@@ -1,1 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>3D Tracker — OrbitWatch</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body>
 
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="logo"><span class="logo-dot"></span>Orbit<span class="logo-light">Watch</span></a>
+    <nav class="site-nav">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="tracker.html" class="nav-link active">Tracker</a>
+      <a href="database.html" class="nav-link">Database</a>
+      <a href="chat.html" class="nav-link nav-ai">🤖 AI Chat</a>
+    </nav>
+    <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="tracker.html" class="nav-link active">Tracker</a>
+    <a href="database.html" class="nav-link">Database</a>
+    <a href="chat.html" class="nav-link">🤖 AI Chat</a>
+  </div>
+</header>
+
+<div class="tracker-layout">
+
+  <!-- SIDEBAR -->
+  <div class="tracker-sidebar" id="trackerSidebar">
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="Search name or NORAD ID…"/>
+        <span class="search-icon">⌕</span>
+      </div>
+    </div>
+    <div class="filter-row" id="filterRow">
+      <button class="ftab active" data-cat="all">All</button>
+      <button class="ftab" data-cat="station">Station</button>
+      <button class="ftab" data-cat="comms">Comms</button>
+      <button class="ftab" data-cat="earth">Earth Sci</button>
+      <button class="ftab" data-cat="obs">Observatory</button>
+      <button class="ftab" data-cat="nav">Nav</button>
+    </div>
+    <div class="sat-list" id="satList"></div>
+  </div>
+
+  <!-- GLOBE -->
+  <div class="tracker-globe" id="globeWrap">
+    <canvas id="globeCanvas"></canvas>
+
+    <!-- HUD top-right -->
+    <div class="hud-tr">
+      <div class="hud-box">
+        <div class="hud-label">Satellites</div>
+        <div class="hud-val" id="hudCount">12</div>
+      </div>
+      <div class="hud-box">
+        <div class="hud-label">Altitude</div>
+        <div class="hud-val green" id="hudAlt">—</div>
+      </div>
+      <div class="hud-box">
+        <div class="hud-label">Velocity</div>
+        <div class="hud-val orange" id="hudVel">—</div>
+      </div>
+    </div>
+
+    <!-- HUD bottom-left -->
+    <div class="hud-bl">
+      <div class="hud-clock">
+        <div class="clock-utc">UTC Time</div>
+        <div class="clock-time" id="clockTime">00:00:00</div>
+        <div class="clock-date" id="clockDate">—</div>
+      </div>
+      <div class="view-btns">
+        <button class="view-btn" id="btnZoomIn">+</button>
+        <button class="view-btn" id="btnZoomOut">−</button>
+        <button class="view-btn" id="btnReset" title="Reset">⊙</button>
+        <button class="view-btn" id="btnSidebar" title="Toggle sidebar">☰</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div class="tracker-detail" id="detailPanel">
+    <div class="detail-head">
+      <div class="detail-head-row">
+        <div class="detail-name" id="detailName">—</div>
+        <button class="close-btn" id="closeDetail">✕</button>
+      </div>
+      <span class="sat-badge" id="detailBadge">—</span>
+    </div>
+
+    <div class="sec-label">Live Telemetry</div>
+    <div class="telem-grid" id="telemGrid"></div>
+
+    <div class="sec-label">Altitude History (60 min)</div>
+    <div class="chart-wrap"><canvas id="altChart" height="80"></canvas></div>
+
+    <div class="sec-label">Mission Info</div>
+    <div class="detail-desc" id="detailDesc">—</div>
+
+    <div class="sec-label">Orbital Parameters</div>
+    <div class="orbit-table" id="orbitTable"></div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/satellite.js/4.0.0/satellite.min.js"></script>
+<script src="../js/satellites.js"></script>
+<script src="../js/tracker.js"></script>
+</body>
+</html>

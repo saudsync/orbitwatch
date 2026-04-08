@@ -1,1 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Astronomer — OrbitWatch</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  .api-key-banner {
+    background: rgba(123,97,255,.1); border: 1px solid rgba(123,97,255,.3);
+    border-radius: 10px; padding: 14px 18px; margin: 0 24px 12px;
+    font-size: 12px; color: var(--accent2); display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .api-key-banner input {
+    flex: 1; min-width: 200px; background: var(--surface2); border: 1px solid rgba(123,97,255,.3);
+    border-radius: 6px; color: var(--text); font-family: var(--font-mono); font-size: 12px;
+    padding: 7px 12px; outline: none;
+  }
+  .api-key-banner input:focus { border-color: var(--accent2); }
+  .api-key-btn {
+    background: var(--accent2); color: #fff; border: none; border-radius: 6px;
+    padding: 7px 14px; font-size: 12px; font-family: var(--font-mono); transition: all .2s;
+  }
+  .api-key-btn:hover { opacity: .85; }
+  .api-status { font-size: 11px; }
+  .api-status.ok { color: var(--green); }
+  .api-status.err { color: var(--red); }
 
+  .msg-time { font-size: 10px; color: var(--muted); margin-top: 4px; text-align: right; }
+  .chat-msg.ai .msg-time { text-align: left; }
+
+  .fact-chip {
+    display: inline-block; background: rgba(0,212,255,.08);
+    border: 1px solid rgba(0,212,255,.15); border-radius: 8px;
+    padding: 6px 12px; font-size: 11px; color: var(--accent);
+    margin: 4px; cursor: pointer; transition: all .2s;
+  }
+  .fact-chip:hover { background: rgba(0,212,255,.15); }
+
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex: 1; gap: 12px; padding: 40px;
+  }
+  .empty-icon { font-size: 64px; opacity: .6; }
+  .empty-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
+  .empty-sub { color: var(--muted); font-size: 13px; text-align: center; max-width: 380px; line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="logo"><span class="logo-dot"></span>Orbit<span class="logo-light">Watch</span></a>
+    <nav class="site-nav">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="tracker.html" class="nav-link">Tracker</a>
+      <a href="database.html" class="nav-link">Database</a>
+      <a href="chat.html" class="nav-link nav-ai active">🤖 AI Chat</a>
+    </nav>
+    <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="tracker.html" class="nav-link">Tracker</a>
+    <a href="database.html" class="nav-link">Database</a>
+    <a href="chat.html" class="nav-link active">🤖 AI Chat</a>
+  </div>
+</header>
+
+<div class="chat-page">
+
+  <!-- Chat header -->
+  <div class="chat-header">
+    <div class="chat-avatar">🔭</div>
+    <div>
+      <div class="chat-agent-name">ARIA — Astronomy & Space AI</div>
+      <div class="chat-agent-status"><span class="live-dot"></span> Ready to explore the cosmos</div>
+    </div>
+    <button id="clearChat" style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:6px 12px;font-size:11px;font-family:var(--font-mono);transition:all .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Clear Chat</button>
+  </div>
+
+  <!-- API Key banner -->
+  <div class="api-key-banner" id="apiBanner">
+    <span>🔑 Enter your Anthropic API key to enable AI responses:</span>
+    <input type="password" id="apiKeyInput" placeholder="sk-ant-…"/>
+    <button class="api-key-btn" id="saveApiKey">Save</button>
+    <span class="api-status" id="apiStatus"></span>
+  </div>
+
+  <!-- Messages -->
+  <div class="chat-body" id="chatBody">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🌌</div>
+      <div class="empty-title">Ask ARIA Anything About Space</div>
+      <div class="empty-sub">ARIA is an AI astronomer powered by Claude. Ask about satellites, black holes, missions, orbital mechanics, and more.</div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px">
+        <span class="fact-chip" onclick="askSuggestion(this)">How does the ISS orbit Earth?</span>
+        <span class="fact-chip" onclick="askSuggestion(this)">What is orbital velocity?</span>
+        <span class="fact-chip" onclick="askSuggestion(this)">Explain Starlink satellites</span>
+        <span class="fact-chip" onclick="askSuggestion(this)">What is a geostationary orbit?</span>
+        <span class="fact-chip" onclick="askSuggestion(this)">How do satellites de-orbit?</span>
+        <span class="fact-chip" onclick="askSuggestion(this)">Tell me about black holes</span>
+        <span class="fact-chip" onclick="askSuggestion(this)">What is the Hubble Telescope?</span>
+        <span class="fact-chip" onclick="askSuggestion(this)">History of space exploration</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Suggestions -->
+  <div class="chat-suggestions" id="suggestionRow">
+    <button class="suggestion-chip" onclick="askSuggestion(this)">🛸 What is the ISS made of?</button>
+    <button class="suggestion-chip" onclick="askSuggestion(this)">🌑 How far is the Moon?</button>
+    <button class="suggestion-chip" onclick="askSuggestion(this)">☀️ Tell me about the Sun</button>
+    <button class="suggestion-chip" onclick="askSuggestion(this)">🪐 Saturn's rings explained</button>
+    <button class="suggestion-chip" onclick="askSuggestion(this)">🚀 Next Mars mission?</button>
+    <button class="suggestion-chip" onclick="askSuggestion(this)">⭐ What is a neutron star?</button>
+  </div>
+
+  <!-- Input -->
+  <div class="chat-input-row">
+    <textarea class="chat-input" id="chatInput" placeholder="Ask about satellites, orbits, astronomy, space missions…" rows="1"></textarea>
+    <button class="chat-send" id="sendBtn" title="Send">➤</button>
+  </div>
+
+</div>
+
+<script src="../js/satellites.js"></script>
+<script>
+// ── API Key Management ────────────────────────────────────────────────────────
+let apiKey = localStorage.getItem('ow_api_key') || '';
+let conversationHistory = [];
+let isLoading = false;
+
+function updateKeyUI() {
+  const banner = document.getElementById('apiBanner');
+  const statusEl = document.getElementById('apiStatus');
+  if (apiKey) {
+    banner.style.display = 'none';
+  } else {
+    banner.style.display = 'flex';
+    statusEl.textContent = 'No key set — using demo mode';
+    statusEl.className = 'api-status err';
+  }
+}
+
+document.getElementById('saveApiKey').addEventListener('click', () => {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (val.startsWith('sk-ant') || val.startsWith('sk-')) {
+    apiKey = val;
+    localStorage.setItem('ow_api_key', val);
+    document.getElementById('apiStatus').textContent = '✓ Key saved!';
+    document.getElementById('apiStatus').className = 'api-status ok';
+    setTimeout(updateKeyUI, 1200);
+  } else {
+    document.getElementById('apiStatus').textContent = '✗ Invalid key format';
+    document.getElementById('apiStatus').className = 'api-status err';
+  }
+});
+
+// ── System Prompt ─────────────────────────────────────────────────────────────
+const SYSTEM_PROMPT = `You are ARIA (Astronomy & Research Intelligence Agent), an expert AI astronomer and space science communicator for the OrbitWatch satellite tracking platform.
+
+Your expertise covers:
+- Satellite orbital mechanics, TLE data, SGP4 propagation
+- Space missions (ISS, Hubble, Starlink, NASA, ESA, SpaceX, etc.)
+- Astronomy: galaxies, stars, black holes, nebulae, exoplanets
+- Rocket science and space exploration history
+- Earth observation satellites and their applications
+- Orbital physics: orbital velocity, altitude, inclination, eccentricity
+
+OrbitWatch tracks these satellites: ${SATELLITES.map(s => s.name + ' (' + s.norad + ')').join(', ')}.
+
+Personality: Enthusiastic, clear, educational. Use space analogies. Keep responses concise but informative (2–4 paragraphs usually). Use **bold** for key terms. Add space facts when relevant. End responses with a brief follow-up question to encourage curiosity.`;
+
+// ── Demo responses ────────────────────────────────────────────────────────────
+const DEMO_RESPONSES = [
+  "I'd love to help with that! However, I need an Anthropic API key to give you a real AI-powered answer. Please add your key using the banner above.\n\nIn the meantime, here's a quick fact: **The ISS orbits at approximately 408 km altitude** and travels at 7.66 km/s — completing one orbit every ~92 minutes!\n\nWhat else are you curious about? 🚀",
+  "Great question! To unlock full AI astronomy responses, please enter your Anthropic API key above.\n\n**Quick space fact**: Satellites in geostationary orbit sit exactly 35,786 km above Earth's equator — where their orbital period perfectly matches Earth's rotation, making them appear stationary from the ground.\n\nAdd your API key for in-depth explanations! 🌍",
+];
+let demoIdx = 0;
+
+// ── Chat Functions ────────────────────────────────────────────────────────────
+function hideEmpty() {
+  document.getElementById('emptyState')?.remove();
+}
+
+function addMessage(role, content) {
+  hideEmpty();
+  const body = document.getElementById('chatBody');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}`;
+  const now = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  const avatarContent = role === 'ai' ? '🔭' : '👤';
+  div.innerHTML = `
+    <div class="msg-avatar ${role}">${avatarContent}</div>
+    <div>
+      <div class="msg-bubble" id="msg-${Date.now()}">${formatMessage(content)}</div>
+      <div class="msg-time">${now}</div>
+    </div>
+  `;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+  return div;
+}
+
+function formatMessage(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br/>')
+    .replace(/^/, '<p>').replace(/$/, '</p>');
+}
+
+function addTyping() {
+  hideEmpty();
+  const body = document.getElementById('chatBody');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ai'; div.id = 'typing-indicator';
+  div.innerHTML = `<div class="msg-avatar ai">🔭</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  body.appendChild(div); body.scrollTop = body.scrollHeight;
+}
+
+function removeTyping() { document.getElementById('typing-indicator')?.remove(); }
+
+async function sendMessage(text) {
+  if (!text.trim() || isLoading) return;
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  addMessage('user', text);
+  conversationHistory.push({ role: 'user', content: text });
+  addTyping();
+
+  if (!apiKey) {
+    await new Promise(r => setTimeout(r, 1200 + Math.random() * 800));
+    removeTyping();
+    const reply = DEMO_RESPONSES[demoIdx % DEMO_RESPONSES.length];
+    demoIdx++;
+    addMessage('ai', reply);
+    conversationHistory.push({ role: 'assistant', content: reply });
+    isLoading = false;
+    document.getElementById('sendBtn').disabled = false;
+    return;
+  }
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: conversationHistory,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'API error ' + res.status);
+    }
+
+    const data = await res.json();
+    const reply = data.content?.map(b => b.text || '').join('') || 'Sorry, I could not generate a response.';
+    removeTyping();
+    addMessage('ai', reply);
+    conversationHistory.push({ role: 'assistant', content: reply });
+  } catch (err) {
+    removeTyping();
+    addMessage('ai', `⚠️ Error: ${err.message}. Please check your API key and try again.`);
+  }
+
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+}
+
+function askSuggestion(el) {
+  const text = el.textContent.replace(/^[^\w]*/, '').trim();
+  document.getElementById('chatInput').value = text;
+  sendAndClear();
+}
+
+function sendAndClear() {
+  const inp = document.getElementById('chatInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  inp.style.height = 'auto';
+  sendMessage(text);
+}
+
+// ── Input events ──────────────────────────────────────────────────────────────
+document.getElementById('sendBtn').addEventListener('click', sendAndClear);
+document.getElementById('chatInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAndClear(); }
+});
+document.getElementById('chatInput').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+document.getElementById('clearChat').addEventListener('click', () => {
+  conversationHistory = [];
+  const body = document.getElementById('chatBody');
+  body.innerHTML = `<div class="empty-state" id="emptyState">
+    <div class="empty-icon">🌌</div>
+    <div class="empty-title">Ask ARIA Anything About Space</div>
+    <div class="empty-sub">ARIA is an AI astronomer powered by Claude. Ask about satellites, black holes, missions, orbital mechanics, and more.</div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px">
+      <span class="fact-chip" onclick="askSuggestion(this)">How does the ISS orbit Earth?</span>
+      <span class="fact-chip" onclick="askSuggestion(this)">What is orbital velocity?</span>
+      <span class="fact-chip" onclick="askSuggestion(this)">Explain Starlink satellites</span>
+      <span class="fact-chip" onclick="askSuggestion(this)">What is a geostationary orbit?</span>
+    </div>
+  </div>`;
+});
+document.getElementById('mobileMenuBtn')?.addEventListener('click', () => document.getElementById('mobileNav')?.classList.toggle('open'));
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+updateKeyUI();
+
+// Welcome message after short delay
+setTimeout(() => {
+  addMessage('ai', `Hello! I'm **ARIA**, your AI astronomy guide on OrbitWatch 🌌\n\nI can answer questions about **satellites, orbital mechanics, space missions, astronomy**, and anything cosmic. Currently tracking ${SATELLITES.length} satellites including the ISS, Hubble, Tiangong, and more.\n\n${apiKey ? 'I\'m fully powered up — what would you like to explore?' : '⚠️ Add your Anthropic API key above for full AI responses. Or ask away and I\'ll show you what I can do!'}\n\nWhat aspect of space are you curious about today? 🚀`);
+}, 500);
+</script>
+</body>
+</html>

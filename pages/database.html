@@ -1,1 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Satellite Database — OrbitWatch</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  /* Modal */
+  .modal-overlay { display:none; position:fixed; inset:0; z-index:500; background:rgba(2,6,16,.85); backdrop-filter:blur(8px); align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--surface); border:1px solid var(--border); border-radius:16px; max-width:580px; width:100%; max-height:88vh; overflow-y:auto; position:relative; }
+  .modal-head { padding:24px 24px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-start; }
+  .modal-title { font-family:var(--font-display); font-size:22px; font-weight:800; }
+  .modal-close { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; }
+  .modal-close:hover { color:var(--text); }
+  .modal-body { padding:20px 24px 28px; }
+  .modal-telem-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:16px 0; }
+  .modal-telem-box { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:10px; }
+  .modal-telem-label { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  .modal-telem-val { font-family:var(--font-display); font-size:18px; font-weight:800; color:var(--accent); }
+  .modal-desc { font-size:13px; color:var(--muted); line-height:1.75; margin-bottom:20px; }
+  .modal-orbit { border-top:1px solid var(--border); padding-top:16px; }
+  .modal-orbit-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:12px; }
+  .modal-orbit-row:last-child { border:none; }
+  .modal-orbit-k { color:var(--muted); }
+  .modal-orbit-v { color:var(--text); }
+  .modal-actions { display:flex; gap:10px; margin-top:20px; }
+</style>
+</head>
+<body>
 
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="logo"><span class="logo-dot"></span>Orbit<span class="logo-light">Watch</span></a>
+    <nav class="site-nav">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="tracker.html" class="nav-link">Tracker</a>
+      <a href="database.html" class="nav-link active">Database</a>
+      <a href="chat.html" class="nav-link nav-ai">🤖 AI Chat</a>
+    </nav>
+    <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="tracker.html" class="nav-link">Tracker</a>
+    <a href="database.html" class="nav-link active">Database</a>
+    <a href="chat.html" class="nav-link">🤖 AI Chat</a>
+  </div>
+</header>
+
+<div class="db-page">
+  <div class="db-hero">
+    <h1>🛰️ Satellite <span style="color:var(--accent)">Database</span></h1>
+    <p>Browse our curated catalog of tracked satellites. Click any satellite to see live telemetry and orbital parameters.</p>
+    <div class="db-controls">
+      <input type="text" class="db-search" id="dbSearch" placeholder="Search name or NORAD ID…"/>
+      <select class="db-filter-select" id="dbFilter">
+        <option value="all">All Categories</option>
+        <option value="station">Space Station</option>
+        <option value="comms">Communications</option>
+        <option value="earth">Earth Science</option>
+        <option value="obs">Observatory</option>
+        <option value="nav">Navigation</option>
+      </select>
+    </div>
+  </div>
+  <div class="db-body">
+    <div class="db-grid" id="dbGrid"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="modalName">—</div>
+        <span class="sat-badge" id="modalBadge">—</span>
+      </div>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-desc" id="modalDesc">—</div>
+      <div class="modal-telem-grid" id="modalTelem"></div>
+      <div class="modal-orbit" id="modalOrbit"></div>
+      <div class="modal-actions">
+        <a id="modalTrackBtn" href="#" class="btn-primary" style="flex:1;text-align:center">Open in 3D Tracker →</a>
+        <a href="chat.html" class="btn-secondary" style="text-align:center">Ask AI About This 🤖</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-logo">Orbit<span>Watch</span></div>
+    <div class="footer-links">
+      <a href="../index.html">Home</a><a href="tracker.html">Tracker</a>
+      <a href="database.html">Database</a><a href="chat.html">AI Chat</a>
+    </div>
+    <div class="footer-copy">© 2025 OrbitWatch</div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/satellite.js/4.0.0/satellite.min.js"></script>
+<script src="../js/satellites.js"></script>
+<script>
+let dbFilter = 'all', dbSearch = '';
+let modalSat = null;
+
+function getFiltered() {
+  return SATELLITES.filter(s => {
+    if (dbFilter !== 'all' && s.cat !== dbFilter) return false;
+    if (dbSearch) { const q = dbSearch.toLowerCase(); return s.name.toLowerCase().includes(q) || s.norad.includes(q); }
+    return true;
+  });
+}
+
+function renderDB() {
+  const grid = document.getElementById('dbGrid');
+  const filtered = getFiltered();
+  if (!filtered.length) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:48px">No satellites match your search.</div>'; return; }
+  grid.innerHTML = filtered.map(sat => `
+    <div class="db-card" onclick="openModal(SATELLITES.find(s=>s.norad==='${sat.norad}'))">
+      <div class="db-card-top">
+        <div>
+          <div class="db-card-name">${sat.icon} ${sat.name}</div>
+          <span class="sat-badge ${BADGE_CLASSES[sat.cat]||''}" style="margin-top:6px;display:inline-block">${BADGE_LABELS[sat.cat]||sat.cat}</span>
+        </div>
+      </div>
+      <div class="db-card-desc">${sat.desc.substring(0,120)}…</div>
+      <div class="db-card-meta">
+        <span class="db-meta-chip">NORAD: ${sat.norad}</span>
+        <span class="db-meta-chip">${sat.launch||'—'}</span>
+        <span class="db-meta-chip">${sat.country||'—'}</span>
+      </div>
+      <div class="db-card-actions">
+        <button class="btn-sm primary">View Details</button>
+        <a href="tracker.html?norad=${sat.norad}" class="btn-sm" style="display:flex;align-items:center;justify-content:center">Track Live 🛰️</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openModal(sat) {
+  if (!sat) return;
+  modalSat = sat;
+  document.getElementById('modalName').textContent = sat.name;
+  const b = document.getElementById('modalBadge');
+  b.textContent = BADGE_LABELS[sat.cat]||sat.cat; b.className='sat-badge '+(BADGE_CLASSES[sat.cat]||'');
+  document.getElementById('modalDesc').textContent = sat.desc;
+  document.getElementById('modalTrackBtn').href = 'tracker.html?norad=' + sat.norad;
+  updateModalTelem(sat);
+  const p = getOrbitalParams(sat);
+  document.getElementById('modalOrbit').innerHTML = p ? `
+    <div class="modal-orbit-row"><span class="modal-orbit-k">Inclination</span><span class="modal-orbit-v">${p.inc}°</span></div>
+    <div class="modal-orbit-row"><span class="modal-orbit-k">Eccentricity</span><span class="modal-orbit-v">${p.ecc}</span></div>
+    <div class="modal-orbit-row"><span class="modal-orbit-k">Orbital Period</span><span class="modal-orbit-v">${p.period} min</span></div>
+    <div class="modal-orbit-row"><span class="modal-orbit-k">RAAN</span><span class="modal-orbit-v">${p.raan}°</span></div>
+    <div class="modal-orbit-row"><span class="modal-orbit-k">Semi-major Axis</span><span class="modal-orbit-v">${p.sma} km</span></div>
+    <div class="modal-orbit-row"><span class="modal-orbit-k">Launch Date</span><span class="modal-orbit-v">${sat.launch||'—'}</span></div>
+    <div class="modal-orbit-row"><span class="modal-orbit-k">Country/Agency</span><span class="modal-orbit-v">${sat.country||'—'}</span></div>
+    <div class="modal-orbit-row"><span class="modal-orbit-k">Mass</span><span class="modal-orbit-v">${sat.mass||'—'}</span></div>
+    <div class="modal-orbit-row"><span class="modal-orbit-k">Purpose</span><span class="modal-orbit-v">${sat.purpose||'—'}</span></div>
+  ` : '';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function updateModalTelem(sat) {
+  const pos = getSatPosition(sat, new Date());
+  if (!pos) return;
+  document.getElementById('modalTelem').innerHTML = `
+    <div class="modal-telem-box"><div class="modal-telem-label">Altitude</div><div class="modal-telem-val">${Math.round(pos.alt)} <small style="font-size:11px;color:var(--muted)">km</small></div></div>
+    <div class="modal-telem-box"><div class="modal-telem-label">Velocity</div><div class="modal-telem-val">${(pos.vel*3.6).toFixed(1)} <small style="font-size:11px;color:var(--muted)">km/h</small></div></div>
+    <div class="modal-telem-box"><div class="modal-telem-label">Latitude</div><div class="modal-telem-val">${pos.lat.toFixed(3)}<small style="font-size:11px;color:var(--muted)">°</small></div></div>
+    <div class="modal-telem-box"><div class="modal-telem-label">Longitude</div><div class="modal-telem-val">${pos.lng.toFixed(3)}<small style="font-size:11px;color:var(--muted)">°</small></div></div>
+  `;
+}
+
+setInterval(() => { if (modalSat && document.getElementById('modalOverlay').classList.contains('open')) updateModalTelem(modalSat); }, 2000);
+
+document.getElementById('modalClose').onclick = () => document.getElementById('modalOverlay').classList.remove('open');
+document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('open'); });
+document.getElementById('dbSearch').addEventListener('input', e => { dbSearch = e.target.value; renderDB(); });
+document.getElementById('dbFilter').addEventListener('change', e => { dbFilter = e.target.value; renderDB(); });
+document.getElementById('mobileMenuBtn')?.addEventListener('click', () => document.getElementById('mobileNav')?.classList.toggle('open'));
+
+renderDB();
+</script>
+</body>
+</html>
