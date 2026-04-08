@@ -1,1 +1,156 @@
-upload
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OrbitWatch — Live Satellite Tracker</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-dot"></span>
+      Orbit<span class="logo-light">Watch</span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html" class="nav-link active">Home</a>
+      <a href="pages/tracker.html" class="nav-link">Tracker</a>
+      <a href="pages/database.html" class="nav-link">Database</a>
+      <a href="pages/chat.html" class="nav-link nav-ai">🤖 AI Chat</a>
+    </nav>
+    <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html" class="nav-link active">Home</a>
+    <a href="pages/tracker.html" class="nav-link">Tracker</a>
+    <a href="pages/database.html" class="nav-link">Database</a>
+    <a href="pages/chat.html" class="nav-link">🤖 AI Chat</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="star-field" id="starField"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🛰️ Real-Time Orbital Tracking</div>
+    <h1 class="hero-title">Track Every Satellite<br/><span class="hero-accent">Above You, Live</span></h1>
+    <p class="hero-sub">Real-time 3D tracking of 12,000+ satellites using SGP4 propagation and up-to-date TLE data. Explore humanity's presence in orbit.</p>
+    <div class="hero-cta">
+      <a href="pages/tracker.html" class="btn-primary">Open 3D Tracker →</a>
+      <a href="pages/chat.html" class="btn-secondary">Ask AI Astronomer</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num" id="statSats">12,000+</span><span class="stat-label">Satellites</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">SGP4</span><span class="stat-label">Orbit Model</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">Live</span><span class="stat-label">TLE Updates</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">Free</span><span class="stat-label">Forever</span></div>
+    </div>
+  </div>
+  <div class="hero-globe-hint">↓ Scroll to explore featured satellites</div>
+</section>
+
+<!-- FEATURED -->
+<section class="featured-section">
+  <div class="section-header">
+    <div class="section-icon">🛰️</div>
+    <h2 class="section-title">Featured</h2>
+    <p class="section-desc">Explore the most iconic and historically significant satellites currently orbiting Earth. From space stations to revolutionary telescopes, these missions have shaped our understanding of space and Earth.</p>
+  </div>
+  <div class="featured-grid" id="featuredGrid">
+    <!-- Populated by JS -->
+  </div>
+</section>
+
+<!-- FEATURES STRIP -->
+<section class="features-strip">
+  <div class="features-inner">
+    <div class="feature-item">
+      <div class="feature-icon">🌍</div>
+      <div class="feature-text">
+        <h3>3D Globe Visualization</h3>
+        <p>Interactive rotating Earth with live satellite dots, orbit trails and real-time telemetry overlay.</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">📡</div>
+      <div class="feature-text">
+        <h3>Live Telemetry</h3>
+        <p>Altitude, velocity, latitude, and longitude updated every second using SGP4 orbital mechanics.</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🤖</div>
+      <div class="feature-text">
+        <h3>AI Astronomy Agent</h3>
+        <p>Chat with our Claude-powered AI astronomer to learn space facts, satellite missions, and more.</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">📊</div>
+      <div class="feature-text">
+        <h3>Orbital Analytics</h3>
+        <p>Altitude history charts, orbital parameters, inclination, eccentricity, and period data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <h2 class="section-title center">What People Say</h2>
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <p>"An incredible tool for anyone interested in space. The real-time tracking is outstanding!"</p>
+      <span>— @spaceenthusiast on Discord</span>
+    </div>
+    <div class="testimonial-card">
+      <p>"Super awesome — literally just what I was looking for! Incredibly intuitive."</p>
+      <span>— @stdalex on Reddit</span>
+    </div>
+    <div class="testimonial-card">
+      <p>"Stellar system — intuitive, comprehensive, flexible. Outstanding work!"</p>
+      <span>— @cosmicwatcher</span>
+    </div>
+    <div class="testimonial-card">
+      <p>"The mobile experience is excellent. Smooth performance even on older phones."</p>
+      <span>— @orbitfan on X</span>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner">
+  <div class="cta-content">
+    <h2>Ready to Explore the Cosmos?</h2>
+    <p>Open the tracker and watch satellites orbit Earth in real-time, right in your browser.</p>
+    <a href="pages/tracker.html" class="btn-primary large">Launch 3D Tracker →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-logo">Orbit<span>Watch</span></div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="pages/tracker.html">Tracker</a>
+      <a href="pages/database.html">Database</a>
+      <a href="pages/chat.html">AI Chat</a>
+    </div>
+    <div class="footer-copy">© 2025 OrbitWatch · Built for space curiosity</div>
+  </div>
+</footer>
+
+<script src="js/satellites.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>
