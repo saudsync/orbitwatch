@@ -8,28 +8,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
 <style>
   .api-key-banner {
-    background: rgba(123,97,255,.1); border: 1px solid rgba(123,97,255,.3);
+    background: rgba(66,133,244,.1); border: 1px solid rgba(66,133,244,.3);
     border-radius: 10px; padding: 14px 18px; margin: 0 24px 12px;
-    font-size: 12px; color: var(--accent2); display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    font-size: 12px; color: #4285f4; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
   }
   .api-key-banner input {
-    flex: 1; min-width: 200px; background: var(--surface2); border: 1px solid rgba(123,97,255,.3);
+    flex: 1; min-width: 200px; background: var(--surface2); border: 1px solid rgba(66,133,244,.3);
     border-radius: 6px; color: var(--text); font-family: var(--font-mono); font-size: 12px;
     padding: 7px 12px; outline: none;
   }
-  .api-key-banner input:focus { border-color: var(--accent2); }
+  .api-key-banner input:focus { border-color: #4285f4; }
   .api-key-btn {
-    background: var(--accent2); color: #fff; border: none; border-radius: 6px;
-    padding: 7px 14px; font-size: 12px; font-family: var(--font-mono); transition: all .2s;
+    background: #4285f4; color: #fff; border: none; border-radius: 6px;
+    padding: 7px 14px; font-size: 12px; font-family: var(--font-mono); transition: all .2s; cursor: pointer;
   }
   .api-key-btn:hover { opacity: .85; }
   .api-status { font-size: 11px; }
   .api-status.ok { color: var(--green); }
   .api-status.err { color: var(--red); }
-
   .msg-time { font-size: 10px; color: var(--muted); margin-top: 4px; text-align: right; }
   .chat-msg.ai .msg-time { text-align: left; }
-
   .fact-chip {
     display: inline-block; background: rgba(0,212,255,.08);
     border: 1px solid rgba(0,212,255,.15); border-radius: 8px;
@@ -37,7 +35,6 @@
     margin: 4px; cursor: pointer; transition: all .2s;
   }
   .fact-chip:hover { background: rgba(0,212,255,.15); }
-
   .empty-state {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     flex: 1; gap: 12px; padding: 40px;
@@ -45,6 +42,13 @@
   .empty-icon { font-size: 64px; opacity: .6; }
   .empty-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
   .empty-sub { color: var(--muted); font-size: 13px; text-align: center; max-width: 380px; line-height: 1.7; }
+  .gemini-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: linear-gradient(135deg, rgba(66,133,244,.18), rgba(234,67,53,.12));
+    border: 1px solid rgba(66,133,244,.3); border-radius: 20px;
+    padding: 2px 9px; font-size: 10px; font-family: var(--font-mono);
+    color: #4285f4; margin-left: 8px; vertical-align: middle; letter-spacing: .03em;
+  }
 </style>
 </head>
 <body>
@@ -75,16 +79,16 @@
   <div class="chat-header">
     <div class="chat-avatar">🔭</div>
     <div>
-      <div class="chat-agent-name">ARIA — Astronomy & Space AI</div>
+      <div class="chat-agent-name">ARIA — Astronomy &amp; Space AI <span class="gemini-badge">✦ Gemini</span></div>
       <div class="chat-agent-status"><span class="live-dot"></span> Ready to explore the cosmos</div>
     </div>
-    <button id="clearChat" style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:6px 12px;font-size:11px;font-family:var(--font-mono);cursor:pointer;transition:all .2s;">Clear</button>
+    <button id="clearChat" style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:6px 12px;font-size:11px;font-family:var(--font-mono);cursor:pointer;transition:all .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Clear Chat</button>
   </div>
 
   <!-- API Key banner -->
   <div class="api-key-banner" id="apiBanner">
-    <span>🔑 Enter your OpenAI API key to enable AI responses:</span>
-    <input type="password" id="apiKeyInput" placeholder="sk-..."/>
+    <span>🔑 Enter your Google Gemini API key to enable AI responses:</span>
+    <input type="password" id="apiKeyInput" placeholder="AIza…"/>
     <button class="api-key-btn" id="saveApiKey">Save</button>
     <span class="api-status" id="apiStatus"></span>
   </div>
@@ -94,7 +98,7 @@
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">🌌</div>
       <div class="empty-title">Ask ARIA Anything About Space</div>
-      <div class="empty-sub">ARIA is an AI astronomer powered by OpenAI. Ask about satellites, black holes, missions, orbital mechanics, and more.</div>
+      <div class="empty-sub">ARIA is an AI astronomer powered by Gemini. Ask about satellites, black holes, missions, orbital mechanics, and more.</div>
       <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px">
         <span class="fact-chip" onclick="askSuggestion(this)">How does the ISS orbit Earth?</span>
         <span class="fact-chip" onclick="askSuggestion(this)">What is orbital velocity?</span>
@@ -128,11 +132,13 @@
 
 <script src="../js/satellites.js"></script>
 <script>
-// ── API Key Management ────────────────────────────────────────────────────────
-let apiKey = localStorage.getItem('ow_openai_key') || '';
-let conversationHistory = [];
+// ── Config ────────────────────────────────────────────────────────────────────
+const GEMINI_MODEL = 'gemini-2.0-flash';
+let apiKey = localStorage.getItem('ow_gemini_key') || '';
+let conversationHistory = []; // Gemini format: [{role:'user'|'model', parts:[{text}]}]
 let isLoading = false;
 
+// ── API Key UI ────────────────────────────────────────────────────────────────
 function updateKeyUI() {
   const banner = document.getElementById('apiBanner');
   const statusEl = document.getElementById('apiStatus');
@@ -140,27 +146,27 @@ function updateKeyUI() {
     banner.style.display = 'none';
   } else {
     banner.style.display = 'flex';
-    statusEl.textContent = 'No key set — AI disabled';
+    statusEl.textContent = 'No key set — using demo mode';
     statusEl.className = 'api-status err';
   }
 }
 
 document.getElementById('saveApiKey').addEventListener('click', () => {
   const val = document.getElementById('apiKeyInput').value.trim();
-  if (val.startsWith('sk-')) {
+  if (val.length > 15) {
     apiKey = val;
-    localStorage.setItem('ow_openai_key', val);
+    localStorage.setItem('ow_gemini_key', val);
     document.getElementById('apiStatus').textContent = '✓ Key saved!';
     document.getElementById('apiStatus').className = 'api-status ok';
     setTimeout(updateKeyUI, 1200);
   } else {
-    document.getElementById('apiStatus').textContent = '✗ Invalid key format';
+    document.getElementById('apiStatus').textContent = '✗ Key too short — check it';
     document.getElementById('apiStatus').className = 'api-status err';
   }
 });
 
-// ── System Prompt ──────────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `You are ARIA (Astronomy & Research Intelligence Agent), an expert AI astronomer and space science communicator for the OrbitWatch satellite tracking platform.
+// ── System Prompt ─────────────────────────────────────────────────────────────
+const SYSTEM_PROMPT = `You are ARIA (Astronomy & Research Intelligence Agent), an expert AI astronomer and space science communicator for the OrbitWatch satellite tracking platform. You are powered by Google Gemini.
 
 Your expertise covers:
 - Satellite orbital mechanics, TLE data, SGP4 propagation
@@ -171,31 +177,23 @@ Your expertise covers:
 - Earth observation satellites and their applications
 - Orbital physics: orbital velocity, altitude, inclination, eccentricity
 
-Personality: Enthusiastic, clear, educational. Use space analogies. Keep responses concise but informative (2–4 paragraphs). Use bold for key terms. Add space facts when relevant.`;
+OrbitWatch tracks these satellites: ${typeof SATELLITES !== 'undefined' ? SATELLITES.map(s => s.name + ' (' + s.norad + ')').join(', ') : 'ISS, Hubble, Starlink, and more'}.
 
-// ── Chat Functions ────────────────────────────────────────────────────────
-function hideEmpty() {
-  document.getElementById('emptyState')?.remove();
-}
+Indian satellites on OrbitWatch:
+- CARTOSAT-2F (NORAD 43111): ISRO Earth observation satellite, launched PSLV-C40, Jan 2018.
+- IRNSS-1I / NavIC (NORAD 43286): India's navigation constellation, launched PSLV-C41, Apr 2018.
 
-function addMessage(role, content) {
-  hideEmpty();
-  const body = document.getElementById('chatBody');
-  const div = document.createElement('div');
-  div.className = `chat-msg ${role}`;
-  const now = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  const avatarContent = role === 'ai' ? '🔭' : '👤';
-  div.innerHTML = `
-    <div class="msg-avatar ${role}">${avatarContent}</div>
-    <div>
-      <div class="msg-bubble" id="msg-${Date.now()}">${formatMessage(content)}</div>
-      <div class="msg-time">${now}</div>
-    </div>
-  `;
-  body.appendChild(div);
-  body.scrollTop = body.scrollHeight;
-  return div;
-}
+Personality: Enthusiastic, clear, educational. Use space analogies. Keep responses concise but informative (2-4 paragraphs). Use **bold** for key terms. When discussing ISRO, show genuine enthusiasm. End with a brief follow-up question to encourage curiosity.`;
+
+// ── Demo Responses ────────────────────────────────────────────────────────────
+const DEMO_RESPONSES = [
+  "I'd love to help with that! However, I need a **Google Gemini API key** to give you a real AI-powered answer. Please add your key using the banner above.\n\nIn the meantime, here's a quick fact: **The ISS orbits at approximately 408 km altitude** and travels at 7.66 km/s — completing one orbit every ~92 minutes!\n\nWhat else are you curious about? 🚀",
+  "Great question! To unlock full AI astronomy responses, please enter your **Gemini API key** above.\n\n**Quick space fact**: Satellites in geostationary orbit sit exactly 35,786 km above Earth's equator — where their orbital period perfectly matches Earth's rotation, making them appear stationary from the ground.\n\nAdd your API key for in-depth explanations! 🌍",
+];
+let demoIdx = 0;
+
+// ── UI Helpers ────────────────────────────────────────────────────────────────
+function hideEmpty() { document.getElementById('emptyState')?.remove(); }
 
 function formatMessage(text) {
   return text
@@ -206,66 +204,87 @@ function formatMessage(text) {
     .replace(/^/, '<p>').replace(/$/, '</p>');
 }
 
-function addTyping() {
+function addMessage(role, content) {
   hideEmpty();
   const body = document.getElementById('chatBody');
   const div = document.createElement('div');
-  div.className = 'chat-msg ai';
-  div.id = 'typing-indicator';
-  div.innerHTML = `<div class="msg-avatar ai">🔭</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  div.className = `chat-msg ${role}`;
+  const now = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  div.innerHTML = `
+    <div class="msg-avatar ${role}">${role === 'ai' ? '🔭' : '👤'}</div>
+    <div>
+      <div class="msg-bubble">${formatMessage(content)}</div>
+      <div class="msg-time">${now}</div>
+    </div>`;
   body.appendChild(div);
   body.scrollTop = body.scrollHeight;
 }
 
-function removeTyping() {
-  document.getElementById('typing-indicator')?.remove();
+function addTyping() {
+  hideEmpty();
+  const body = document.getElementById('chatBody');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ai'; div.id = 'typing-indicator';
+  div.innerHTML = `<div class="msg-avatar ai">🔭</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  body.appendChild(div); body.scrollTop = body.scrollHeight;
 }
+function removeTyping() { document.getElementById('typing-indicator')?.remove(); }
 
-async function sendMessage(text) {
-  if (!text.trim() || isLoading) return;
-  if (!apiKey) {
-    alert('⚠️ Please enter your OpenAI API key first!');
-    return;
+// ── Gemini API ────────────────────────────────────────────────────────────────
+async function callGemini(userText) {
+  conversationHistory.push({ role: 'user', parts: [{ text: userText }] });
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+  const payload = {
+    system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+    contents: conversationHistory,
+    generationConfig: { maxOutputTokens: 1024, temperature: 0.7 }
+  };
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `Gemini API error ${res.status}`);
   }
 
+  const data = await res.json();
+  const reply = data.candidates?.[0]?.content?.parts?.[0]?.text
+    || 'Sorry, no response generated.';
+
+  conversationHistory.push({ role: 'model', parts: [{ text: reply }] });
+  return reply;
+}
+
+// ── Send ──────────────────────────────────────────────────────────────────────
+async function sendMessage(text) {
+  if (!text.trim() || isLoading) return;
   isLoading = true;
   document.getElementById('sendBtn').disabled = true;
 
   addMessage('user', text);
-  conversationHistory.push({ role: 'user', content: text });
   addTyping();
 
+  if (!apiKey) {
+    await new Promise(r => setTimeout(r, 1000 + Math.random() * 700));
+    removeTyping();
+    addMessage('ai', DEMO_RESPONSES[demoIdx++ % DEMO_RESPONSES.length]);
+    isLoading = false;
+    document.getElementById('sendBtn').disabled = false;
+    return;
+  }
+
   try {
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          ...conversationHistory
-        ],
-        max_tokens: 1000,
-        temperature: 0.7
-      }),
-    });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error?.message || `API error ${res.status}`);
-    }
-
-    const data = await res.json();
-    const reply = data.choices?.[0]?.message?.content || 'Sorry, I could not generate a response.';
+    const reply = await callGemini(text);
     removeTyping();
     addMessage('ai', reply);
-    conversationHistory.push({ role: 'assistant', content: reply });
   } catch (err) {
     removeTyping();
-    addMessage('ai', `⚠️ Error: ${err.message}. Please check your API key and try again.`);
+    addMessage('ai', `⚠️ Error: ${err.message}. Please check your Gemini API key and try again.`);
   }
 
   isLoading = false;
@@ -273,7 +292,7 @@ async function sendMessage(text) {
 }
 
 function askSuggestion(el) {
-  const text = el.textContent.replace(/^[^\w]*/, '').trim();
+  const text = el.textContent.replace(/^[^\w🇮🇳🧭]*/u, '').trim();
   document.getElementById('chatInput').value = text;
   sendAndClear();
 }
@@ -282,17 +301,16 @@ function sendAndClear() {
   const inp = document.getElementById('chatInput');
   const text = inp.value.trim();
   if (!text) return;
-  inp.value = '';
-  inp.style.height = 'auto';
+  inp.value = ''; inp.style.height = 'auto';
   sendMessage(text);
 }
 
-// ── Input events ───────────────────────────────────────────────────────────
+// ── Events ────────────────────────────────────────────────────────────────────
 document.getElementById('sendBtn').addEventListener('click', sendAndClear);
 document.getElementById('chatInput').addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAndClear(); }
 });
-document.getElementById('chatInput').addEventListener('input', function() {
+document.getElementById('chatInput').addEventListener('input', function () {
   this.style.height = 'auto';
   this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 });
@@ -302,7 +320,7 @@ document.getElementById('clearChat').addEventListener('click', () => {
   body.innerHTML = `<div class="empty-state" id="emptyState">
     <div class="empty-icon">🌌</div>
     <div class="empty-title">Ask ARIA Anything About Space</div>
-    <div class="empty-sub">ARIA is an AI astronomer powered by OpenAI. Ask about satellites, black holes, missions, orbital mechanics, and more.</div>
+    <div class="empty-sub">ARIA is an AI astronomer powered by Gemini. Ask about satellites, black holes, missions, orbital mechanics, and more.</div>
     <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px">
       <span class="fact-chip" onclick="askSuggestion(this)">How does the ISS orbit Earth?</span>
       <span class="fact-chip" onclick="askSuggestion(this)">What is orbital velocity?</span>
@@ -311,17 +329,15 @@ document.getElementById('clearChat').addEventListener('click', () => {
     </div>
   </div>`;
 });
-document.getElementById('mobileMenuBtn')?.addEventListener('click', () => document.getElementById('mobileNav')?.classList.toggle('open'));
+document.getElementById('mobileMenuBtn')?.addEventListener('click', () =>
+  document.getElementById('mobileNav')?.classList.toggle('open'));
 
-// ── Init ─────────────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────────────
 updateKeyUI();
-
-// Welcome message after short delay
 setTimeout(() => {
-  addMessage('ai', `Hello! I'm ARIA, your AI astronomy guide on OrbitWatch 🌌
-
-I can answer questions about satellites, orbital mechanics, space missions, astronomy, and anything cosmic. Ask away!`);
+  const satCount = typeof SATELLITES !== 'undefined' ? SATELLITES.length : 'many';
+  addMessage('ai', `Hello! I'm **ARIA**, your AI astronomy guide on OrbitWatch 🌌\n\nI'm now powered by **Google Gemini** ✦ and ready to answer questions about **satellites, orbital mechanics, space missions, astronomy**, and anything cosmic. Currently tracking ${satCount} satellites including the ISS, Hubble, Tiangong, and more.\n\n${apiKey ? "I'm fully powered up — what would you like to explore?" : '⚠️ Add your Gemini API key above for full AI responses.'}\n\nWhat aspect of space are you curious about today? 🚀`);
 }, 500);
 </script>
 </body>
-                                                                                                    </html>
+</html>
