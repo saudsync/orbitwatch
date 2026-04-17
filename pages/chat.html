@@ -102,8 +102,8 @@
         <span class="fact-chip" onclick="askSuggestion(this)">What is a geostationary orbit?</span>
         <span class="fact-chip" onclick="askSuggestion(this)">How do satellites de-orbit?</span>
         <span class="fact-chip" onclick="askSuggestion(this)">Tell me about black holes</span>
-        <span class="fact-chip" onclick="askSuggestion(this)">What is the Hubble Telescope?</span>
-        <span class="fact-chip" onclick="askSuggestion(this)">History of space exploration</span>
+        <span class="fact-chip" onclick="askSuggestion(this)">🇮🇳 Tell me about CARTOSAT-2F</span>
+        <span class="fact-chip" onclick="askSuggestion(this)">🧭 What is NavIC IRNSS?</span>
       </div>
     </div>
   </div>
@@ -112,9 +112,9 @@
   <div class="chat-suggestions" id="suggestionRow">
     <button class="suggestion-chip" onclick="askSuggestion(this)">🛸 What is the ISS made of?</button>
     <button class="suggestion-chip" onclick="askSuggestion(this)">🌑 How far is the Moon?</button>
-    <button class="suggestion-chip" onclick="askSuggestion(this)">☀️ Tell me about the Sun</button>
-    <button class="suggestion-chip" onclick="askSuggestion(this)">🪐 Saturn's rings explained</button>
-    <button class="suggestion-chip" onclick="askSuggestion(this)">🚀 Next Mars mission?</button>
+    <button class="suggestion-chip" onclick="askSuggestion(this)">🇮🇳 Tell me about CARTOSAT-2F</button>
+    <button class="suggestion-chip" onclick="askSuggestion(this)">🧭 What is NavIC / IRNSS?</button>
+    <button class="suggestion-chip" onclick="askSuggestion(this)">🚀 ISRO's greatest achievements</button>
     <button class="suggestion-chip" onclick="askSuggestion(this)">⭐ What is a neutron star?</button>
   </div>
 
@@ -165,6 +165,7 @@ const SYSTEM_PROMPT = `You are ARIA (Astronomy & Research Intelligence Agent), a
 Your expertise covers:
 - Satellite orbital mechanics, TLE data, SGP4 propagation
 - Space missions (ISS, Hubble, Starlink, NASA, ESA, SpaceX, etc.)
+- **Indian Space Research Organisation (ISRO)** missions — PSLV, GSLV, Chandrayaan, Mangalyaan, NavIC, CARTOSAT, RISAT, Aditya-L1
 - Astronomy: galaxies, stars, black holes, nebulae, exoplanets
 - Rocket science and space exploration history
 - Earth observation satellites and their applications
@@ -172,7 +173,11 @@ Your expertise covers:
 
 OrbitWatch tracks these satellites: ${SATELLITES.map(s => s.name + ' (' + s.norad + ')').join(', ')}.
 
-Personality: Enthusiastic, clear, educational. Use space analogies. Keep responses concise but informative (2–4 paragraphs usually). Use **bold** for key terms. Add space facts when relevant. End responses with a brief follow-up question to encourage curiosity.`;
+**Indian satellites on OrbitWatch:**
+- CARTOSAT-2F (NORAD 43111): ISRO Earth observation satellite, launched PSLV-C40, Jan 2018. Provides high-resolution imagery for cartography and disaster management.
+- IRNSS-1I / NavIC (NORAD 43286): Part of India's indigenous navigation constellation (NavIC). Launched PSLV-C41, Apr 2018. Covers India + 1,500 km region.
+
+Personality: Enthusiastic, clear, educational. Use space analogies. Keep responses concise but informative (2–4 paragraphs usually). Use **bold** for key terms. Add space facts when relevant. When discussing Indian satellites or ISRO, show genuine enthusiasm for India's impressive space achievements. End responses with a brief follow-up question to encourage curiosity.`;
 
 // ── Demo responses ────────────────────────────────────────────────────────────
 const DEMO_RESPONSES = [

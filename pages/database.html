@@ -64,6 +64,7 @@
         <option value="earth">Earth Science</option>
         <option value="obs">Observatory</option>
         <option value="nav">Navigation</option>
+      <option value="india">🇮🇳 ISRO (India)</option>
       </select>
     </div>
   </div>
@@ -113,7 +114,8 @@ let modalSat = null;
 
 function getFiltered() {
   return SATELLITES.filter(s => {
-    if (dbFilter !== 'all' && s.cat !== dbFilter) return false;
+    if (dbFilter === "india") return typeof INDIAN_NORADS !== "undefined" && INDIAN_NORADS.includes(s.norad);
+    if (dbFilter !== "all" && s.cat !== dbFilter) return false;
     if (dbSearch) { const q = dbSearch.toLowerCase(); return s.name.toLowerCase().includes(q) || s.norad.includes(q); }
     return true;
   });
