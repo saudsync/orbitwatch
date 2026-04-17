@@ -146,7 +146,7 @@
    Model: llama3 (or any model available on your account)
    ═══════════════════════════════════════════════════ */
 
-const OLLAMA_ENDPOINT = 'https://api.ollama.com/v1/chat/completions';
+const OLLAMA_ENDPOINT = 'https://ollama.com/api/chat';
 const OLLAMA_MODEL    = 'llama3.2';
 const MAX_TOKENS      = 1024;
 const MAX_HISTORY     = 20;
@@ -230,17 +230,18 @@ async function callOllama(userText) {
   const res = await fetch(OLLAMA_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ollamaApiKey },
-    body: JSON.stringify({ model: OLLAMA_MODEL, max_tokens: MAX_TOKENS, temperature: 0.7, messages })
+    body: JSON.stringify({ model: OLLAMA_MODEL, stream: false, messages })
   });
 
   let data;
   try { data = await res.json(); } catch(_) { throw new Error('Non-JSON response from server (HTTP ' + res.status + ')'); }
 
   if (!res.ok) {
-    throw new Error(data?.error?.message || data?.error?.code || 'API error ' + res.status);
+    throw new Error(data?.error || 'API error ' + res.status);
   }
 
-  const reply = data?.choices?.[0]?.message?.content?.trim();
+  // Ollama native API returns: { message: { role, content }, done: true, ... }
+  const reply = data?.message?.content?.trim();
   if (!reply) throw new Error('Empty response received. Please try again.');
   return reply;
 }
