@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini AI Chatbot</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Type your message here..." />
+        <button id="send-button">Send</button>
+    </div>
+
+    <script>
+        const API_KEY = 'AIzaSyAb8RN6LbSdAfA3_1Z6ROASB_r-Wl0_yfHwl5_OaQWMvE9oRlfw';
+        const PROJECT_NAME = 'Orbit Watch';
+        const PROJECT_ID = '549073136605';
+
+        $(document).ready(function() {
+            $('#send-button').click(function() {
+                const userInput = $('#user-input').val();
+                $('#chat-box').append(`<div class='user-message'>${userInput}</div>`);
+                $('#user-input').val('');
+                callGeminiAPI(userInput);
+            });
+        });
+
+        function callGeminiAPI(message) {
+            $.ajax({
+                url: `https://gemini-api-url.example.com/v1/messages?projectId=${PROJECT_ID}`,
+                type: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify({ "message": message }),
+                success: function(response) {
+                    const botResponse = response.data.reply;
+                    $('#chat-box').append(`<div class='bot-message'>${botResponse}</div>`);
+                },
+                error: function() {
+                    $('#chat-box').append(`<div class='bot-message'>Sorry, there was an error. Please try again.</div>`);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
