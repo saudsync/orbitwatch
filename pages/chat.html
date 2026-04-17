@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="../css/style.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
 <style>
+  /* ... (keep all existing styles from previous version) ... */
   .api-key-banner {
     background: rgba(123,97,255,.1); border: 1px solid rgba(123,97,255,.3);
     border-radius: 10px; padding: 14px 18px; margin: 0 24px 12px;
@@ -59,22 +60,6 @@
     border-color: rgba(255,69,96,.35) !important;
     background: rgba(255,69,96,.06) !important;
     color: #ff8090 !important;
-  }
-  .status-badge {
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 12px;
-    margin-left: 8px;
-  }
-  .status-online {
-    background: rgba(0,255,157,.15);
-    color: var(--green);
-    border: 1px solid rgba(0,255,157,.3);
-  }
-  .status-offline {
-    background: rgba(255,69,96,.15);
-    color: var(--red);
-    border: 1px solid rgba(255,69,96,.3);
   }
 </style>
 </head>
@@ -157,16 +142,17 @@
 <script src="../js/satellites.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════
-   ORBITWATCH · ARIA — OpenRouter (Free Tier)
-   Model: meta-llama/llama-3-8b-instruct:free
+   ORBITWATCH · ARIA — OpenRouter with CORS Proxy
+   Using corsproxy.io to bypass CORS restrictions
    ═══════════════════════════════════════════════════ */
 
 const OR_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
+const CORS_PROXY = 'https://corsproxy.io/?';
 const OR_MODEL    = 'meta-llama/llama-3-8b-instruct:free';
 const MAX_TOKENS  = 1024;
 const MAX_HISTORY = 20;
 
-// YOUR API KEY (pre-filled)
+// YOUR API KEY
 const DEFAULT_API_KEY = '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';
 
 const SAT_LIST = (typeof SATELLITES !== 'undefined')
@@ -195,7 +181,6 @@ let apiKey = localStorage.getItem('ow_or_key') || DEFAULT_API_KEY;
 let conversationHistory = [];
 let isLoading = false;
 
-// Save default key if not present
 if (!localStorage.getItem('ow_or_key') && DEFAULT_API_KEY) {
   localStorage.setItem('ow_or_key', DEFAULT_API_KEY);
 }
@@ -241,19 +226,17 @@ document.getElementById('saveApiKey').addEventListener('click', () => {
   status.textContent = '✓ Saved! Key is active';
   status.className = 'api-status ok';
   updateKeyUI();
-  
-  // Show success message
-  addMessage('ai', '✅ **API key saved successfully!**\n\nI\'m now fully operational with Llama 3 via OpenRouter. Feel free to ask me anything about space, satellites, or astronomy! 🚀');
+  addMessage('ai', '✅ **API key saved successfully!**\n\nI\'m now fully operational with Llama 3 via OpenRouter. Feel free to ask me anything about space! 🚀');
 });
 
 document.getElementById('clearApiKey').addEventListener('click', () => {
   apiKey = ''; 
   localStorage.removeItem('ow_or_key'); 
   updateKeyUI();
-  addMessage('ai', '🔑 **API key removed.** You can add a new one from openrouter.ai/keys to continue using the AI. I\'ll still provide space facts in demo mode! 🌟');
+  addMessage('ai', '🔑 **API key removed.** Add a new one from openrouter.ai/keys to continue using the AI. I\'ll still provide space facts in demo mode! 🌟');
 });
 
-// ── API CALL ──────────────────────────────────────────────────────────────────
+// ── API CALL with CORS Proxy ──────────────────────────────────────────────────
 async function callOpenRouter(userText) {
   const messages = [
     { role: 'system', content: SYSTEM_PROMPT },
@@ -261,31 +244,34 @@ async function callOpenRouter(userText) {
     { role: 'user', content: userText }
   ];
 
-  const response = await fetch(OR_ENDPOINT, {
+  const requestBody = { 
+    model: OR_MODEL, 
+    max_tokens: MAX_TOKENS, 
+    messages,
+    temperature: 0.7
+  };
+
+  // Use CORS proxy to avoid browser restrictions
+  const proxyUrl = CORS_PROXY + encodeURIComponent(OR_ENDPOINT);
+  
+  const response = await fetch(proxyUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + apiKey,
-      'HTTP-Referer': window.location.origin + '/',
-      'X-Title': 'OrbitWatch'
+      'Authorization': 'Bearer ' + apiKey
     },
-    body: JSON.stringify({ 
-      model: OR_MODEL, 
-      max_tokens: MAX_TOKENS, 
-      messages,
-      temperature: 0.7
-    })
+    body: JSON.stringify(requestBody)
   });
 
   let data;
   try { 
     data = await response.json(); 
   } catch(e) { 
-    throw new Error('Failed to parse response'); 
+    throw new Error('Failed to parse response from server'); 
   }
 
   if (!response.ok) {
-    const errorMsg = data?.error?.message || `HTTP ${response.status}`;
+    const errorMsg = data?.error?.message || data?.error || `HTTP ${response.status}`;
     throw new Error(errorMsg);
   }
 
@@ -301,19 +287,21 @@ function friendlyError(msg) {
   if (m.includes('401') || m.includes('invalid') || m.includes('unauthorized'))
     return '❌ **Invalid API key.** Get a free key at [openrouter.ai/keys](https://openrouter.ai/keys) and paste it above.';
   if (m.includes('402') || m.includes('credit') || m.includes('payment'))
-    return '💰 **Free tier issue.** Make sure you selected the free model. The key should work without credits. Try re-saving your key.';
+    return '💰 **Free tier issue.** Make sure you selected the free model. Try re-saving your key.';
   if (m.includes('429') || m.includes('rate limit'))
-    return '⏱️ **Rate limit reached.** Wait 30 seconds and try again. OpenRouter free tier allows ~30 requests per minute.';
+    return '⏱️ **Rate limit reached.** Wait 30 seconds and try again.';
   if (m.includes('fetch') || m.includes('network') || m.includes('failed'))
     return '🌐 **Network error.** Please check your internet connection.';
+  if (m.includes('cors'))
+    return '🔧 **CORS issue.** Using proxy, please try again.';
   return msg.length > 120 ? msg.slice(0, 120) + '…' : msg;
 }
 
-// ── DEMO RESPONSES (fallback when no API key) ─────────────────────────────────
+// ── DEMO RESPONSES ────────────────────────────────────────────────────────────
 const DEMO = [
-  "🌟 **Space fact:** The ISS orbits at ~408 km altitude at 7.66 km/s — completing one orbit every 92 minutes, giving astronauts 16 sunrises per day!\n\n💡 *Want full AI answers? Add your free OpenRouter key above!*",
-  "🛰️ **Space fact:** Geostationary satellites orbit at exactly **35,786 km** where their speed matches Earth's rotation — appearing to hover perfectly still.\n\n💡 *Add an OpenRouter key above for unlimited space Q&A!*",
-  "🇮🇳 **ISRO fact:** India's NavIC (IRNSS-1I) is India's own GPS — covering the entire subcontinent plus 1,500 km beyond its borders.\n\n💡 *Enter your OpenRouter key above to ask me anything about space!*",
+  "🌟 **Space fact:** The ISS orbits at ~408 km altitude at 7.66 km/s — completing one orbit every 92 minutes!\n\n💡 *Want full AI answers? Add your OpenRouter key above!*",
+  "🛰️ **Space fact:** Geostationary satellites orbit at exactly **35,786 km** where their speed matches Earth's rotation.\n\n💡 *Add your OpenRouter key above for unlimited Q&A!*",
+  "🇮🇳 **ISRO fact:** India's NavIC is India's own GPS — covering the subcontinent + 1,500 km beyond its borders.\n\n💡 *Enter your OpenRouter key above to ask me anything!*",
 ];
 let demoIdx = 0;
 
@@ -332,10 +320,8 @@ function formatMessage(text) {
     .replace(/\*(.*?)\*/g,'<em>$1</em>')
     .replace(/`(.*?)`/g,'<code style="background:rgba(0,212,255,.1);padding:1px 5px;border-radius:3px;font-size:11px">$1</code>');
   
-  // Handle line breaks
   formatted = formatted.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br/>');
   
-  // Wrap in paragraphs if not already
   if (!formatted.startsWith('<p>')) {
     formatted = '<p>' + formatted + '</p>';
   }
@@ -378,7 +364,7 @@ function setLoading(on) {
   if (sendBtn) sendBtn.disabled = on;
   document.getElementById('agentStatus').textContent = on
     ? 'ARIA is thinking… 🤔'
-    : (apiKey ? 'Online — Llama 3 ready' : 'Add OpenRouter key to activate');
+    : (apiKey ? 'Online — Llama 3 ready' : 'Add OpenRouter key');
 }
 
 // ── SEND MESSAGE ──────────────────────────────────────────────────────────────
@@ -390,7 +376,6 @@ async function sendMessage(text) {
   addMessage('user', text);
   addTyping();
 
-  // Demo mode (no API key)
   if (!apiKey || apiKey === '') {
     await new Promise(r => setTimeout(r, 800 + Math.random() * 400));
     removeTyping();
@@ -401,7 +386,6 @@ async function sendMessage(text) {
     return;
   }
 
-  // Live API mode
   try {
     const reply = await callOpenRouter(text);
     removeTyping();
@@ -419,9 +403,8 @@ async function sendMessage(text) {
 }
 
 function askSuggestion(el) {
-  const raw = el.textContent || '';
-  // Clean up the text (remove emojis at start if needed)
-  let text = raw.replace(/^[^\w\s]+/, '').trim();
+  let text = el.textContent || '';
+  text = text.replace(/^[^\w\s]+/, '').trim();
   document.getElementById('chatInput').value = text;
   sendAndClear();
 }
@@ -454,7 +437,7 @@ document.getElementById('clearChat').addEventListener('click', () => {
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">🌌</div>
       <div class="empty-title">Ask ARIA Anything About Space</div>
-      <div class="empty-sub">Powered by <strong>OpenRouter · Llama 3</strong> — free AI. Ask about satellites, ISRO, black holes and more.</div>
+      <div class="empty-sub">Powered by <strong>OpenRouter · Llama 3</strong> — free AI.</div>
       <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:12px">
         <span class="fact-chip" onclick="askSuggestion(this)">How does the ISS orbit Earth?</span>
         <span class="fact-chip" onclick="askSuggestion(this)">What is orbital velocity?</span>
@@ -472,15 +455,14 @@ document.getElementById('mobileMenuBtn')?.addEventListener('click', () =>
 // ── INITIALIZE ────────────────────────────────────────────────────────────────
 updateKeyUI();
 
-// Welcome message after a short delay
 setTimeout(() => {
   const satCount = (typeof SATELLITES !== 'undefined') ? SATELLITES.length : 14;
   const hasKey = apiKey && apiKey !== '';
   
   if (hasKey) {
-    addMessage('ai', `✨ **Hello! I'm ARIA** — your AI astronomy guide on OrbitWatch 🌌\n\nI'm running on **OpenRouter · Llama 3** and ready to answer your space questions!\n\nCurrently tracking **${satCount} satellites** — including ISS, Hubble, Tiangong, CARTOSAT-2F 🇮🇳, and NavIC/IRNSS-1I 🇮🇳.\n\nAsk me about satellites, orbital mechanics, space missions, astronomy, or anything cosmic! 🚀`);
+    addMessage('ai', `✨ **Hello! I'm ARIA** — your AI astronomy guide 🌌\n\nI'm running on **OpenRouter · Llama 3** via CORS proxy.\n\nTracking **${satCount} satellites** — including ISS, Hubble, CARTOSAT-2F 🇮🇳, and NavIC.\n\nAsk me anything about space! 🚀`);
   } else {
-    addMessage('ai', `🌠 **Welcome to ARIA** — your AI astronomy guide!\n\nTo get full AI answers, paste your **free OpenRouter API key** in the banner above.\n\nGet one in 30 seconds at [openrouter.ai/keys](https://openrouter.ai/keys) — no credit card required!\n\nMeanwhile, here are some space facts to enjoy... 🌟`);
+    addMessage('ai', `🌠 **Welcome to ARIA!**\n\nTo get AI answers, paste your **free OpenRouter API key** in the banner above.\n\nGet one at [openrouter.ai/keys](https://openrouter.ai/keys) — no credit card!\n\nMeanwhile, here are some space facts... 🌟`);
   }
 }, 400);
 </script>
