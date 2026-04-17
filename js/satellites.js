@@ -99,13 +99,32 @@ const SATELLITES = [
     tle2: "2 26824   0.0100 358.0000 0002000 200.0000 160.0000  1.00270000000000",
     launch: "2001-06-09", country: "Luxembourg", mass: "4,724 kg", purpose: "Communications"
   },
+  {
+    name: "CARTOSAT-2F", norad: "43111", cat: "earth",
+    icon: "🇮🇳",
+    desc: "CARTOSAT-2F is an Indian Earth observation satellite built and operated by ISRO (Indian Space Research Organisation). Launched aboard PSLV-C40 in January 2018, it provides high-resolution panchromatic and multispectral imagery for cartography, urban planning, disaster management, and land-use mapping across India and the globe.",
+    tle1: "1 43111U 18004B   24001.50000000  .00001200  00000-0  50000-4 0  9992",
+    tle2: "2 43111  97.4700  30.0000 0001200  90.0000 270.0000 14.77000000000000",
+    launch: "2018-01-12", country: "India (ISRO)", mass: "710 kg", purpose: "High-Resolution Earth Imaging"
+  },
+  {
+    name: "IRNSS-1I (NavIC)", norad: "43286", cat: "nav",
+    icon: "🧭",
+    desc: "IRNSS-1I is part of India's own Navigation with Indian Constellation (NavIC) system, built and operated by ISRO. Launched by PSLV-C41 in April 2018 as a replacement satellite, it provides accurate Position, Navigation and Timing (PNT) services over India and a region extending up to 1,500 km around India. NavIC makes India one of only a handful of nations with its own independent navigation satellite system.",
+    tle1: "1 43286U 18035A   24001.50000000 -.00000300  00000-0  00000-0 0  9991",
+    tle2: "2 43286  28.1000  55.0000 0020000 270.0000  88.0000  1.00270000000000",
+    launch: "2018-04-12", country: "India (ISRO)", mass: "1,425 kg", purpose: "Regional Navigation (NavIC)"
+  },
 ];
 
-const FEATURED_NAMES = ["ISS (ZARYA)", "STARLINK-1130", "HUBBLE SPACE TELESCOPE", "TIANGONG CSS", "TERRA", "SENTINEL-1A"];
+const FEATURED_NAMES = ["ISS (ZARYA)", "STARLINK-1130", "HUBBLE SPACE TELESCOPE", "TIANGONG CSS", "CARTOSAT-2F", "IRNSS-1I (NavIC)"];
 
 const BADGE_CLASSES = { station:"badge-station", comms:"badge-comms", earth:"badge-earth", obs:"badge-obs", nav:"badge-nav" };
 const BADGE_LABELS = { station:"Space Station", comms:"Communications", earth:"Earth Science", obs:"Observatory", nav:"Navigation" };
 const CAT_ICONS = { station:"🛸", comms:"📡", earth:"🌍", obs:"🔭", nav:"🧭" };
+
+// Indian satellites — highlighted in UI
+const INDIAN_NORADS = ["43111", "43286"];
 
 // ── Satellite.js SGP4 wrapper ──────────────────────────────────────────────
 function getSatPosition(sat, date) {

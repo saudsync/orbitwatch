@@ -235,6 +235,7 @@ function updateHUD() {
 // ── Sidebar List ──────────────────────────────────────────────────────────────
 function getFiltered() {
   return SATELLITES.filter(s => {
+    if (filterCat === 'india') return INDIAN_NORADS.includes(s.norad);
     if (filterCat !== 'all' && s.cat !== filterCat) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
