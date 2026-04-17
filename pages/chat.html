@@ -3,64 +3,157 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>AI Astronomer — OrbitWatch</title>
+<title>ARIA — Space AI</title>
 <link rel="stylesheet" href="../css/style.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
 <style>
-  /* ... (keep all existing styles from previous version) ... */
-  .api-key-banner {
-    background: rgba(123,97,255,.1); border: 1px solid rgba(123,97,255,.3);
-    border-radius: 10px; padding: 14px 18px; margin: 0 24px 12px;
-    font-size: 12px; color: var(--accent2);
-    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  .api-bar {
+    background: rgba(123,97,255,.1);
+    border: 1px solid rgba(123,97,255,.3);
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 12px;
   }
-  .api-key-banner input {
-    flex: 1; min-width: 200px; background: var(--surface2);
-    border: 1px solid rgba(123,97,255,.3); border-radius: 6px;
-    color: var(--text); font-family: var(--font-mono); font-size: 12px;
-    padding: 7px 12px; outline: none; transition: border-color .2s;
+  .api-bar input {
+    flex: 1;
+    background: #0d1830;
+    border: 1px solid rgba(123,97,255,.3);
+    border-radius: 6px;
+    color: #e8f4ff;
+    padding: 6px 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
   }
-  .api-key-banner input:focus { border-color: var(--accent2); }
-  .api-key-btn {
-    background: var(--accent2); color: #fff; border: none; border-radius: 6px;
-    padding: 7px 14px; font-size: 12px; font-family: var(--font-mono); cursor: pointer; transition: opacity .2s;
+  .api-bar button {
+    background: #7b61ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 11px;
+    cursor: pointer;
   }
-  .api-key-btn:hover { opacity: .85; }
-  .api-key-clear {
-    background: none; border: 1px solid rgba(255,69,96,.3); color: var(--red);
-    border-radius: 6px; padding: 7px 12px; font-size: 11px;
-    font-family: var(--font-mono); cursor: pointer; transition: all .2s;
+  .api-status { font-size: 10px; }
+  .status-ok { color: #00ff9d; }
+  .status-err { color: #ff4560; }
+  .chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
-  .api-key-clear:hover { background: rgba(255,69,96,.1); }
-  .api-status { font-size: 11px; }
-  .api-status.ok  { color: var(--green); }
-  .api-status.err { color: var(--red); }
-  .msg-time { font-size: 10px; color: var(--muted); margin-top: 4px; text-align: right; }
-  .chat-msg.ai .msg-time { text-align: left; }
-  .fact-chip {
-    display: inline-block; background: rgba(0,212,255,.08);
-    border: 1px solid rgba(0,212,255,.15); border-radius: 8px;
-    padding: 6px 12px; font-size: 11px; color: var(--accent);
-    margin: 4px; cursor: pointer; transition: all .2s;
+  .msg { display: flex; gap: 10px; max-width: 80%; }
+  .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+  .msg-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
   }
-  .fact-chip:hover { background: rgba(0,212,255,.18); }
+  .msg-avatar.ai { background: linear-gradient(135deg, #7b61ff, #00d4ff); }
+  .msg-avatar.user { background: #101e38; border: 1px solid rgba(100,180,255,0.2); }
+  .msg-bubble {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .msg.ai .msg-bubble {
+    background: #080f1e;
+    border: 1px solid rgba(0,212,255,.2);
+    border-top-left-radius: 3px;
+  }
+  .msg.user .msg-bubble {
+    background: rgba(0,212,255,.1);
+    border: 1px solid rgba(0,212,255,.2);
+    border-top-right-radius: 3px;
+  }
+  .msg-bubble p { margin: 0 0 6px; }
+  .msg-bubble p:last-child { margin: 0; }
+  .msg-bubble strong { color: #00d4ff; }
+  .typing-dots {
+    display: flex;
+    gap: 4px;
+    padding: 4px 0;
+  }
+  .typing-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #5a7a9a;
+    animation: bounce 1.2s infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: .2s; }
+  .typing-dots span:nth-child(3) { animation-delay: .4s; }
+  @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+  .suggestions {
+    padding: 8px 20px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(100,180,255,0.12);
+  }
+  .suggestion {
+    background: #0d1830;
+    border: 1px solid rgba(100,180,255,0.2);
+    border-radius: 16px;
+    padding: 5px 12px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .suggestion:hover {
+    border-color: #7b61ff;
+    color: #7b61ff;
+  }
+  .input-row {
+    padding: 12px 20px 20px;
+    border-top: 1px solid rgba(100,180,255,0.12);
+    display: flex;
+    gap: 10px;
+    background: #030610;
+  }
+  .input-row textarea {
+    flex: 1;
+    background: #0d1830;
+    border: 1px solid rgba(100,180,255,0.2);
+    border-radius: 10px;
+    color: #e8f4ff;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 10px 14px;
+    resize: none;
+    outline: none;
+  }
+  .input-row textarea:focus { border-color: #7b61ff; }
+  .input-row button {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #7b61ff, #00d4ff);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .input-row button:disabled { opacity: 0.4; cursor: not-allowed; }
   .empty-state {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; flex: 1; gap: 12px; padding: 40px;
+    text-align: center;
+    padding: 60px 20px;
   }
-  .empty-icon  { font-size: 64px; opacity: .6; }
-  .empty-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
-  .empty-sub   { color: var(--muted); font-size: 13px; text-align: center; max-width: 380px; line-height: 1.7; }
-  .model-badge {
-    font-size: 10px; padding: 3px 9px; border-radius: 10px;
-    background: rgba(0,255,157,.08); border: 1px solid rgba(0,255,157,.2);
-    color: var(--green); font-family: var(--font-mono); margin-top: 3px; display: inline-block;
-  }
-  .msg-bubble.error {
-    border-color: rgba(255,69,96,.35) !important;
-    background: rgba(255,69,96,.06) !important;
-    color: #ff8090 !important;
-  }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .empty-sub { color: #5a7a9a; font-size: 12px; }
 </style>
 </head>
 <body>
@@ -85,386 +178,262 @@
   </div>
 </header>
 
-<div class="chat-page">
+<div class="chat-page" style="display:flex;flex-direction:column;height:100vh;padding-top:60px;">
 
-  <div class="chat-header">
-    <div class="chat-avatar">🔭</div>
+  <div style="padding:12px 20px;border-bottom:1px solid rgba(100,180,255,0.12);display:flex;align-items:center;gap:12px;">
+    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7b61ff,#00d4ff);display:flex;align-items:center;justify-content:center;font-size:18px;">🔭</div>
     <div>
-      <div class="chat-agent-name">ARIA — Astronomy &amp; Space AI</div>
-      <div class="chat-agent-status"><span class="live-dot"></span><span id="agentStatus">Ready to explore the cosmos</span></div>
-      <span class="model-badge" id="modelBadge">OpenRouter · Llama 3</span>
+      <div style="font-weight:700;">ARIA</div>
+      <div style="font-size:10px;color:#5a7a9a;" id="agentStatus">Ready</div>
     </div>
-    <button id="clearChat" style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:6px 12px;font-size:11px;font-family:var(--font-mono);transition:all .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Clear Chat</button>
+    <button id="clearChat" style="margin-left:auto;background:none;border:1px solid rgba(100,180,255,0.2);color:#5a7a9a;border-radius:6px;padding:5px 10px;font-size:10px;cursor:pointer;">Clear</button>
   </div>
 
-  <div class="api-key-banner" id="apiBanner">
-    <span>🔑 <strong>OpenRouter API Key</strong> (free tier):</span>
+  <div class="api-bar">
+    <span>🔑 OpenRouter Key:</span>
     <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..."/>
-    <button class="api-key-btn" id="saveApiKey">Save Key</button>
-    <button class="api-key-clear" id="clearApiKey" style="display:none">Remove</button>
-    <span class="api-status err" id="apiStatus">No key — demo mode</span>
+    <button id="saveApiKey">Save</button>
+    <button id="clearApiKey" style="display:none">Remove</button>
+    <span class="api-status" id="apiStatus">No key</span>
   </div>
 
   <div class="chat-body" id="chatBody">
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">🌌</div>
-      <div class="empty-title">Ask ARIA Anything About Space</div>
-      <div class="empty-sub">Powered by <strong>OpenRouter · Llama 3</strong> — free AI. Ask about satellites, black holes, ISRO missions, orbital mechanics and more.</div>
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:12px">
-        <span class="fact-chip" onclick="askSuggestion(this)">How does the ISS orbit Earth?</span>
-        <span class="fact-chip" onclick="askSuggestion(this)">What is orbital velocity?</span>
-        <span class="fact-chip" onclick="askSuggestion(this)">Explain Starlink satellites</span>
-        <span class="fact-chip" onclick="askSuggestion(this)">What is a geostationary orbit?</span>
-        <span class="fact-chip" onclick="askSuggestion(this)">How do satellites de-orbit?</span>
-        <span class="fact-chip" onclick="askSuggestion(this)">Tell me about black holes</span>
-        <span class="fact-chip" onclick="askSuggestion(this)">Tell me about CARTOSAT-2F</span>
-        <span class="fact-chip" onclick="askSuggestion(this)">What is NavIC IRNSS?</span>
-      </div>
+      <div class="empty-title">Ask ARIA</div>
+      <div class="empty-sub">Satellites · ISRO · Black Holes · Orbits</div>
     </div>
   </div>
 
-  <div class="chat-suggestions" id="suggestionRow">
-    <button class="suggestion-chip" onclick="askSuggestion(this)">🛸 What is the ISS made of?</button>
-    <button class="suggestion-chip" onclick="askSuggestion(this)">🌑 How far is the Moon?</button>
-    <button class="suggestion-chip" onclick="askSuggestion(this)">🇮🇳 Tell me about CARTOSAT-2F</button>
-    <button class="suggestion-chip" onclick="askSuggestion(this)">🧭 What is NavIC / IRNSS?</button>
-    <button class="suggestion-chip" onclick="askSuggestion(this)">🚀 ISRO greatest achievements</button>
-    <button class="suggestion-chip" onclick="askSuggestion(this)">⭐ What is a neutron star?</button>
+  <div class="suggestions">
+    <span class="suggestion" onclick="askSuggestion(this)">ISS orbit</span>
+    <span class="suggestion" onclick="askSuggestion(this)">CARTOSAT-2F</span>
+    <span class="suggestion" onclick="askSuggestion(this)">NavIC</span>
+    <span class="suggestion" onclick="askSuggestion(this)">Black holes</span>
+    <span class="suggestion" onclick="askSuggestion(this)">ISRO achievements</span>
+    <span class="suggestion" onclick="askSuggestion(this)">Geostationary orbit</span>
   </div>
 
-  <div class="chat-input-row">
-    <textarea class="chat-input" id="chatInput" placeholder="Ask about satellites, orbits, astronomy, space missions…" rows="1"></textarea>
-    <button class="chat-send" id="sendBtn" title="Send">➤</button>
+  <div class="input-row">
+    <textarea id="chatInput" placeholder="Ask about space..." rows="1"></textarea>
+    <button id="sendBtn">➤</button>
   </div>
 
 </div>
 
-<script src="../js/satellites.js"></script>
 <script>
-/* ═══════════════════════════════════════════════════
-   ORBITWATCH · ARIA — OpenRouter with CORS Proxy
-   Using corsproxy.io to bypass CORS restrictions
-   ═══════════════════════════════════════════════════ */
-
+// CONFIG
+const API_KEY = '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';
 const OR_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
-const CORS_PROXY = 'https://corsproxy.io/?';
-const OR_MODEL    = 'meta-llama/llama-3-8b-instruct:free';
-const MAX_TOKENS  = 1024;
-const MAX_HISTORY = 20;
+const MODEL = 'meta-llama/llama-3-8b-instruct:free';
 
-// YOUR API KEY
-const DEFAULT_API_KEY = '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';
+let savedKey = localStorage.getItem('openrouter_key') || API_KEY;
+let history = [];
+let loading = false;
 
-const SAT_LIST = (typeof SATELLITES !== 'undefined')
-  ? SATELLITES.map(s => s.name + ' (NORAD ' + s.norad + ')').join(', ')
-  : 'ISS, Hubble, Tiangong, Starlink, CARTOSAT-2F, IRNSS-1I NavIC, and more';
+// System prompt
+const SYSTEM = `You are ARIA, an astronomy expert for OrbitWatch. Answer space questions clearly and concisely. Use **bold** for key terms. Keep answers short (2-3 paragraphs).`;
 
-const SYSTEM_PROMPT = `You are ARIA (Astronomy & Research Intelligence Agent), an expert AI astronomer for the OrbitWatch satellite tracking platform.
-
-Expertise:
-- Satellite orbital mechanics, TLE data, SGP4 propagation
-- Space missions: ISS, Hubble, Starlink, NASA, ESA, SpaceX, Roscosmos, JAXA
-- ISRO missions: PSLV, GSLV, Chandrayaan-1/2/3, Mangalyaan, NavIC, CARTOSAT, RISAT, Aditya-L1, Gaganyaan
-- Astronomy: galaxies, stars, black holes, nebulae, exoplanets
-- Rocket science, re-entry physics, Hohmann transfers
-- Earth observation and remote sensing
-
-OrbitWatch tracks: ${SAT_LIST}
-
-Indian satellites:
-- CARTOSAT-2F (43111): ISRO high-res Earth imaging, PSLV-C40, Jan 2018
-- IRNSS-1I / NavIC (43286): India navigation system, PSLV-C41, Apr 2018
-
-Style: Enthusiastic, clear, educational. Bold key terms using **term**. Keep answers 2-4 paragraphs. Show pride in ISRO. End with a curious follow-up question.`;
-
-let apiKey = localStorage.getItem('ow_or_key') || DEFAULT_API_KEY;
-let conversationHistory = [];
-let isLoading = false;
-
-if (!localStorage.getItem('ow_or_key') && DEFAULT_API_KEY) {
-  localStorage.setItem('ow_or_key', DEFAULT_API_KEY);
-}
-
-// ── KEY UI ────────────────────────────────────────────────────────────────────
-function updateKeyUI() {
-  const banner = document.getElementById('apiBanner');
-  const status = document.getElementById('apiStatus');
+// UI Functions
+function updateUI() {
+  const hasKey = savedKey && savedKey !== '';
+  const statusEl = document.getElementById('apiStatus');
   const clearBtn = document.getElementById('clearApiKey');
-  const badge = document.getElementById('modelBadge');
-  const agentSt = document.getElementById('agentStatus');
-
-  if (apiKey && apiKey !== '') {
-    banner.style.cssText += 'background:rgba(0,255,157,.05);border-color:rgba(0,255,157,.2);';
-    status.textContent = '✓ OpenRouter active — Llama 3 ready';
-    status.className = 'api-status ok';
+  const agentStatus = document.getElementById('agentStatus');
+  
+  if (hasKey) {
+    statusEl.textContent = '✓ Active';
+    statusEl.className = 'api-status status-ok';
     clearBtn.style.display = 'inline-block';
-    badge.textContent = 'OpenRouter · Llama 3 · Live ✓';
-    badge.style.background = 'rgba(0,255,157,.1)';
-    agentSt.textContent = 'Online — Llama 3 via OpenRouter';
+    agentStatus.textContent = 'Online · Llama 3';
   } else {
-    banner.style.cssText += 'background:rgba(123,97,255,.1);border-color:rgba(123,97,255,.3);';
-    status.textContent = 'No key — add OpenRouter key above';
-    status.className = 'api-status err';
+    statusEl.textContent = 'No key';
+    statusEl.className = 'api-status status-err';
     clearBtn.style.display = 'none';
-    badge.textContent = 'Add OpenRouter key to activate';
-    badge.style.background = 'rgba(255,140,66,.08)';
-    agentSt.textContent = 'Add OpenRouter key to activate';
+    agentStatus.textContent = 'Add API key';
   }
 }
 
-document.getElementById('saveApiKey').addEventListener('click', () => {
+document.getElementById('saveApiKey').onclick = () => {
   const val = document.getElementById('apiKeyInput').value.trim();
-  const status = document.getElementById('apiStatus');
-  if (!val) { 
-    status.textContent = '✗ Please enter a key'; 
-    status.className = 'api-status err'; 
-    return; 
+  if (val) {
+    savedKey = val;
+    localStorage.setItem('openrouter_key', val);
+    updateUI();
+    document.getElementById('apiKeyInput').value = '';
+    addMessage('ai', '✅ Key saved! Ask me anything about space.');
   }
-  apiKey = val;
-  localStorage.setItem('ow_or_key', val);
-  document.getElementById('apiKeyInput').value = '';
-  status.textContent = '✓ Saved! Key is active';
-  status.className = 'api-status ok';
-  updateKeyUI();
-  addMessage('ai', '✅ **API key saved successfully!**\n\nI\'m now fully operational with Llama 3 via OpenRouter. Feel free to ask me anything about space! 🚀');
-});
+};
 
-document.getElementById('clearApiKey').addEventListener('click', () => {
-  apiKey = ''; 
-  localStorage.removeItem('ow_or_key'); 
-  updateKeyUI();
-  addMessage('ai', '🔑 **API key removed.** Add a new one from openrouter.ai/keys to continue using the AI. I\'ll still provide space facts in demo mode! 🌟');
-});
+document.getElementById('clearApiKey').onclick = () => {
+  savedKey = '';
+  localStorage.removeItem('openrouter_key');
+  updateUI();
+  addMessage('ai', '🔑 Key removed. Add a new key from openrouter.ai/keys');
+};
 
-// ── API CALL with CORS Proxy ──────────────────────────────────────────────────
-async function callOpenRouter(userText) {
-  const messages = [
-    { role: 'system', content: SYSTEM_PROMPT },
-    ...conversationHistory.slice(-MAX_HISTORY),
-    { role: 'user', content: userText }
-  ];
+// Message rendering
+function hideEmpty() {
+  const empty = document.getElementById('emptyState');
+  if (empty) empty.remove();
+}
 
-  const requestBody = { 
-    model: OR_MODEL, 
-    max_tokens: MAX_TOKENS, 
-    messages,
-    temperature: 0.7
-  };
-
-  // Use CORS proxy to avoid browser restrictions
-  const proxyUrl = CORS_PROXY + encodeURIComponent(OR_ENDPOINT);
+function addMessage(role, content, isError = false) {
+  hideEmpty();
+  const body = document.getElementById('chatBody');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
   
-  const response = await fetch(proxyUrl, {
+  let formatted = content
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br/>');
+  
+  div.innerHTML = `
+    <div class="msg-avatar ${role}">${role === 'ai' ? '🔭' : '👤'}</div>
+    <div class="msg-bubble" style="${isError ? 'border-color:#ff4560!important;background:rgba(255,69,96,.05)!important;' : ''}">
+      ${formatted}
+    </div>
+  `;
+  body.appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
+function showTyping() {
+  hideEmpty();
+  const body = document.getElementById('chatBody');
+  const div = document.createElement('div');
+  div.id = 'typing';
+  div.className = 'msg ai';
+  div.innerHTML = `
+    <div class="msg-avatar ai">🔭</div>
+    <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>
+  `;
+  body.appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
+function hideTyping() {
+  const typing = document.getElementById('typing');
+  if (typing) typing.remove();
+}
+
+// API Call
+async function callAI(userMsg) {
+  const response = await fetch(OR_ENDPOINT, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + apiKey
+      'Authorization': `Bearer ${savedKey}`
     },
-    body: JSON.stringify(requestBody)
+    body: JSON.stringify({
+      model: MODEL,
+      messages: [
+        { role: 'system', content: SYSTEM },
+        ...history.slice(-10),
+        { role: 'user', content: userMsg }
+      ],
+      max_tokens: 512,
+      temperature: 0.7
+    })
   });
 
-  let data;
-  try { 
-    data = await response.json(); 
-  } catch(e) { 
-    throw new Error('Failed to parse response from server'); 
-  }
-
   if (!response.ok) {
-    const errorMsg = data?.error?.message || data?.error || `HTTP ${response.status}`;
-    throw new Error(errorMsg);
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error?.message || `HTTP ${response.status}`);
   }
 
-  const reply = data?.choices?.[0]?.message?.content?.trim();
-  if (!reply) throw new Error('Empty response from AI');
-  return reply;
+  const data = await response.json();
+  return data.choices[0].message.content.trim();
 }
 
-// ── ERROR MAPPER ──────────────────────────────────────────────────────────────
-function friendlyError(msg) {
-  if (!msg) return 'Unknown error — please retry.';
-  const m = msg.toLowerCase();
-  if (m.includes('401') || m.includes('invalid') || m.includes('unauthorized'))
-    return '❌ **Invalid API key.** Get a free key at [openrouter.ai/keys](https://openrouter.ai/keys) and paste it above.';
-  if (m.includes('402') || m.includes('credit') || m.includes('payment'))
-    return '💰 **Free tier issue.** Make sure you selected the free model. Try re-saving your key.';
-  if (m.includes('429') || m.includes('rate limit'))
-    return '⏱️ **Rate limit reached.** Wait 30 seconds and try again.';
-  if (m.includes('fetch') || m.includes('network') || m.includes('failed'))
-    return '🌐 **Network error.** Please check your internet connection.';
-  if (m.includes('cors'))
-    return '🔧 **CORS issue.** Using proxy, please try again.';
-  return msg.length > 120 ? msg.slice(0, 120) + '…' : msg;
-}
-
-// ── DEMO RESPONSES ────────────────────────────────────────────────────────────
-const DEMO = [
-  "🌟 **Space fact:** The ISS orbits at ~408 km altitude at 7.66 km/s — completing one orbit every 92 minutes!\n\n💡 *Want full AI answers? Add your OpenRouter key above!*",
-  "🛰️ **Space fact:** Geostationary satellites orbit at exactly **35,786 km** where their speed matches Earth's rotation.\n\n💡 *Add your OpenRouter key above for unlimited Q&A!*",
-  "🇮🇳 **ISRO fact:** India's NavIC is India's own GPS — covering the subcontinent + 1,500 km beyond its borders.\n\n💡 *Enter your OpenRouter key above to ask me anything!*",
-];
-let demoIdx = 0;
-
-// ── RENDERING ─────────────────────────────────────────────────────────────────
-function hideEmpty() { 
-  const empty = document.getElementById('emptyState');
-  if (empty) empty.remove(); 
-}
-
-function formatMessage(text) {
-  let formatted = text
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g,'<em>$1</em>')
-    .replace(/`(.*?)`/g,'<code style="background:rgba(0,212,255,.1);padding:1px 5px;border-radius:3px;font-size:11px">$1</code>');
-  
-  formatted = formatted.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br/>');
-  
-  if (!formatted.startsWith('<p>')) {
-    formatted = '<p>' + formatted + '</p>';
-  }
-  
-  return formatted;
-}
-
-function addMessage(role, content, isError) {
-  hideEmpty();
-  const body = document.getElementById('chatBody');
-  const div = document.createElement('div');
-  div.className = 'chat-msg ' + role;
-  const t = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  div.innerHTML = `
-    <div class="msg-avatar ${role}">${role==='ai'?'🔭':'👤'}</div>
-    <div style="max-width:100%">
-      <div class="msg-bubble${isError?' error':''}">${formatMessage(content)}</div>
-      <div class="msg-time">${t}</div>
-    </div>`;
-  body.appendChild(div);
-  body.scrollTop = body.scrollHeight;
-}
-
-function addTyping() {
-  hideEmpty();
-  const body = document.getElementById('chatBody');
-  const div = document.createElement('div');
-  div.className = 'chat-msg ai'; div.id = 'typing-indicator';
-  div.innerHTML = '<div class="msg-avatar ai">🔭</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
-  body.appendChild(div); body.scrollTop = body.scrollHeight;
-}
-function removeTyping() { 
-  const indicator = document.getElementById('typing-indicator');
-  if (indicator) indicator.remove(); 
-}
-
-function setLoading(on) {
-  isLoading = on;
-  const sendBtn = document.getElementById('sendBtn');
-  if (sendBtn) sendBtn.disabled = on;
-  document.getElementById('agentStatus').textContent = on
-    ? 'ARIA is thinking… 🤔'
-    : (apiKey ? 'Online — Llama 3 ready' : 'Add OpenRouter key');
-}
-
-// ── SEND MESSAGE ──────────────────────────────────────────────────────────────
+// Send message
 async function sendMessage(text) {
-  text = (text || '').trim();
-  if (!text || isLoading) return;
+  if (!text.trim() || loading) return;
   
-  setLoading(true);
+  loading = true;
+  document.getElementById('sendBtn').disabled = true;
+  
   addMessage('user', text);
-  addTyping();
-
-  if (!apiKey || apiKey === '') {
-    await new Promise(r => setTimeout(r, 800 + Math.random() * 400));
-    removeTyping();
-    const reply = DEMO[demoIdx++ % DEMO.length];
-    addMessage('ai', reply);
-    conversationHistory.push({role:'user',content:text},{role:'assistant',content:reply});
-    setLoading(false);
+  showTyping();
+  
+  if (!savedKey) {
+    setTimeout(() => {
+      hideTyping();
+      addMessage('ai', '⚠️ Add your OpenRouter API key above.\n\nGet one free at openrouter.ai/keys');
+      loading = false;
+      document.getElementById('sendBtn').disabled = false;
+    }, 500);
     return;
   }
-
+  
   try {
-    const reply = await callOpenRouter(text);
-    removeTyping();
+    const reply = await callAI(text);
+    hideTyping();
     addMessage('ai', reply);
-    conversationHistory.push({role:'user',content:text},{role:'assistant',content:reply});
-    if (conversationHistory.length > MAX_HISTORY * 2) {
-      conversationHistory = conversationHistory.slice(-MAX_HISTORY);
-    }
-  } catch(err) {
-    removeTyping();
-    console.error('[OpenRouter Error]', err);
-    addMessage('ai', '⚠️ ' + friendlyError(err.message), true);
+    history.push({ role: 'user', content: text }, { role: 'assistant', content: reply });
+    if (history.length > 20) history = history.slice(-20);
+  } catch (err) {
+    hideTyping();
+    console.error(err);
+    let errMsg = err.message;
+    if (errMsg.includes('401')) errMsg = 'Invalid API key. Check your key at openrouter.ai/keys';
+    if (errMsg.includes('402')) errMsg = 'Free tier issue. Try a different free model';
+    if (errMsg.includes('429')) errMsg = 'Rate limit. Wait 30 seconds';
+    addMessage('ai', `⚠️ ${errMsg}`, true);
   }
-  setLoading(false);
+  
+  loading = false;
+  document.getElementById('sendBtn').disabled = false;
 }
 
+// Helpers
 function askSuggestion(el) {
-  let text = el.textContent || '';
-  text = text.replace(/^[^\w\s]+/, '').trim();
-  document.getElementById('chatInput').value = text;
+  document.getElementById('chatInput').value = el.textContent;
   sendAndClear();
 }
 
 function sendAndClear() {
   const inp = document.getElementById('chatInput');
   const text = inp.value.trim();
-  if (!text) return;
-  inp.value = ''; 
-  inp.style.height = 'auto';
-  sendMessage(text);
+  if (text) {
+    inp.value = '';
+    inp.style.height = 'auto';
+    sendMessage(text);
+  }
 }
 
-// ── EVENT LISTENERS ───────────────────────────────────────────────────────────
-document.getElementById('sendBtn').addEventListener('click', sendAndClear);
-document.getElementById('chatInput').addEventListener('keydown', e => { 
-  if(e.key === 'Enter' && !e.shiftKey) {
+// Event listeners
+document.getElementById('sendBtn').onclick = sendAndClear;
+document.getElementById('chatInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
     sendAndClear();
-  } 
+  }
 });
-document.getElementById('chatInput').addEventListener('input', function(){ 
-  this.style.height = 'auto'; 
-  this.style.height = Math.min(this.scrollHeight, 120) + 'px'; 
+document.getElementById('chatInput').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 100) + 'px';
 });
-
-document.getElementById('clearChat').addEventListener('click', () => {
-  conversationHistory = [];
+document.getElementById('clearChat').onclick = () => {
+  history = [];
   document.getElementById('chatBody').innerHTML = `
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">🌌</div>
-      <div class="empty-title">Ask ARIA Anything About Space</div>
-      <div class="empty-sub">Powered by <strong>OpenRouter · Llama 3</strong> — free AI.</div>
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:12px">
-        <span class="fact-chip" onclick="askSuggestion(this)">How does the ISS orbit Earth?</span>
-        <span class="fact-chip" onclick="askSuggestion(this)">What is orbital velocity?</span>
-        <span class="fact-chip" onclick="askSuggestion(this)">Tell me about CARTOSAT-2F</span>
-        <span class="fact-chip" onclick="askSuggestion(this)">What is NavIC IRNSS?</span>
-      </div>
+      <div class="empty-title">Ask ARIA</div>
+      <div class="empty-sub">Satellites · ISRO · Black Holes · Orbits</div>
     </div>
   `;
+};
+
+document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
+  document.getElementById('mobileNav')?.classList.toggle('open');
 });
 
-document.getElementById('mobileMenuBtn')?.addEventListener('click', () => 
-  document.getElementById('mobileNav')?.classList.toggle('open')
-);
-
-// ── INITIALIZE ────────────────────────────────────────────────────────────────
-updateKeyUI();
-
+// Init
+updateUI();
 setTimeout(() => {
-  const satCount = (typeof SATELLITES !== 'undefined') ? SATELLITES.length : 14;
-  const hasKey = apiKey && apiKey !== '';
-  
-  if (hasKey) {
-    addMessage('ai', `✨ **Hello! I'm ARIA** — your AI astronomy guide 🌌\n\nI'm running on **OpenRouter · Llama 3** via CORS proxy.\n\nTracking **${satCount} satellites** — including ISS, Hubble, CARTOSAT-2F 🇮🇳, and NavIC.\n\nAsk me anything about space! 🚀`);
-  } else {
-    addMessage('ai', `🌠 **Welcome to ARIA!**\n\nTo get AI answers, paste your **free OpenRouter API key** in the banner above.\n\nGet one at [openrouter.ai/keys](https://openrouter.ai/keys) — no credit card!\n\nMeanwhile, here are some space facts... 🌟`);
-  }
-}, 400);
+  addMessage('ai', '👋 Hi! I\'m ARIA. Ask me about satellites, ISRO missions, black holes, or anything space-related.');
+}, 300);
 </script>
 </body>
 </html>
