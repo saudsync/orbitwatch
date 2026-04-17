@@ -91,14 +91,14 @@
     <div>
       <div class="chat-agent-name">ARIA — Astronomy &amp; Space AI</div>
       <div class="chat-agent-status"><span class="live-dot"></span><span id="agentStatus">Ready to explore the cosmos</span></div>
-      <span class="model-badge" id="modelBadge">Ollama · Local AI</span>
+      <span class="model-badge" id="modelBadge">OpenRouter · Llama 3</span>
     </div>
     <button id="clearChat" style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:6px 12px;font-size:11px;font-family:var(--font-mono);transition:all .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Clear Chat</button>
   </div>
 
   <div class="api-key-banner" id="apiBanner">
-    <span>🔑 Enter your <strong>Ollama API key</strong> from <a href="https://ollama.com/settings/keys" target="_blank" style="color:var(--accent)">ollama.com/settings/keys</a>:</span>
-    <input type="password" id="apiKeyInput" placeholder="ollama_…"/>
+    <span>🔑 Free API key from <a href="https://openrouter.ai/keys" target="_blank" style="color:var(--accent)">openrouter.ai/keys</a> (free, no credit card):</span>
+    <input type="password" id="apiKeyInput" placeholder="sk-or-v1-…"/>
     <button class="api-key-btn" id="saveApiKey">Save Key</button>
     <button class="api-key-clear" id="clearApiKey" style="display:none">Remove</button>
     <span class="api-status err" id="apiStatus">No key — demo mode</span>
@@ -108,7 +108,7 @@
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">🌌</div>
       <div class="empty-title">Ask ARIA Anything About Space</div>
-      <div class="empty-sub">Powered by <strong>Ollama</strong> — local AI. Ask about satellites, black holes, ISRO missions, orbital mechanics and more.</div>
+      <div class="empty-sub">Powered by <strong>Llama 3</strong> via OpenRouter — free AI. Ask about satellites, black holes, ISRO missions, orbital mechanics and more.</div>
       <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:12px">
         <span class="fact-chip" onclick="askSuggestion(this)">How does the ISS orbit Earth?</span>
         <span class="fact-chip" onclick="askSuggestion(this)">What is orbital velocity?</span>
@@ -141,15 +141,16 @@
 <script src="../js/satellites.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════
-   ORBITWATCH · ARIA — Ollama backend
-   Uses Ollama cloud API (openai-compatible endpoint)
-   Model: llama3 (or any model available on your account)
+   ORBITWATCH · ARIA — OpenRouter backend
+   OpenRouter supports CORS from any browser/website.
+   Free tier: https://openrouter.ai/keys
+   Model: meta-llama/llama-3-8b-instruct:free
    ═══════════════════════════════════════════════════ */
 
-const OLLAMA_ENDPOINT = 'https://ollama.com/api/chat';
-const OLLAMA_MODEL    = 'llama3.2';
-const MAX_TOKENS      = 1024;
-const MAX_HISTORY     = 20;
+const OR_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
+const OR_MODEL    = 'meta-llama/llama-3-8b-instruct:free';
+const MAX_TOKENS  = 1024;
+const MAX_HISTORY = 20;
 
 const SAT_LIST = (typeof SATELLITES !== 'undefined')
   ? SATELLITES.map(s => s.name + ' (NORAD ' + s.norad + ')').join(', ')
@@ -173,7 +174,7 @@ Indian satellites:
 
 Style: Enthusiastic, clear, educational. Bold key terms using **term**. Keep answers 2-4 paragraphs. Show pride in ISRO. End with a curious follow-up question.`;
 
-let ollamaApiKey = localStorage.getItem('ow_ollama_key') || '';
+let apiKey = localStorage.getItem('ow_or_key') || '';
 let conversationHistory = [];
 let isLoading = false;
 
@@ -185,22 +186,22 @@ function updateKeyUI() {
   const badge = document.getElementById('modelBadge');
   const agentSt = document.getElementById('agentStatus');
 
-  if (ollamaApiKey) {
+  if (apiKey) {
     banner.style.cssText += 'background:rgba(0,255,157,.05);border-color:rgba(0,255,157,.2);';
-    status.textContent = '✓ Ollama key active — full AI mode';
+    status.textContent = '✓ Key active — full AI mode';
     status.className = 'api-status ok';
     clearBtn.style.display = 'inline-block';
-    badge.textContent = 'Ollama · ' + OLLAMA_MODEL + ' · Active ✓';
+    badge.textContent = 'OpenRouter · Llama 3 · Active ✓';
     badge.style.background = 'rgba(0,255,157,.1)';
-    agentSt.textContent = 'Online — Ollama powered';
+    agentSt.textContent = 'Online — Llama 3 powered';
   } else {
     banner.style.cssText += 'background:rgba(123,97,255,.1);border-color:rgba(123,97,255,.3);';
     status.textContent = 'No key — demo mode';
     status.className = 'api-status err';
     clearBtn.style.display = 'none';
-    badge.textContent = 'Demo mode — add Ollama key';
+    badge.textContent = 'Demo mode — add free OpenRouter key';
     badge.style.background = 'rgba(255,140,66,.08)';
-    agentSt.textContent = 'Demo mode — add Ollama key to activate';
+    agentSt.textContent = 'Demo mode — add key to activate';
   }
 }
 
@@ -208,41 +209,45 @@ document.getElementById('saveApiKey').addEventListener('click', () => {
   const val = document.getElementById('apiKeyInput').value.trim();
   const status = document.getElementById('apiStatus');
   if (!val) { status.textContent = '✗ Please enter a key'; status.className = 'api-status err'; return; }
-  ollamaApiKey = val;
-  localStorage.setItem('ow_ollama_key', val);
+  apiKey = val;
+  localStorage.setItem('ow_or_key', val);
   document.getElementById('apiKeyInput').value = '';
-  status.textContent = '✓ Saved! Connecting…'; status.className = 'api-status ok';
+  status.textContent = '✓ Saved!'; status.className = 'api-status ok';
   updateKeyUI();
 });
 
 document.getElementById('clearApiKey').addEventListener('click', () => {
-  ollamaApiKey = ''; localStorage.removeItem('ow_ollama_key'); updateKeyUI();
+  apiKey = ''; localStorage.removeItem('ow_or_key'); updateKeyUI();
 });
 
-// ── OLLAMA API ────────────────────────────────────────────────────────────────
-async function callOllama(userText) {
+// ── API CALL ──────────────────────────────────────────────────────────────────
+async function callAI(userText) {
   const messages = [
     { role: 'system', content: SYSTEM_PROMPT },
     ...conversationHistory.slice(-MAX_HISTORY),
     { role: 'user', content: userText }
   ];
 
-  const res = await fetch(OLLAMA_ENDPOINT, {
+  const res = await fetch(OR_ENDPOINT, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + ollamaApiKey },
-    body: JSON.stringify({ model: OLLAMA_MODEL, stream: false, messages })
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + apiKey,
+      'HTTP-Referer': 'https://saudsync.github.io/orbitwatch',
+      'X-Title': 'OrbitWatch'
+    },
+    body: JSON.stringify({ model: OR_MODEL, max_tokens: MAX_TOKENS, messages })
   });
 
   let data;
-  try { data = await res.json(); } catch(_) { throw new Error('Non-JSON response from server (HTTP ' + res.status + ')'); }
+  try { data = await res.json(); } catch(_) { throw new Error('Server error (HTTP ' + res.status + ')'); }
 
   if (!res.ok) {
-    throw new Error(data?.error || 'API error ' + res.status);
+    throw new Error(data?.error?.message || 'API error ' + res.status);
   }
 
-  // Ollama native API returns: { message: { role, content }, done: true, ... }
-  const reply = data?.message?.content?.trim();
-  if (!reply) throw new Error('Empty response received. Please try again.');
+  const reply = data?.choices?.[0]?.message?.content?.trim();
+  if (!reply) throw new Error('Empty response. Please try again.');
   return reply;
 }
 
@@ -250,24 +255,22 @@ async function callOllama(userText) {
 function friendlyError(msg) {
   if (!msg) return 'Unknown error — please retry.';
   const m = msg.toLowerCase();
-  if (m.includes('401') || m.includes('invalid api key') || m.includes('unauthorized'))
-    return 'Invalid Ollama API key. Get yours at ollama.com/settings/keys and update above.';
-  if (m.includes('429') || m.includes('rate limit') || m.includes('quota'))
+  if (m.includes('401') || m.includes('invalid') || m.includes('unauthorized'))
+    return 'Invalid API key. Get a free one at openrouter.ai/keys and update above.';
+  if (m.includes('429') || m.includes('rate limit'))
     return 'Rate limit reached. Wait 30 seconds and retry.';
-  if (m.includes('404') || m.includes('model'))
-    return 'Model temporarily unavailable. Please retry in a moment.';
-  if (m.includes('fetch') || m.includes('network') || m.includes('cors'))
+  if (m.includes('402') || m.includes('credit'))
+    return 'No credits. The free model should not need credits — try removing and re-adding your key.';
+  if (m.includes('fetch') || m.includes('network') || m.includes('failed'))
     return 'Network error. Please check your internet connection.';
-  if (m.includes('context') || m.includes('token'))
-    return 'Message history too long — clearing context. Please repeat your question.';
-  return msg.length > 100 ? msg.slice(0, 100) + '…' : msg;
+  return msg.length > 120 ? msg.slice(0, 120) + '…' : msg;
 }
 
 // ── DEMO RESPONSES ────────────────────────────────────────────────────────────
 const DEMO = [
-  "I'd love to give a full answer! Add your **Ollama API key** above (get it at ollama.com/settings/keys).\n\n**Quick fact:** The ISS orbits at ~408 km altitude at 7.66 km/s — completing one orbit every 92 minutes, giving astronauts 16 sunrises per day! 🌅\n\nWhat are you curious about?",
-  "Add your **Ollama key** above to unlock live AI answers!\n\n**Space fact:** Geostationary satellites orbit at exactly **35,786 km** where their speed matches Earth's rotation — appearing to hover perfectly still over one spot. This is why your TV dish always points the same direction! 📡\n\nWhat else would you like to explore?",
-  "Almost there — just need your **Ollama API key** to power full answers!\n\n**ISRO fact:** India's NavIC system (IRNSS-1I on OrbitWatch) is India's own GPS — covering the entire subcontinent plus 1,500 km beyond its borders. Only the US, Russia, EU, China and Japan also have independent navigation systems. India joined this elite club! 🇮🇳\n\nAdd your key and I'll answer anything!",
+  "Add your **free OpenRouter key** above (get one in 30 seconds at openrouter.ai/keys — no credit card needed).\n\n**Quick fact:** The ISS orbits at ~408 km altitude at 7.66 km/s — completing one orbit every 92 minutes, giving astronauts 16 sunrises per day! 🌅\n\nWhat are you curious about?",
+  "Just need a **free OpenRouter key** to unlock live AI answers!\n\n**Space fact:** Geostationary satellites orbit at exactly **35,786 km** where their speed matches Earth's rotation — appearing to hover perfectly still. This is why your TV dish always points the same direction! 📡\n\nWhat else would you like to explore?",
+  "Almost there — grab a **free key** at openrouter.ai/keys!\n\n**ISRO fact:** India's NavIC (IRNSS-1I on OrbitWatch) is India's own GPS — covering the entire subcontinent plus 1,500 km beyond its borders. Only the US, Russia, EU, China and Japan have independent navigation systems. India joined this elite club! 🇮🇳\n\nAdd your key and I'll answer anything!",
 ];
 let demoIdx = 0;
 
@@ -315,7 +318,7 @@ function setLoading(on) {
   document.getElementById('sendBtn').disabled = on;
   document.getElementById('agentStatus').textContent = on
     ? 'ARIA is thinking…'
-    : (ollamaApiKey ? 'Online — Ollama powered' : 'Demo mode — add Ollama key to activate');
+    : (apiKey ? 'Online — Llama 3 powered' : 'Demo mode — add key to activate');
 }
 
 // ── SEND ──────────────────────────────────────────────────────────────────────
@@ -326,7 +329,7 @@ async function sendMessage(text) {
   addMessage('user', text);
   addTyping();
 
-  if (!ollamaApiKey) {
+  if (!apiKey) {
     await new Promise(r => setTimeout(r, 900 + Math.random() * 600));
     removeTyping();
     const reply = DEMO[demoIdx++ % DEMO.length];
@@ -337,19 +340,15 @@ async function sendMessage(text) {
   }
 
   try {
-    const reply = await callOllama(text);
+    const reply = await callAI(text);
     removeTyping();
     addMessage('ai', reply);
     conversationHistory.push({role:'user',content:text},{role:'assistant',content:reply});
     if (conversationHistory.length > MAX_HISTORY * 2) conversationHistory = conversationHistory.slice(-MAX_HISTORY);
   } catch(err) {
     removeTyping();
-    console.error('[ARIA Ollama Error]', err);
-    const friendly = friendlyError(err.message);
-    if (err.message.toLowerCase().includes('context') || err.message.toLowerCase().includes('token')) {
-      conversationHistory = [];
-    }
-    addMessage('ai', '⚠️ ' + friendly, true);
+    console.error('[ARIA Error]', err);
+    addMessage('ai', '⚠️ ' + friendlyError(err.message), true);
   }
   setLoading(false);
 }
@@ -375,7 +374,7 @@ document.getElementById('chatInput').addEventListener('input', function(){ this.
 
 document.getElementById('clearChat').addEventListener('click', () => {
   conversationHistory = [];
-  document.getElementById('chatBody').innerHTML = '<div class="empty-state" id="emptyState"><div class="empty-icon">🌌</div><div class="empty-title">Ask ARIA Anything About Space</div><div class="empty-sub">Powered by <strong>Ollama</strong>. Ask about satellites, ISRO, black holes and more.</div><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:12px"><span class="fact-chip" onclick="askSuggestion(this)">How does the ISS orbit Earth?</span><span class="fact-chip" onclick="askSuggestion(this)">What is orbital velocity?</span><span class="fact-chip" onclick="askSuggestion(this)">Tell me about CARTOSAT-2F</span><span class="fact-chip" onclick="askSuggestion(this)">What is NavIC IRNSS?</span></div></div>';
+  document.getElementById('chatBody').innerHTML = '<div class="empty-state" id="emptyState"><div class="empty-icon">🌌</div><div class="empty-title">Ask ARIA Anything About Space</div><div class="empty-sub">Powered by <strong>Llama 3</strong> via OpenRouter. Ask about satellites, ISRO, black holes and more.</div><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:12px"><span class="fact-chip" onclick="askSuggestion(this)">How does the ISS orbit Earth?</span><span class="fact-chip" onclick="askSuggestion(this)">What is orbital velocity?</span><span class="fact-chip" onclick="askSuggestion(this)">Tell me about CARTOSAT-2F</span><span class="fact-chip" onclick="askSuggestion(this)">What is NavIC IRNSS?</span></div></div>';
 });
 
 document.getElementById('mobileMenuBtn')?.addEventListener('click', () => document.getElementById('mobileNav')?.classList.toggle('open'));
@@ -384,7 +383,7 @@ updateKeyUI();
 
 setTimeout(() => {
   const satCount = (typeof SATELLITES !== 'undefined') ? SATELLITES.length : 14;
-  const mode = ollamaApiKey ? '**Ollama** is fully active' : 'in **demo mode** (add your Ollama key above to unlock)';
+  const mode = apiKey ? '**OpenRouter · Llama 3** is fully active' : 'in **demo mode** (add a free OpenRouter key above to unlock)';
   addMessage('ai', `Hello! I\'m **ARIA**, your AI astronomy guide on OrbitWatch 🌌\n\nCurrently running ${mode}. I can answer questions about **satellites, orbital mechanics, space missions, ISRO, astronomy**, and anything cosmic.\n\nTracking **${satCount} satellites** — including ISS, Hubble, Tiangong, CARTOSAT-2F 🇮🇳, and NavIC/IRNSS-1I 🇮🇳.\n\nWhat would you like to explore today? 🚀`);
 }, 400);
 </script>
