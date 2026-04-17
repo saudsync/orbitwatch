@@ -6,40 +6,6 @@
 <title>ARIA — Space AI</title>
 <link rel="stylesheet" href="../css/style.css"/>
 <style>
-  .api-bar {
-    background: rgba(123,97,255,.1);
-    border: 1px solid rgba(123,97,255,.3);
-    border-radius: 10px;
-    padding: 10px 16px;
-    margin: 12px 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    font-size: 12px;
-  }
-  .api-bar input {
-    flex: 1;
-    background: #0d1830;
-    border: 1px solid rgba(123,97,255,.3);
-    border-radius: 6px;
-    color: #e8f4ff;
-    padding: 6px 10px;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-  }
-  .api-bar button {
-    background: #7b61ff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 6px 12px;
-    font-size: 11px;
-    cursor: pointer;
-  }
-  .api-status { font-size: 10px; }
-  .status-ok { color: #00ff9d; }
-  .status-err { color: #ff4560; }
   .chat-body {
     flex: 1;
     overflow-y: auto;
@@ -154,6 +120,13 @@
   .empty-icon { font-size: 48px; margin-bottom: 12px; }
   .empty-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
   .empty-sub { color: #5a7a9a; font-size: 12px; }
+  .status-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: rgba(0,255,157,.15);
+    color: #00ff9d;
+  }
 </style>
 </head>
 <body>
@@ -183,18 +156,13 @@
   <div style="padding:12px 20px;border-bottom:1px solid rgba(100,180,255,0.12);display:flex;align-items:center;gap:12px;">
     <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7b61ff,#00d4ff);display:flex;align-items:center;justify-content:center;font-size:18px;">🔭</div>
     <div>
-      <div style="font-weight:700;">ARIA</div>
-      <div style="font-size:10px;color:#5a7a9a;" id="agentStatus">Ready</div>
+      <div style="font-weight:700;">ARIA — Space AI</div>
+      <div style="font-size:10px;color:#5a7a9a;display:flex;align-items:center;gap:6px;">
+        <span>Gemini 1.5 Flash</span>
+        <span class="status-badge">● Online</span>
+      </div>
     </div>
     <button id="clearChat" style="margin-left:auto;background:none;border:1px solid rgba(100,180,255,0.2);color:#5a7a9a;border-radius:6px;padding:5px 10px;font-size:10px;cursor:pointer;">Clear</button>
-  </div>
-
-  <div class="api-bar">
-    <span>🔑 OpenRouter Key:</span>
-    <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..."/>
-    <button id="saveApiKey">Save</button>
-    <button id="clearApiKey" style="display:none">Remove</button>
-    <span class="api-status" id="apiStatus">No key</span>
   </div>
 
   <div class="chat-body" id="chatBody">
@@ -206,12 +174,12 @@
   </div>
 
   <div class="suggestions">
-    <span class="suggestion" onclick="askSuggestion(this)">ISS orbit</span>
-    <span class="suggestion" onclick="askSuggestion(this)">CARTOSAT-2F</span>
-    <span class="suggestion" onclick="askSuggestion(this)">NavIC</span>
-    <span class="suggestion" onclick="askSuggestion(this)">Black holes</span>
+    <span class="suggestion" onclick="askSuggestion(this)">How does the ISS orbit?</span>
+    <span class="suggestion" onclick="askSuggestion(this)">Tell me about CARTOSAT-2F</span>
+    <span class="suggestion" onclick="askSuggestion(this)">What is NavIC?</span>
+    <span class="suggestion" onclick="askSuggestion(this)">Explain black holes</span>
     <span class="suggestion" onclick="askSuggestion(this)">ISRO achievements</span>
-    <span class="suggestion" onclick="askSuggestion(this)">Geostationary orbit</span>
+    <span class="suggestion" onclick="askSuggestion(this)">What is geostationary orbit?</span>
   </div>
 
   <div class="input-row">
@@ -222,55 +190,15 @@
 </div>
 
 <script>
-// CONFIG
-const API_KEY = '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';
-const OR_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
-const MODEL = 'meta-llama/llama-3-8b-instruct:free';
+// Gemini API Configuration - Your key is pre-loaded!
+const GEMINI_API_KEY = 'AQ.Ab8RN6LbSdAfA3_1Z6ROASB_r-Wl0_yfHwl5_OaQWMvE9oRlfw';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
-let savedKey = localStorage.getItem('openrouter_key') || API_KEY;
 let history = [];
 let loading = false;
 
 // System prompt
-const SYSTEM = `You are ARIA, an astronomy expert for OrbitWatch. Answer space questions clearly and concisely. Use **bold** for key terms. Keep answers short (2-3 paragraphs).`;
-
-// UI Functions
-function updateUI() {
-  const hasKey = savedKey && savedKey !== '';
-  const statusEl = document.getElementById('apiStatus');
-  const clearBtn = document.getElementById('clearApiKey');
-  const agentStatus = document.getElementById('agentStatus');
-  
-  if (hasKey) {
-    statusEl.textContent = '✓ Active';
-    statusEl.className = 'api-status status-ok';
-    clearBtn.style.display = 'inline-block';
-    agentStatus.textContent = 'Online · Llama 3';
-  } else {
-    statusEl.textContent = 'No key';
-    statusEl.className = 'api-status status-err';
-    clearBtn.style.display = 'none';
-    agentStatus.textContent = 'Add API key';
-  }
-}
-
-document.getElementById('saveApiKey').onclick = () => {
-  const val = document.getElementById('apiKeyInput').value.trim();
-  if (val) {
-    savedKey = val;
-    localStorage.setItem('openrouter_key', val);
-    updateUI();
-    document.getElementById('apiKeyInput').value = '';
-    addMessage('ai', '✅ Key saved! Ask me anything about space.');
-  }
-};
-
-document.getElementById('clearApiKey').onclick = () => {
-  savedKey = '';
-  localStorage.removeItem('openrouter_key');
-  updateUI();
-  addMessage('ai', '🔑 Key removed. Add a new key from openrouter.ai/keys');
-};
+const SYSTEM_PROMPT = `You are ARIA, an expert astronomer for OrbitWatch. Answer space questions clearly and concisely. Use **bold** for key terms. Keep answers 2-3 short paragraphs. Be enthusiastic about ISRO and Indian space missions like CARTOSAT, NavIC, Chandrayaan, and Mangalyaan.`;
 
 // Message rendering
 function hideEmpty() {
@@ -285,6 +213,9 @@ function addMessage(role, content, isError = false) {
   div.className = `msg ${role}`;
   
   let formatted = content
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\n/g, '<br/>');
   
@@ -317,33 +248,44 @@ function hideTyping() {
   if (typing) typing.remove();
 }
 
-// API Call
-async function callAI(userMsg) {
-  const response = await fetch(OR_ENDPOINT, {
+// Gemini API Call
+async function callGemini(userMsg) {
+  // Build conversation context
+  let context = SYSTEM_PROMPT + '\n\n';
+  for (let i = history.length - 6; i < history.length; i++) {
+    if (history[i]) {
+      context += `${history[i].role === 'user' ? 'User' : 'ARIA'}: ${history[i].content}\n`;
+    }
+  }
+  context += `User: ${userMsg}\nARIA:`;
+  
+  const response = await fetch(GEMINI_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${savedKey}`
     },
     body: JSON.stringify({
-      model: MODEL,
-      messages: [
-        { role: 'system', content: SYSTEM },
-        ...history.slice(-10),
-        { role: 'user', content: userMsg }
-      ],
-      max_tokens: 512,
-      temperature: 0.7
+      contents: [{
+        parts: [{ text: context }]
+      }],
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 800,
+        topP: 0.9
+      }
     })
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
+    const error = await response.json();
     throw new Error(error.error?.message || `HTTP ${response.status}`);
   }
 
   const data = await response.json();
-  return data.choices[0].message.content.trim();
+  const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  
+  if (!reply) throw new Error('Empty response from AI');
+  return reply;
 }
 
 // Send message
@@ -356,18 +298,8 @@ async function sendMessage(text) {
   addMessage('user', text);
   showTyping();
   
-  if (!savedKey) {
-    setTimeout(() => {
-      hideTyping();
-      addMessage('ai', '⚠️ Add your OpenRouter API key above.\n\nGet one free at openrouter.ai/keys');
-      loading = false;
-      document.getElementById('sendBtn').disabled = false;
-    }, 500);
-    return;
-  }
-  
   try {
-    const reply = await callAI(text);
+    const reply = await callGemini(text);
     hideTyping();
     addMessage('ai', reply);
     history.push({ role: 'user', content: text }, { role: 'assistant', content: reply });
@@ -376,10 +308,16 @@ async function sendMessage(text) {
     hideTyping();
     console.error(err);
     let errMsg = err.message;
-    if (errMsg.includes('401')) errMsg = 'Invalid API key. Check your key at openrouter.ai/keys';
-    if (errMsg.includes('402')) errMsg = 'Free tier issue. Try a different free model';
-    if (errMsg.includes('429')) errMsg = 'Rate limit. Wait 30 seconds';
-    addMessage('ai', `⚠️ ${errMsg}`, true);
+    if (errMsg.includes('API key') || errMsg.includes('key')) {
+      errMsg = '🔑 API key error. The key may have expired. Get a new free key at aistudio.google.com/apikey';
+    } else if (errMsg.includes('429')) {
+      errMsg = '⏱️ Rate limit reached. Please wait a moment and try again.';
+    } else if (errMsg.includes('network')) {
+      errMsg = '🌐 Network error. Please check your connection.';
+    } else {
+      errMsg = `⚠️ Error: ${errMsg}`;
+    }
+    addMessage('ai', errMsg, true);
   }
   
   loading = false;
@@ -423,16 +361,16 @@ document.getElementById('clearChat').onclick = () => {
       <div class="empty-sub">Satellites · ISRO · Black Holes · Orbits</div>
     </div>
   `;
+  addMessage('ai', '✨ Chat cleared! Ask me anything about space.');
 };
 
 document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
   document.getElementById('mobileNav')?.classList.toggle('open');
 });
 
-// Init
-updateUI();
+// Welcome message
 setTimeout(() => {
-  addMessage('ai', '👋 Hi! I\'m ARIA. Ask me about satellites, ISRO missions, black holes, or anything space-related.');
+  addMessage('ai', '👋 **Hello! I\'m ARIA**\n\nI\'m your AI astronomer for OrbitWatch. Ask me about:\n\n• **Satellites** (ISS, Hubble, Starlink)\n• **ISRO missions** (CARTOSAT, NavIC, Chandrayaan)\n• **Black holes, orbits, space facts**\n\nWhat would you like to explore today? 🚀');
 }, 300);
 </script>
 </body>
