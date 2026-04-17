@@ -6,7 +6,7 @@ A beautiful, free, browser-based satellite tracking application with a 3D globe,
 
 ## 🌐 Live Demo
 
-Deploy to GitHub Pages and visit: `https://saudsync.github.io/orbitwatch/`
+Deploy to GitHub Pages and visit: `https://yourusername.github.io/orbitwatch/`
 
 ## ✨ Features
 
