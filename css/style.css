@@ -251,6 +251,7 @@ img { max-width: 100%; }
 .badge-earth { background: rgba(255,140,66,.1); color: var(--orange); border: 1px solid rgba(255,140,66,.25); }
 .badge-obs { background: rgba(255,69,96,.1); color: var(--red); border: 1px solid rgba(255,69,96,.25); }
 .badge-nav { background: rgba(123,97,255,.1); color: var(--accent2); border: 1px solid rgba(123,97,255,.25); }
+.badge-india { background: rgba(255,153,0,.1); color: #ff9900; border: 1px solid rgba(255,153,0,.3); }
 
 .sfc-desc {
   font-size: 13px; color: var(--muted); line-height: 1.7;
