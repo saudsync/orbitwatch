@@ -3,154 +3,120 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>AI Astronomer — OrbitWatch</title>
+<title>AI Chat — OrbitWatch</title>
 <link rel="stylesheet" href="../css/style.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
 <style>
-  .chat-page {
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh - 64px);
-    overflow: hidden;
-  }
+:root { --blue:#4f8ef7; --purple:#7b61ff; --green:#00ff9d; --red:#ff4560; --orange:#ff8c42; }
 
-  .chat-header {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 20px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-  }
+.chat-page {
+  display:flex; flex-direction:column;
+  height:calc(100vh - 64px); overflow:hidden;
+  background:var(--bg);
+}
 
-  .chat-avatar {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #7b61ff, #00d4ff);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; flex-shrink: 0;
-  }
+/* ── HEADER ── */
+.chat-top {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px; background:var(--surface);
+  border-bottom:1px solid var(--border); flex-shrink:0;
+}
+.chat-avatar {
+  width:42px; height:42px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,#7b61ff,#00d4ff);
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+}
+.chat-name { font-family:var(--font-display); font-weight:700; font-size:15px; }
+.chat-status { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:5px; margin-top:2px; }
+.badge {
+  font-size:10px; padding:2px 8px; border-radius:10px;
+  background:rgba(0,255,157,.08); border:1px solid rgba(0,255,157,.2);
+  color:var(--green); font-family:var(--font-mono); display:inline-block; margin-top:3px;
+}
 
-  .chat-agent-name {
-    font-family: var(--font-display);
-    font-weight: 700; font-size: 16px;
-  }
+/* ── MESSAGES ── */
+.chat-body {
+  flex:1; overflow-y:auto; padding:16px;
+  display:flex; flex-direction:column; gap:12px;
+  scroll-behavior:smooth;
+}
+.chat-body::-webkit-scrollbar { width:4px; }
+.chat-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
 
-  .chat-agent-status {
-    font-size: 12px; color: var(--muted);
-    display: flex; align-items: center; gap: 6px; margin-top: 2px;
-  }
+.msg { display:flex; gap:10px; align-items:flex-start; max-width:100%; }
+.msg.user { flex-direction:row-reverse; }
 
-  .model-badge {
-    font-size: 10px; padding: 3px 9px; border-radius: 10px;
-    background: rgba(0,255,157,.08); border: 1px solid rgba(0,255,157,.2);
-    color: var(--green); font-family: var(--font-mono); margin-top: 3px;
-    display: inline-block;
-  }
+.msg-av {
+  width:32px; height:32px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:15px;
+}
+.msg.ai   .msg-av { background:linear-gradient(135deg,#7b61ff,#00d4ff); }
+.msg.user .msg-av { background:rgba(255,255,255,.08); border:1px solid var(--border); }
 
-  .ai-tabs {
-    flex-shrink: 0;
-    display: flex;
-    gap: 8px;
-    padding: 10px 16px;
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .ai-tabs::-webkit-scrollbar { display: none; }
+.bubble {
+  max-width:82%; padding:11px 14px; border-radius:14px;
+  font-size:13px; line-height:1.65; word-break:break-word;
+}
+.msg.ai   .bubble { background:var(--surface); border:1px solid var(--border); border-bottom-left-radius:4px; }
+.msg.user .bubble { background:rgba(79,142,247,.15); border:1px solid rgba(79,142,247,.25); border-bottom-right-radius:4px; }
+.bubble.err { background:rgba(255,69,96,.06)!important; border-color:rgba(255,69,96,.3)!important; color:#ff8090!important; }
 
-  .ai-tab {
-    flex-shrink: 0;
-    padding: 8px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-family: var(--font-mono);
-    cursor: pointer;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    transition: all .2s;
-    white-space: nowrap;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .ai-tab:hover { color: var(--text); border-color: var(--accent2); }
-  .ai-tab.active {
-    background: rgba(123,97,255,.15);
-    border-color: var(--accent2);
-    color: var(--text);
-  }
-  .ai-tab .dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--green); flex-shrink: 0;
-  }
+.bubble strong { color:var(--accent); }
+.bubble code {
+  background:rgba(0,212,255,.1); padding:1px 5px; border-radius:3px;
+  font-family:var(--font-mono); font-size:11px;
+}
 
-  .iframe-wrapper {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    background: #0a0a12;
-  }
+.msg-time { font-size:10px; color:var(--muted); margin-top:4px; }
+.msg.user .msg-time { text-align:right; }
 
-  .ai-frame {
-    position: absolute;
-    inset: 0;
-    width: 100%; height: 100%;
-    border: none;
-    display: none;
-    border-radius: 0;
-  }
-  .ai-frame.active { display: block; }
+/* typing dots */
+.dots span {
+  display:inline-block; width:6px; height:6px; border-radius:50%;
+  background:var(--muted); margin:0 2px;
+  animation:bounce .9s infinite;
+}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
 
-  .loading-overlay {
-    position: absolute;
-    inset: 0;
-    background: #0a0a12;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    z-index: 10;
-    pointer-events: none;
-    transition: opacity .4s;
-  }
-  .loading-overlay.hidden { opacity: 0; }
+/* ── SUGGESTIONS ── */
+.suggestions {
+  display:flex; gap:8px; padding:8px 16px;
+  overflow-x:auto; flex-shrink:0;
+  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+}
+.suggestions::-webkit-scrollbar{display:none}
+.chip {
+  flex-shrink:0; font-size:11px; font-family:var(--font-mono);
+  padding:6px 12px; border-radius:16px; cursor:pointer;
+  background:var(--surface); border:1px solid var(--border);
+  color:var(--muted); transition:all .2s; white-space:nowrap;
+}
+.chip:hover { border-color:var(--accent); color:var(--text); }
 
-  .loading-spinner {
-    width: 40px; height: 40px;
-    border: 3px solid rgba(123,97,255,.2);
-    border-top-color: var(--accent2);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .loading-text {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--muted);
-  }
-
-  .loading-sub {
-    font-size: 11px;
-    color: rgba(255,255,255,.3);
-    margin-top: -10px;
-  }
-
-  .info-bar {
-    flex-shrink: 0;
-    padding: 7px 16px;
-    background: rgba(0,212,255,.04);
-    border-top: 1px solid rgba(0,212,255,.08);
-    font-size: 11px;
-    color: var(--muted);
-    text-align: center;
-  }
-  .info-bar a { color: var(--accent); text-decoration: none; }
-  .info-bar a:hover { text-decoration: underline; }
+/* ── INPUT ROW ── */
+.input-row {
+  display:flex; align-items:flex-end; gap:10px;
+  padding:10px 16px; background:var(--surface);
+  border-top:1px solid var(--border); flex-shrink:0;
+}
+.chat-input {
+  flex:1; resize:none; background:var(--surface2);
+  border:1px solid var(--border); border-radius:12px;
+  color:var(--text); font-family:var(--font-mono); font-size:13px;
+  padding:10px 14px; outline:none; line-height:1.5; max-height:100px;
+  transition:border-color .2s;
+}
+.chat-input:focus { border-color:var(--accent2); }
+.send-btn {
+  width:42px; height:42px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,#7b61ff,#4f8ef7);
+  border:none; color:#fff; font-size:18px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:opacity .2s; box-shadow:0 2px 10px rgba(123,97,255,.35);
+}
+.send-btn:hover{opacity:.85} .send-btn:disabled{opacity:.4;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -176,175 +142,219 @@
 </header>
 
 <div class="chat-page">
-
-  <!-- Header -->
-  <div class="chat-header">
+  <div class="chat-top">
     <div class="chat-avatar">🔭</div>
     <div>
-      <div class="chat-agent-name">ARIA — Astronomy &amp; Space AI</div>
-      <div class="chat-agent-status">
-        <span class="live-dot"></span>
-        <span id="statusText">Loading AI…</span>
-      </div>
-      <span class="model-badge" id="modelBadge">Free · No Login Required</span>
+      <div class="chat-name">ARIA — Space &amp; Astronomy AI</div>
+      <div class="chat-status"><span class="live-dot"></span><span id="statusTxt">Online</span></div>
+      <span class="badge" id="modelBadge">Blackbox AI · Free · No Login</span>
     </div>
   </div>
 
-  <!-- AI Selector Tabs -->
-  <div class="ai-tabs" id="aiTabs">
-    <button class="ai-tab active" onclick="switchAI(0)" id="tab-0">
-      <span class="dot"></span> DeepSeek R1
-    </button>
-    <button class="ai-tab" onclick="switchAI(1)" id="tab-1">
-      <span class="dot"></span> Llama 3.3
-    </button>
-    <button class="ai-tab" onclick="switchAI(2)" id="tab-2">
-      <span class="dot"></span> Qwen 2.5
-    </button>
-    <button class="ai-tab" onclick="switchAI(3)" id="tab-3">
-      <span class="dot"></span> Mistral
-    </button>
+  <div class="chat-body" id="chatBody"></div>
+
+  <div class="suggestions">
+    <span class="chip" onclick="quick(this)">🛸 How does the ISS orbit?</span>
+    <span class="chip" onclick="quick(this)">🚀 ISRO greatest achievements</span>
+    <span class="chip" onclick="quick(this)">🌑 What is orbital velocity?</span>
+    <span class="chip" onclick="quick(this)">🇮🇳 Tell me about CARTOSAT-2F</span>
+    <span class="chip" onclick="quick(this)">🔭 What is a black hole?</span>
+    <span class="chip" onclick="quick(this)">🧭 What is NavIC?</span>
+    <span class="chip" onclick="quick(this)">⭐ What is a neutron star?</span>
+    <span class="chip" onclick="quick(this)">🪐 How big is Jupiter?</span>
   </div>
 
-  <!-- iFrame container -->
-  <div class="iframe-wrapper">
-
-    <div class="loading-overlay" id="loadingOverlay">
-      <div class="loading-spinner"></div>
-      <div class="loading-text" id="loadingText">Connecting to AI…</div>
-      <div class="loading-sub">Free • No login • No key needed</div>
-    </div>
-
-    <!-- DeepSeek R1 (Hugging Face Space) -->
-    <iframe
-      id="frame-0"
-      class="ai-frame active"
-      src="https://huggingface-projects-deepseek-r1-distill-qwen-32b.hf.space"
-      title="DeepSeek R1"
-      allow="microphone"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-    ></iframe>
-
-    <!-- Meta Llama 3.3 70B (Hugging Face) -->
-    <iframe
-      id="frame-1"
-      class="ai-frame"
-      src="https://huggingface-projects-llama-3-3-70b-instruct.hf.space"
-      title="Llama 3.3"
-      allow="microphone"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-    ></iframe>
-
-    <!-- Qwen 2.5 72B -->
-    <iframe
-      id="frame-2"
-      class="ai-frame"
-      src="https://qwen-qwen2-5-72b-instruct.hf.space"
-      title="Qwen 2.5"
-      allow="microphone"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-    ></iframe>
-
-    <!-- Mistral -->
-    <iframe
-      id="frame-3"
-      class="ai-frame"
-      src="https://mistralai-mistral-src.hf.space"
-      title="Mistral"
-      allow="microphone"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-    ></iframe>
-
+  <div class="input-row">
+    <textarea class="chat-input" id="inp" placeholder="Ask about satellites, space, astronomy…" rows="1"></textarea>
+    <button class="send-btn" id="sendBtn" title="Send">➤</button>
   </div>
-
-  <!-- Info bar -->
-  <div class="info-bar">
-    🆓 All models are free & run on Hugging Face — no account needed &nbsp;·&nbsp;
-    💬 Ask about satellites, ISRO, black holes, orbital mechanics and more &nbsp;·&nbsp;
-    <a href="https://huggingface.co/spaces" target="_blank">Powered by HuggingFace Spaces ↗</a>
-  </div>
-
 </div>
 
 <script>
-const AIS = [
-  {
-    name: 'DeepSeek R1',
-    badge: 'DeepSeek R1 · Reasoning Model',
-    status: 'Online — DeepSeek R1 (32B)',
-    color: '#7b61ff'
-  },
-  {
-    name: 'Llama 3.3 70B',
-    badge: 'Meta Llama 3.3 · 70B',
-    status: 'Online — Meta Llama 3.3 70B',
-    color: '#00d4ff'
-  },
-  {
-    name: 'Qwen 2.5 72B',
-    badge: 'Qwen 2.5 · 72B Instruct',
-    status: 'Online — Alibaba Qwen 2.5 72B',
-    color: '#00ff9d'
-  },
-  {
-    name: 'Mistral',
-    badge: 'Mistral AI · Open Source',
-    status: 'Online — Mistral AI',
-    color: '#ff8c42'
-  }
-];
+/* ─────────────────────────────────────────────
+   ARIA chat · Blackbox AI · No key · No login
+   Uses the public Blackbox AI endpoint which
+   supports CORS from browser pages.
+───────────────────────────────────────────── */
 
-let currentAI = 0;
-let frameLoaded = [false, false, false, false];
+const SYSTEM = `You are ARIA, an expert AI astronomer for the OrbitWatch satellite tracking platform. You specialize in:
+- Satellites, TLE data, orbital mechanics, SGP4 propagation
+- Space missions: ISS, Hubble, Starlink, NASA, ESA, SpaceX, JAXA, Roscosmos  
+- ISRO missions: PSLV, GSLV, Chandrayaan 1/2/3, Mangalyaan/MOM, Aditya-L1, Gaganyaan, NavIC/IRNSS, CARTOSAT, RISAT
+- Astronomy: black holes, galaxies, nebulae, exoplanets, stars
+- Rocket science, Hohmann transfers, re-entry, launch windows
 
-function switchAI(idx) {
-  // Update tabs
-  document.querySelectorAll('.ai-tab').forEach((t, i) => {
-    t.classList.toggle('active', i === idx);
-  });
+Indian satellites tracked on OrbitWatch:
+- CARTOSAT-2F (NORAD 43111): ISRO Earth imaging, PSLV-C40, Jan 2018
+- IRNSS-1I / NavIC (NORAD 43286): India's navigation system, PSLV-C41, Apr 2018
 
-  // Update frames
-  document.querySelectorAll('.ai-frame').forEach((f, i) => {
-    f.classList.toggle('active', i === idx);
-  });
+Style: Enthusiastic, clear, educational. Use **bold** for key terms. 2-4 paragraphs. End with a follow-up question. Show pride in ISRO achievements.`;
 
-  // Update header
-  document.getElementById('modelBadge').textContent = AIS[idx].badge;
-  document.getElementById('statusText').textContent = AIS[idx].status;
+let history = [];
+let busy = false;
+let msgId = 0;
 
-  // Show loading if frame not yet loaded
-  const overlay = document.getElementById('loadingOverlay');
-  const loadText = document.getElementById('loadingText');
-  if (!frameLoaded[idx]) {
-    overlay.classList.remove('hidden');
-    loadText.textContent = 'Loading ' + AIS[idx].name + '…';
-  } else {
-    overlay.classList.add('hidden');
-  }
+// ── RENDER ──────────────────────────────────
+function ts() { return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
 
-  currentAI = idx;
+function fmt(txt) {
+  return txt
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\n\n+/g,'</p><p>')
+    .replace(/\n/g,'<br>')
+    .replace(/^/,'<p>').replace(/$/,'</p>');
 }
 
-// Hide loading overlay when each iframe loads
-document.querySelectorAll('.ai-frame').forEach((frame, idx) => {
-  frame.addEventListener('load', () => {
-    frameLoaded[idx] = true;
-    if (idx === currentAI) {
-      setTimeout(() => {
-        document.getElementById('loadingOverlay').classList.add('hidden');
-        document.getElementById('statusText').textContent = AIS[idx].status;
-      }, 600);
-    }
+function addMsg(role, text, isErr) {
+  const body = document.getElementById('chatBody');
+  const id = 'msg-' + (++msgId);
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.id = id;
+  div.innerHTML = `
+    <div class="msg-av">${role==='ai'?'🔭':'👤'}</div>
+    <div>
+      <div class="bubble${isErr?' err':''}">${fmt(text)}</div>
+      <div class="msg-time">${ts()}</div>
+    </div>`;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+  return id;
+}
+
+function addTyping() {
+  const body = document.getElementById('chatBody');
+  const div = document.createElement('div');
+  div.className = 'msg ai'; div.id = 'typing';
+  div.innerHTML = `<div class="msg-av">🔭</div><div class="bubble"><div class="dots"><span></span><span></span><span></span></div></div>`;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+}
+function rmTyping() { document.getElementById('typing')?.remove(); }
+
+function setStatus(txt, busy) {
+  document.getElementById('statusTxt').textContent = txt;
+  document.getElementById('sendBtn').disabled = busy;
+}
+
+// ── BLACKBOX API ─────────────────────────────
+async function askBlackbox(userMsg) {
+  const messages = [
+    { id:'sys-1', content: SYSTEM, role:'system' },
+    ...history.slice(-16),
+    { id:'u-'+Date.now(), content: userMsg, role:'user' }
+  ];
+
+  const res = await fetch('https://www.blackbox.ai/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      messages,
+      id: 'orbitwatch-' + Date.now(),
+      previewToken: null,
+      userId: null,
+      codeModelMode: false,
+      agentMode: {},
+      trendingAgentMode: {},
+      isMicMode: false,
+      userSystemPrompt: null,
+      maxTokens: 1024,
+      playgroundTopP: null,
+      playgroundTemperature: null,
+      isChromeExt: false,
+      githubToken: '',
+      clickedAnswer2: false,
+      clickedAnswer3: false,
+      clickedForceWebSearch: false,
+      visitFromDelta: false,
+      mobileClient: false,
+      webSearchMode: false
+    })
   });
+
+  if (!res.ok) throw new Error('API error ' + res.status);
+  const raw = await res.text();
+
+  // Blackbox returns mixed stream — grab last clean text block
+  // Strip $@$... metadata tokens Blackbox adds
+  const clean = raw
+    .replace(/\$@\$[^$]*\$@\$/g, '')
+    .replace(/\$~~~\$[^$]*\$~~~\$/g, '')
+    .trim();
+
+  if (!clean) throw new Error('Empty response — please try again.');
+  return clean;
+}
+
+// ── SEND ─────────────────────────────────────
+async function send(text) {
+  text = text.trim();
+  if (!text || busy) return;
+  busy = true;
+  addMsg('user', text);
+  addTyping();
+  setStatus('ARIA is thinking…', true);
+
+  try {
+    const reply = await askBlackbox(text);
+    rmTyping();
+    addMsg('ai', reply);
+    history.push(
+      { id:'u'+Date.now(), content:text,  role:'user'      },
+      { id:'a'+Date.now(), content:reply, role:'assistant' }
+    );
+    if (history.length > 20) history = history.slice(-20);
+    setStatus('Online', false);
+  } catch(e) {
+    rmTyping();
+    console.error(e);
+    let msg = e.message||'';
+    if (msg.includes('fetch')||msg.includes('network')||msg.includes('Failed'))
+      msg = '⚠️ Could not reach AI. Check your connection and try again.';
+    else if (msg.includes('429')||msg.includes('rate'))
+      msg = '⏳ Too many requests. Wait a moment and try again.';
+    else
+      msg = '⚠️ ' + msg;
+    addMsg('ai', msg, true);
+    setStatus('Online', false);
+  }
+  busy = false;
+}
+
+function quick(el) {
+  const t = el.textContent.replace(/^[^\w]+/,'').trim();
+  document.getElementById('inp').value = t;
+  go();
+}
+
+function go() {
+  const inp = document.getElementById('inp');
+  const v = inp.value.trim();
+  if (!v) return;
+  inp.value = ''; inp.style.height = 'auto';
+  send(v);
+}
+
+document.getElementById('sendBtn').addEventListener('click', go);
+document.getElementById('inp').addEventListener('keydown', e => {
+  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); go(); }
 });
-
-// Initial status
-document.getElementById('loadingText').textContent = 'Loading ' + AIS[0].name + '…';
-document.getElementById('statusText').textContent = 'Connecting…';
-document.getElementById('modelBadge').textContent = AIS[0].badge;
-
+document.getElementById('inp').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+});
 document.getElementById('mobileMenuBtn')?.addEventListener('click', () =>
   document.getElementById('mobileNav')?.classList.toggle('open'));
+
+// ── WELCOME ──────────────────────────────────
+addMsg('ai', `Hello! I'm **ARIA**, your AI astronomy guide on OrbitWatch 🌌
+
+I'm powered by **Blackbox AI** — completely free, no login needed. Ask me anything about satellites, orbital mechanics, ISRO missions, black holes, or anything space-related!
+
+Tracking **ISS, Hubble, Tiangong, CARTOSAT-2F 🇮🇳, NavIC/IRNSS-1I 🇮🇳** and more. Try a suggestion below or type your question! 🚀`);
 </script>
 </body>
 </html>
