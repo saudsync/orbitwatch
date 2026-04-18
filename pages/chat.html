@@ -242,7 +242,7 @@
 
     <iframe
       id="bbFrame"
-      src="https://www.blackbox.ai/embed"
+      src="https://app.blackbox.ai/embed"
       title="Blackbox AI Assistant — ARIA"
       allow="clipboard-write; clipboard-read"
       allowfullscreen
@@ -253,7 +253,7 @@
   <!-- ── FOOTER ── -->
   <div class="chat-footer">
     💬 Ask ARIA anything about satellites, ISRO, black holes &amp; orbital mechanics &nbsp;·&nbsp;
-    <a href="https://www.blackbox.ai" target="_blank">Powered by Blackbox.ai ↗</a>
+    <a href="https://www.blackbox.ai/" target="_blank">Powered by Blackbox.ai ↗</a>
   </div>
 
 </div>
@@ -273,10 +273,10 @@
     const iframe = document.getElementById('bbFrame');
     // Try postMessage first
     try {
-      iframe.contentWindow.postMessage({ type:'question', text:q }, 'https://www.blackbox.ai');
+      iframe.contentWindow.postMessage({ type:'question', text:q }, 'https://app.blackbox.ai/');
     } catch(e) {}
     // Reliable fallback: reload iframe with query param
-    iframe.src = 'https://www.blackbox.ai/embed?q=' + encodeURIComponent(q);
+    iframe.src = 'https://app.blackbox.ai/embed?q=' + encodeURIComponent(q);
   }
 
   // Mobile menu
