@@ -3,23 +3,21 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ARIA — Space AI Assistant · OrbitWatch</title>
+<title>Astroboy — Space AI Assistant · OrbitWatch</title>
 <link rel="stylesheet" href="../css/style.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
 <style>
-  /* ── PAGE LAYOUT ── */
   body { overflow: hidden; }
 
   .chat-page {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    padding-top: 64px; /* site header height */
+    padding-top: 64px;
     box-sizing: border-box;
     background: #030610;
   }
 
-  /* ── ARIA HEADER BAR ── */
   .chat-header {
     display: flex;
     align-items: center;
@@ -81,7 +79,6 @@
     font-family: 'Space Mono', monospace;
   }
 
-  /* ── SUGGESTIONS STRIP ── */
   .suggestions {
     display: flex; gap: 7px;
     padding: 9px 16px;
@@ -114,12 +111,11 @@
   }
   .chip:active { transform: translateY(0); }
 
-  /* ── IFRAME WRAPPER ── */
   .iframe-wrap {
     flex: 1;
     position: relative;
     overflow: hidden;
-    min-height: 0; /* critical for flex shrink */
+    min-height: 0;
   }
 
   .iframe-wrap iframe {
@@ -132,7 +128,6 @@
     display: block;
   }
 
-  /* Loading shimmer shown before iframe loads */
   .iframe-loader {
     position: absolute;
     inset: 0;
@@ -166,7 +161,6 @@
     margin-top: -8px;
   }
 
-  /* ── FOOTER NOTE ── */
   .chat-footer {
     flex-shrink: 0;
     padding: 5px 16px;
@@ -204,7 +198,6 @@
 
 <div class="chat-page">
 
-  <!-- ── HEADER ── -->
   <div class="chat-header">
     <div class="chat-avatar">🔭</div>
     <div style="flex:1; min-width:0;">
@@ -217,7 +210,6 @@
     </div>
   </div>
 
-  <!-- ── SUGGESTION CHIPS ── -->
   <div class="suggestions">
     <span class="chip" onclick="suggest('How does the ISS orbit Earth?')">🛰️ ISS orbit</span>
     <span class="chip" onclick="suggest('Tell me about ISRO CARTOSAT-2F satellite')">🇮🇳 CARTOSAT-2F</span>
@@ -231,9 +223,7 @@
     <span class="chip" onclick="suggest('What is a neutron star?')">⭐ Neutron stars</span>
   </div>
 
-  <!-- ── IFRAME ── -->
   <div class="iframe-wrap">
-
     <div class="iframe-loader" id="loader">
       <div class="spinner"></div>
       <div class="loader-text">Connecting to Blackbox AI…</div>
@@ -242,24 +232,21 @@
 
     <iframe
       id="bbFrame"
-      src="https://app.blackbox.ai/embed"
+      src="https://app.blackbox.ai/"
       title="Blackbox AI Assistant — ARIA"
       allow="clipboard-write; clipboard-read"
       allowfullscreen
     ></iframe>
-
   </div>
 
-  <!-- ── FOOTER ── -->
   <div class="chat-footer">
     💬 Ask ARIA anything about satellites, ISRO, black holes &amp; orbital mechanics &nbsp;·&nbsp;
-    <a href="https://www.blackbox.ai/" target="_blank">Powered by Blackbox.ai ↗</a>
+    <a href="https://www.blackbox.ai" target="_blank">Powered by Blackbox.ai ↗</a>
   </div>
 
 </div>
 
 <script>
-  // Hide loader once iframe loads
   document.getElementById('bbFrame').addEventListener('load', function() {
     setTimeout(() => {
       const l = document.getElementById('loader');
@@ -268,18 +255,14 @@
     }, 400);
   });
 
-  // Suggestion chips — open Blackbox with question pre-filled
   function suggest(q) {
     const iframe = document.getElementById('bbFrame');
-    // Try postMessage first
     try {
-      iframe.contentWindow.postMessage({ type:'question', text:q }, 'https://app.blackbox.ai/');
+      iframe.contentWindow.postMessage({ type:'question', text:q }, 'https://app.blackbox.ai');
     } catch(e) {}
-    // Reliable fallback: reload iframe with query param
-    iframe.src = 'https://app.blackbox.ai/embed?q=' + encodeURIComponent(q);
+    iframe.src = 'https://app.blackbox.ai/?q=' + encodeURIComponent(q);
   }
 
-  // Mobile menu
   document.getElementById('mobileMenuBtn')?.addEventListener('click', () =>
     document.getElementById('mobileNav')?.classList.toggle('open'));
 </script>
