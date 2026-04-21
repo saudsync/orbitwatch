@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Learn Astronomy — OrbitWatch</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body class="light-page">
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="logo"><span class="logo-dot"></span>Orbit<span class="logo-light">Watch</span></a>
+    <nav class="site-nav">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="tracker.html" class="nav-link">Tracker</a>
+      <a href="database.html" class="nav-link">Database</a>
+      <a href="chat.html" class="nav-link nav-ai">🤖 AI Chat</a>
+      <a href="learn-hub.html" class="nav-link active">📚 Learn</a>
+    </nav>
+    <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="tracker.html" class="nav-link">Tracker</a>
+    <a href="database.html" class="nav-link">Database</a>
+    <a href="chat.html" class="nav-link">🤖 AI Chat</a>
+    <a href="learn-hub.html" class="nav-link active">📚 Learn</a>
+  </div>
+</header>
+
+<div class="learn-page">
+  <div class="learn-hero">
+    <div class="learn-hero-badge">🔭 Course 2</div>
+    <h1>Astronomy</h1>
+    <p>From the planets in our backyard to the most distant galaxies, astronomy is the study of everything beyond Earth's atmosphere. Discover how stars are born and die, what black holes really are, and how we find worlds around other stars.</p>
+    <div class="units-toc">
+      <button class="unit-toc-btn" onclick="scrollTo('unit1')"><span class="unit-toc-num">Unit 1</span>Stars & Stellar Evolution</button>
+      <button class="unit-toc-btn" onclick="scrollTo('unit2')"><span class="unit-toc-num">Unit 2</span>Our Solar System</button>
+      <button class="unit-toc-btn" onclick="scrollTo('unit3')"><span class="unit-toc-num">Unit 3</span>Galaxies</button>
+      <button class="unit-toc-btn" onclick="scrollTo('unit4')"><span class="unit-toc-num">Unit 4</span>Black Holes</button>
+      <button class="unit-toc-btn" onclick="scrollTo('unit5')"><span class="unit-toc-num">Unit 5</span>Exoplanets</button>
+      <button class="unit-toc-btn" onclick="scrollTo('unit6')"><span class="unit-toc-num">Unit 6</span>Tools of Astronomy</button>
+    </div>
+  </div>
+
+  <div class="learn-breadcrumb">
+    <a href="learn-hub.html">📚 Learn</a>
+    <span>›</span>
+    <span>Astronomy</span>
+  </div>
+
+  <div class="learn-layout">
+    <aside class="learn-sidebar">
+      <div class="learn-sidebar-title">Contents</div>
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 1 — Stars</div>
+        <span class="learn-nav-link" onclick="openLesson('l1-1')">How Stars Form</span>
+        <span class="learn-nav-link" onclick="openLesson('l1-2')">Main Sequence & HR Diagram</span>
+        <span class="learn-nav-link" onclick="openLesson('l1-3')">Stellar Deaths</span>
+      </div>
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 2 — Solar System</div>
+        <span class="learn-nav-link" onclick="openLesson('l2-1')">Formation & Structure</span>
+        <span class="learn-nav-link" onclick="openLesson('l2-2')">The Inner Planets</span>
+        <span class="learn-nav-link" onclick="openLesson('l2-3')">Gas Giants & Beyond</span>
+      </div>
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 3 — Galaxies</div>
+        <span class="learn-nav-link" onclick="openLesson('l3-1')">Galaxy Types</span>
+        <span class="learn-nav-link" onclick="openLesson('l3-2')">The Milky Way</span>
+        <span class="learn-nav-link" onclick="openLesson('l3-3')">Galaxy Evolution</span>
+      </div>
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 4 — Black Holes</div>
+        <span class="learn-nav-link" onclick="openLesson('l4-1')">What is a Black Hole?</span>
+        <span class="learn-nav-link" onclick="openLesson('l4-2')">Types & Hawking Radiation</span>
+      </div>
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 5 — Exoplanets</div>
+        <span class="learn-nav-link" onclick="openLesson('l5-1')">Detection Methods</span>
+        <span class="learn-nav-link" onclick="openLesson('l5-2')">Habitability & SETI</span>
+      </div>
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 6 — Tools</div>
+        <span class="learn-nav-link" onclick="openLesson('l6-1')">Telescopes</span>
+        <span class="learn-nav-link" onclick="openLesson('l6-2')">Spectroscopy</span>
+      </div>
+    </aside>
+
+    <main class="learn-main">
+
+      <!-- UNIT 1: STARS -->
+      <div class="learn-unit" id="unit1">
+        <div class="unit-header">
+          <span class="unit-icon">⭐</span>
+          <div>
+            <div class="unit-number">Unit 1</div>
+            <div class="unit-title">Stars & Stellar Evolution</div>
+            <div class="unit-desc">Stars are the fundamental building blocks of the visible universe — nuclear furnaces that forge the elements everything is made of.</div>
+          </div>
+        </div>
+
+        <div class="lesson-card open" id="l1-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">How Stars Form</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">Stars are born inside giant clouds of gas and dust called nebulae. Gravity pulls regions of these clouds together, heating them until nuclear fusion ignites and a new star blazes to life.</div>
+            <div class="lesson-section">
+              <h4>Molecular Clouds</h4>
+              <p>Star formation begins in <strong>giant molecular clouds (GMCs)</strong> — vast cold (10–30 K) reservoirs of hydrogen and helium, threaded with dust. The Orion Molecular Cloud, visible to the naked eye as the Orion Nebula, is a spectacular active star-forming region ~1,344 light-years away.</p>
+              <p>A cloud collapses when something disturbs the balance between gravity and pressure — perhaps the shockwave from a nearby supernova, a galaxy collision, or simply random turbulence. The cloud fragments into smaller clumps, each collapsing under its own gravity.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Protostar Phase</h4>
+              <p>As a clump contracts, gravitational potential energy converts to heat. The central region — the <strong>protostar</strong> — heats up to thousands of degrees. It is surrounded by a spinning disk of gas and dust (the protoplanetary disk) from which planets may eventually form. Protostars blow powerful jets of material perpendicular to the disk — Herbig-Haro objects — visible in spectacular Hubble and JWST images.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Ignition of Fusion</h4>
+              <p>When the protostar's core reaches ~10 million Kelvin, hydrogen nuclei have enough energy to overcome electrostatic repulsion and fuse together, releasing energy via the <strong>proton-proton chain</strong>. The outward pressure from this energy exactly balances gravity, and the protostar becomes a true <strong>main sequence star</strong>. Our Sun took about 50 million years to reach this stage.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">🌟 Our Sun</div>
+              <p>The Sun fuses <strong>600 million tons of hydrogen per second</strong> into helium, releasing energy equivalent to 4 × 10²⁶ watts — more energy in one second than humanity has used in all of recorded history.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l1-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">The Main Sequence & Hertzsprung-Russell Diagram</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The Hertzsprung-Russell (H-R) diagram is the most important tool in stellar astronomy — a plot of stars by luminosity vs. temperature that reveals the entire life story of stars at a glance.</div>
+            <div class="lesson-section">
+              <h4>The Main Sequence</h4>
+              <p>When you plot thousands of stars on the H-R diagram, they don't scatter randomly — they cluster along a diagonal band called the <strong>main sequence</strong>, running from hot, luminous, massive blue-white stars (upper left) to cool, dim, low-mass red stars (lower right). Stars spend most of their lives on the main sequence fusing hydrogen in their cores.</p>
+              <p>A key relationship: more massive stars are hotter, brighter, and shorter-lived. A star 10 times the Sun's mass burns 10,000 times more brightly and lives only 30 million years. A star half the Sun's mass burns far more dimly and can live for 50 billion years.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Stellar Classification (OBAFGKM)</h4>
+              <p>Stars are classified by their spectral type, determined by surface temperature: <strong>O</strong> (blue, 30,000+ K), <strong>B</strong> (blue-white, 10,000–30,000 K), <strong>A</strong> (white, 7,500–10,000 K), <strong>F</strong> (yellow-white, 6,000–7,500 K), <strong>G</strong> (yellow, 5,200–6,000 K — our Sun is G2), <strong>K</strong> (orange, 3,700–5,200 K), <strong>M</strong> (red, &lt;3,700 K). The mnemonic: "Oh Be A Fine Girl/Guy, Kiss Me." M-dwarf red stars are the most common stars in the galaxy.</p>
+            </div>
+            <div class="key-points">
+              <div class="key-point"><span class="key-point-icon">🔵</span><div class="key-point-text"><strong>O/B Stars</strong>Hottest, most massive, live millions of years</div></div>
+              <div class="key-point"><span class="key-point-icon">🌟</span><div class="key-point-text"><strong>G Stars (like Sun)</strong>Medium temperature, ~10B year lifespan</div></div>
+              <div class="key-point"><span class="key-point-icon">🔴</span><div class="key-point-text"><strong>M Dwarfs</strong>Coolest, most numerous, live trillions of years</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l1-3">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">3</div>
+            <div class="lesson-title">Stellar Deaths: White Dwarfs, Neutron Stars & Supernovae</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">How a star dies depends entirely on its mass. The death of a massive star in a supernova is one of the most energetic events in the universe — and creates the heavy elements that make life possible.</div>
+            <div class="lesson-section">
+              <h4>Low-Mass Stars: Red Giants & White Dwarfs</h4>
+              <p>When a Sun-like star exhausts the hydrogen in its core, the core contracts while the outer layers expand dramatically — it becomes a <strong>red giant</strong>, swelling to ~100 times its original radius. The Sun will engulf Mercury and Venus in about 5 billion years. Eventually, the outer layers are expelled as a beautiful <strong>planetary nebula</strong>, leaving behind a hot, dense <strong>white dwarf</strong> — an Earth-sized ember of carbon and oxygen that slowly cools over billions of years.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Massive Stars: Core Collapse & Supernovae</h4>
+              <p>Stars more than ~8 solar masses continue fusing heavier elements — helium into carbon, carbon into neon, neon into oxygen, oxygen into silicon, silicon into iron. Each stage is shorter than the last; silicon burning lasts only one day. Iron cannot release energy through fusion — so the core suddenly collapses in less than a second, from the size of Earth to a sphere just ~20 km across. The outer layers bounce off this dense core and explode outward as a <strong>core-collapse supernova</strong> — briefly outshining the entire galaxy.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Remnants: Neutron Stars & Pulsars</h4>
+              <p>The collapsed core becomes a <strong>neutron star</strong> — the densest object in the universe short of a black hole. A teaspoon of neutron star material weighs ~4 billion tons. Rapidly spinning neutron stars that emit radio beams are called <strong>pulsars</strong>, and some spin hundreds of times per second (millisecond pulsars). When two neutron stars merge, they produce gravitational waves (detected by LIGO) and a <strong>kilonova</strong> — the primary factory for gold and other heavy elements in the universe.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">💎 Where Heavy Elements Come From</div>
+              <p>Every gold atom in your jewelry was forged in a neutron star merger billions of years ago. Iron was made in the cores of massive stars. Carbon in your body came from dying red giants. We are, literally, made of stardust.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNIT 2: SOLAR SYSTEM -->
+      <div class="learn-unit" id="unit2">
+        <div class="unit-header">
+          <span class="unit-icon">☀️</span>
+          <div>
+            <div class="unit-number">Unit 2</div>
+            <div class="unit-title">Our Solar System</div>
+            <div class="unit-desc">Eight planets, hundreds of moons, millions of asteroids, and trillions of comets — the Solar System is endlessly diverse.</div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l2-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">Formation & Structure</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The Solar System formed ~4.6 billion years ago from a rotating cloud of gas and dust. The same physics that forms stars also creates planetary systems — it's a natural byproduct of stellar birth.</div>
+            <div class="lesson-section">
+              <h4>The Solar Nebula Theory</h4>
+              <p>As the solar nebula collapsed, conservation of angular momentum caused it to spin faster and flatten into a disk — the <strong>protoplanetary disk</strong>. The Sun formed at the center from most of the mass. In the disk, dust grains collided and stuck together (<strong>accretion</strong>), forming kilometer-sized <strong>planetesimals</strong>, then larger <strong>protoplanets</strong>, and finally the planets we know today.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>The Frost Line</h4>
+              <p>A key feature called the <strong>frost line</strong> (or snow line) at ~2.7 AU from the Sun divided the solar system: inside it, only rocky, refractory materials could condense (forming the terrestrial planets Mercury, Venus, Earth, Mars). Outside it, ices of water, methane, and ammonia could solidify, giving the gas giants much more material to accumulate and grow massive enough to capture hydrogen and helium gas directly from the nebula.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l2-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">The Inner Rocky Planets</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">Mercury, Venus, Earth, and Mars are the terrestrial planets — small, dense, rocky worlds with solid surfaces and diverse geological histories.</div>
+            <div class="lesson-section">
+              <h4>Mercury</h4>
+              <p>The smallest planet and closest to the Sun experiences extreme temperature swings — from 430°C on the sunlit side to -180°C at night. It has virtually no atmosphere (it's too small to retain one) and a surprisingly large iron core comprising ~85% of its radius. NASA's MESSENGER mission revealed vast expanses of ancient volcanic plains and discovered water ice in permanently shadowed polar craters.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Venus — Earth's Evil Twin</h4>
+              <p>Nearly the same size as Earth, Venus should be familiar but is instead the most hostile planet in the Solar System. Its thick CO₂ atmosphere creates a runaway greenhouse effect, with surface temperatures of 465°C — hot enough to melt lead. Surface pressure is 90 times Earth's. Venus rotates backwards (retrograde) and extremely slowly — a Venusian day is longer than its year.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Mars — The Red Planet</h4>
+              <p>Mars has the largest volcano in the Solar System (<strong>Olympus Mons</strong>, 21 km high — nearly 3× Everest) and the longest canyon (<strong>Valles Marineris</strong>, 4,000 km — roughly the width of the USA). Evidence abounds for ancient rivers and lakes — Mars was once warmer and wetter. NASA's Perseverance rover is currently collecting samples for eventual return to Earth, searching for signs of ancient microbial life.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l2-3">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">3</div>
+            <div class="lesson-title">Gas Giants, Ice Giants & Beyond</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">Beyond the asteroid belt lie the giant planets, each a world unto itself with complex atmospheric chemistry, powerful magnetic fields, and fascinating moon systems.</div>
+            <div class="lesson-section">
+              <h4>Jupiter — King of Planets</h4>
+              <p>Jupiter is so massive (~318 Earth masses) that it would need to be 80× heavier to ignite nuclear fusion and become a star. Its <strong>Great Red Spot</strong> is a storm larger than Earth that has raged for at least 350 years. Jupiter has 95 known moons; <strong>Europa</strong> harbors a subsurface liquid water ocean beneath its ice shell and is a prime target for astrobiology. <strong>Io</strong> is the most volcanically active body in the Solar System, with sulfur volcanoes erupting continuously.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Saturn's Spectacular Rings</h4>
+              <p>Saturn's rings are made of billions of chunks of ice and rock, ranging from micrometers to meters in size. Remarkably thin (most only 10–20 meters thick) but 240,000 km wide, they're a young feature — probably formed only 100–400 million years ago, possibly from a disrupted moon. Saturn also hosts <strong>Titan</strong>, the only moon with a thick atmosphere and liquid methane lakes on its surface.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Uranus & Neptune — Ice Giants</h4>
+              <p>Uranus (rotates on its side — likely from a giant impact) and Neptune are categorized separately as "ice giants" — their interiors contain a slushy mix of water, methane, and ammonia ices, not primarily hydrogen gas. Neptune has the fastest winds in the Solar System (~2,100 km/h). <strong>Triton</strong>, Neptune's largest moon, orbits in retrograde and is likely a captured Kuiper Belt object, destined to be torn apart in ~3.6 billion years.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">🛰️ Spacecraft Exploration</div>
+              <p>As of 2025, spacecraft have visited every planet in the Solar System. The <strong>New Horizons</strong> flyby of Pluto (2015) revealed it has mountains of water ice, a heart-shaped nitrogen plain, and active nitrogen geysers — far more complex than expected for a world so far from the Sun.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNIT 3: GALAXIES -->
+      <div class="learn-unit" id="unit3">
+        <div class="unit-header">
+          <span class="unit-icon">🌌</span>
+          <div>
+            <div class="unit-number">Unit 3</div>
+            <div class="unit-title">Galaxies</div>
+            <div class="unit-desc">Island universes containing billions of stars, held together by gravity and dark matter, each with a supermassive black hole at its center.</div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l3-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">Galaxy Types & Classification</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">Edwin Hubble classified galaxies into types based on their morphology — a system still used today, though our understanding has become far more nuanced.</div>
+            <div class="lesson-section">
+              <h4>Spiral Galaxies</h4>
+              <p>Spiral galaxies have a central bulge surrounded by a flat disk with distinctive spiral arms — regions of ongoing star formation outlined by young blue stars and glowing nebulae. The arms are density waves, not rigid structures — stars pass through them like traffic through a slower zone. The Milky Way and Andromeda (M31) are both spirals. <strong>Barred spirals</strong> (like the Milky Way) have a bar of stars through the center connecting the spiral arms.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Elliptical Galaxies</h4>
+              <p>Elliptical galaxies range from nearly spherical (E0) to elongated (E7). They contain mostly old, red stars with very little gas or dust — star formation has essentially ceased. The largest galaxies in the universe are giant ellipticals like <strong>IC 1101</strong> (~6 million light-years in diameter). They're thought to form from major mergers of spiral galaxies.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Irregular & Dwarf Galaxies</h4>
+              <p><strong>Irregular galaxies</strong> (like the Magellanic Clouds, satellites of the Milky Way) have no defined shape — usually from gravitational interactions. <strong>Dwarf galaxies</strong> are the most numerous galaxies in the universe, typically containing millions to a few billion stars. The Milky Way has ~50 known dwarf satellite galaxies.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l3-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">The Milky Way — Our Galaxy</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">We live inside a barred spiral galaxy — the Milky Way — containing ~250 billion stars spread across a disk ~100,000 light-years in diameter. The Solar System sits about 26,000 light-years from the center, in the Orion Arm.</div>
+            <div class="lesson-section">
+              <h4>Structure</h4>
+              <p>The Milky Way has four main spiral arms: Perseus, Norma, Scutum-Centaurus, and Sagittarius. At its center is the <strong>Galactic bulge</strong>, a dense region of older stars, and at the very center lurks the supermassive black hole <strong>Sagittarius A*</strong> (Sgr A*), with a mass of ~4 million suns. The 2022 Nobel Prize in Physics was awarded for its discovery and imaging.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Collision with Andromeda</h4>
+              <p>The Andromeda Galaxy (M31), our nearest large galactic neighbor at 2.5 million light-years, is approaching the Milky Way at ~110 km/s. In ~4.5 billion years, the two galaxies will begin merging — a process taking another 2–3 billion years. The result will be a giant elliptical galaxy astronomers call "<strong>Milkomeda</strong>." Despite the vast number of stars involved, actual stellar collisions will be extremely rare due to the enormous distances between stars.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">⏱️ Galactic Year</div>
+              <p>The Solar System takes ~225–250 million years to orbit the Milky Way's center — one <strong>Galactic Year</strong> (or "cosmic year"). Since Earth formed, we've completed about 18 galactic orbits. The last time we were in our current position in the galaxy, dinosaurs were just appearing.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l3-3">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">3</div>
+            <div class="lesson-title">Active Galactic Nuclei & Quasars</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">Some galaxies have extraordinarily bright, energetic centers powered by matter falling into supermassive black holes — these are Active Galactic Nuclei (AGN), and quasars are the most luminous type.</div>
+            <div class="lesson-section">
+              <h4>What Powers a Quasar?</h4>
+              <p>When gas and dust fall toward a supermassive black hole, they form a rapidly rotating <strong>accretion disk</strong>. Friction heats the disk to millions of degrees, making it radiate brilliantly across the electromagnetic spectrum. The most luminous quasars outshine entire galaxies containing hundreds of billions of stars — some emit more energy in a single second than the Sun will produce in its entire 10-billion-year life.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Looking Back in Time</h4>
+              <p>Because light takes time to reach us, distant quasars appear as they were billions of years ago — some show us the universe when it was only 700 million years old. The early universe was far more active than today — quasars were much more common when galaxies were young and had more gas to feed their central black holes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNIT 4: BLACK HOLES -->
+      <div class="learn-unit" id="unit4">
+        <div class="unit-header">
+          <span class="unit-icon">🕳️</span>
+          <div>
+            <div class="unit-number">Unit 4</div>
+            <div class="unit-title">Black Holes</div>
+            <div class="unit-desc">The most extreme objects in the universe — where gravity is so strong that not even light can escape.</div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l4-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">What is a Black Hole?</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">A black hole is a region of spacetime where gravity is so intense that the escape velocity exceeds the speed of light. Once matter or energy crosses the event horizon, it cannot escape — not even light.</div>
+            <div class="lesson-section">
+              <h4>The Event Horizon</h4>
+              <p>The <strong>event horizon</strong> is the point of no return — a sphere surrounding the black hole whose radius (the <strong>Schwarzschild radius</strong>) depends only on the mass. For the Sun, the Schwarzschild radius is ~3 km; for Earth, it's ~9 mm. The event horizon is not a physical surface — an astronaut crossing it wouldn't feel anything special in the moment (though they'd be doomed). It's a mathematical boundary in spacetime.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>The Singularity</h4>
+              <p>At the very center of a black hole lies a <strong>singularity</strong> — a point of infinite density where our current laws of physics break down completely. General relativity predicts the singularity but cannot describe it. Most physicists believe a future theory of quantum gravity (like loop quantum gravity or string theory) will resolve the singularity into something finite.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">📸 First Image</div>
+              <p>In April 2019, the <strong>Event Horizon Telescope</strong> released the first direct image of a black hole's shadow — the supermassive black hole M87*, 6.5 billion solar masses, 55 million light-years away. In 2022, they imaged <strong>Sagittarius A*</strong> at the center of our own galaxy, confirming its black hole nature.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l4-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">Types of Black Holes & Hawking Radiation</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">Black holes come in very different sizes, from stellar-mass remnants to the giants at galaxy centers. Stephen Hawking's theoretical discovery that black holes slowly evaporate over immense timescales revolutionized our understanding.</div>
+            <div class="lesson-section">
+              <h4>Types by Mass</h4>
+              <p><strong>Stellar black holes</strong> (3–100 solar masses): formed from core-collapse supernovae. <strong>Intermediate-mass black holes</strong> (100–10,000 M☉): rare and elusive, perhaps formed in globular clusters. <strong>Supermassive black holes</strong> (10⁶–10¹⁰ M☉): found at the centers of almost all large galaxies; how they grew so massive is still debated. <strong>Primordial black holes</strong>: hypothetically formed in the early universe; could be dark matter candidates.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Hawking Radiation</h4>
+              <p>In 1974, Stephen Hawking applied quantum mechanics to black holes and found that they should slowly emit thermal radiation — now called <strong>Hawking radiation</strong>. Near the event horizon, quantum fluctuations create particle-antiparticle pairs; occasionally one falls in while the other escapes, carrying away energy. Over an astronomically long time (~10⁶⁷ years for a stellar black hole), the black hole completely evaporates. Hawking radiation has never been directly observed — it's too faint for current instruments — but is widely accepted as theoretically correct.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Gravitational Waves</h4>
+              <p>When two black holes spiral together and merge, they send ripples through spacetime — <strong>gravitational waves</strong>. The LIGO and Virgo detectors first detected these waves in 2015 (GW150914), confirming a prediction of General Relativity from 1916. This opened an entirely new way of observing the universe — <strong>gravitational wave astronomy</strong> — earning the 2017 Nobel Prize.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNIT 5: EXOPLANETS -->
+      <div class="learn-unit" id="unit5">
+        <div class="unit-header">
+          <span class="unit-icon">🪐</span>
+          <div>
+            <div class="unit-number">Unit 5</div>
+            <div class="unit-title">Exoplanets</div>
+            <div class="unit-desc">Worlds orbiting other stars — over 5,700 confirmed, and potentially trillions more in the Milky Way alone.</div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l5-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">Detection Methods</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">Directly seeing an exoplanet next to its blinding host star is like spotting a firefly next to a spotlight from across a continent. Astronomers use indirect methods to detect these distant worlds.</div>
+            <div class="lesson-section">
+              <h4>Transit Method</h4>
+              <p>When a planet passes in front of its star, it blocks a tiny fraction of the star's light — typically 0.01–1%. By measuring this regular dip in brightness, we can determine the planet's orbital period and its size relative to the star. This is how NASA's <strong>Kepler Space Telescope</strong> (2009–2018) discovered over 2,600 exoplanets, and how the <strong>TESS</strong> mission continues this work today.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Radial Velocity (Doppler Wobble)</h4>
+              <p>A planet doesn't orbit its star — both orbit their common center of mass. As a planet pulls its star, the star wobbles slightly toward and away from us, causing tiny Doppler shifts in its spectral lines. This "wobble" reveals the planet's minimum mass and orbital period. The first exoplanet around a Sun-like star (<strong>51 Pegasi b</strong>) was discovered this way in 1995, winning the 2019 Nobel Prize.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Direct Imaging & Microlensing</h4>
+              <p><strong>Direct imaging</strong> uses coronagraphs to block starlight, revealing self-luminous young giant planets nearby. <strong>Gravitational microlensing</strong> occurs when a foreground star (with a planet) passes in front of a background star — the planet's gravity creates a characteristic spike in the background star's brightness, revealing worlds that other methods miss.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l5-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">Habitability, Atmospheres & the Search for Life</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The discovery of thousands of exoplanets has transformed the question "Are we alone?" from philosophy into science. We now have the tools to begin probing distant atmospheres for signs of life.</div>
+            <div class="lesson-section">
+              <h4>The Habitable Zone</h4>
+              <p>The <strong>habitable zone</strong> (or "Goldilocks zone") is the range of distances from a star where a rocky planet could maintain liquid water on its surface. Earth sits comfortably within the Sun's habitable zone. The system <strong>TRAPPIST-1</strong>, just 40 light-years away, has three rocky planets in its habitable zone — making it one of the most exciting targets for atmospheric characterization by JWST.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Atmospheric Biosignatures</h4>
+              <p>The <strong>James Webb Space Telescope (JWST)</strong>, launched in 2021, can analyze exoplanet atmospheres by measuring how starlight filters through them during transits (<strong>transmission spectroscopy</strong>). Astronomers look for atmospheric "biosignatures" — gases that life produces and that are difficult to explain abiotically: oxygen, methane, nitrous oxide, and their combinations. In 2023, JWST detected carbon dioxide and water in several exoplanet atmospheres, and tantalizing hints of dimethyl sulfide (a molecule only produced by life on Earth) in K2-18b — though this remains highly uncertain.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">🌍 Scale of the Opportunity</div>
+              <p>Statistical analysis of Kepler data suggests that roughly <strong>one in five Sun-like stars</strong> has an Earth-sized planet in its habitable zone. With ~100 billion Sun-like stars in the Milky Way, there could be 20 billion Earth-like planets in our galaxy alone.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNIT 6: TOOLS -->
+      <div class="learn-unit" id="unit6">
+        <div class="unit-header">
+          <span class="unit-icon">🔬</span>
+          <div>
+            <div class="unit-number">Unit 6</div>
+            <div class="unit-title">Tools of Astronomy</div>
+            <div class="unit-desc">How astronomers study the cosmos — from the first telescopes to modern multi-billion-dollar space observatories.</div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l6-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">Telescopes Across the Electromagnetic Spectrum</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The universe emits radiation across the entire electromagnetic spectrum, and different wavelengths reveal completely different phenomena. Modern astronomy uses telescopes tuned to each band.</div>
+            <div class="lesson-section">
+              <h4>Radio Telescopes</h4>
+              <p>Radio waves from space pass through Earth's atmosphere and dust clouds that block visible light. The <strong>Very Large Array (VLA)</strong> in New Mexico uses 27 dish antennas acting together as a single huge telescope. Radio astronomy discovered pulsars, quasars, the CMB, and mapped the structure of our galaxy via hydrogen's 21-cm emission line. The <strong>FAST</strong> telescope in China (500m diameter) is the world's largest single-dish radio telescope.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Space Observatories</h4>
+              <p>Above Earth's atmosphere, telescopes can observe X-rays, gamma rays, and ultraviolet light blocked at the surface. NASA's <strong>Great Observatories</strong>: Hubble (visible/UV), Chandra (X-ray), Spitzer (infrared), and Compton (gamma-ray) have transformed virtually every area of astronomy. The <strong>James Webb Space Telescope</strong> (2021) sees primarily in infrared and can observe the most distant galaxies formed 300 million years after the Big Bang.</p>
+            </div>
+            <div class="key-points">
+              <div class="key-point"><span class="key-point-icon">📻</span><div class="key-point-text"><strong>Radio</strong>CMB, pulsars, galaxy structure, 21cm line</div></div>
+              <div class="key-point"><span class="key-point-icon">♨️</span><div class="key-point-text"><strong>Infrared</strong>Cool stars, dust clouds, distant galaxies</div></div>
+              <div class="key-point"><span class="key-point-icon">👁️</span><div class="key-point-text"><strong>Visible</strong>Stars, nebulae, galaxies — what we see</div></div>
+              <div class="key-point"><span class="key-point-icon">⚡</span><div class="key-point-text"><strong>X-ray / Gamma</strong>Black holes, neutron stars, supernovae</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l6-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">Spectroscopy — Reading the Light</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">Spectroscopy — splitting light into its component wavelengths — is the most powerful tool in astronomy. From a star's spectrum, we can determine its temperature, composition, velocity, magnetic field, and much more.</div>
+            <div class="lesson-section">
+              <h4>Absorption & Emission Lines</h4>
+              <p>Every chemical element absorbs and emits light at specific, characteristic wavelengths — a unique "fingerprint." When starlight passes through a star's outer atmosphere, elements absorb specific wavelengths, producing dark <strong>absorption lines</strong> in the spectrum. By matching these lines to known elements in the lab, astronomers can determine exactly what a star is made of — even from light-years away.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>What Spectroscopy Reveals</h4>
+              <p><strong>Composition:</strong> Hydrogen, helium, and dozens of other elements identified in stellar spectra. <strong>Temperature:</strong> The overall color/shape of the spectrum (blackbody curve) reveals surface temperature. <strong>Velocity:</strong> Doppler shifts in spectral lines reveal motion toward/away from us. <strong>Rotation:</strong> Different parts of a rotating star have different Doppler shifts, broadening spectral lines. <strong>Magnetic fields:</strong> The Zeeman effect splits spectral lines in the presence of strong magnetic fields.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">🌞 Discovery of Helium</div>
+              <p>Helium was discovered in the Sun's spectrum in 1868 — 27 years before it was found on Earth! The unknown spectral lines couldn't match any known element, so it was named after <em>Helios</em>, the Greek god of the Sun. It remains the only element first discovered in space.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-logo">Orbit<span>Watch</span></div>
+    <div class="footer-links">
+      <a href="../index.html">Home</a>
+      <a href="tracker.html">Tracker</a>
+      <a href="database.html">Database</a>
+      <a href="chat.html">AI Chat</a>
+      <a href="learn-hub.html">Learn</a>
+    </div>
+    <div class="footer-copy">© 2025 OrbitWatch · Built for space curiosity</div>
+  </div>
+</footer>
+
+<script>
+function toggleLesson(header) {
+  const card = header.closest('.lesson-card');
+  card.classList.toggle('open');
+}
+function openLesson(id) {
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('open'); el.scrollIntoView({behavior:'smooth',block:'start'}); }
+}
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.getElementById('mobileMenuBtn')?.addEventListener('click',()=>document.getElementById('mobileNav')?.classList.toggle('open'));
+
+window.addEventListener('scroll', () => {
+  const navLinks = document.querySelectorAll('.learn-nav-link');
+  const units = document.querySelectorAll('.learn-unit, .lesson-card');
+  let current = '';
+  units.forEach(u => {
+    if (u.getBoundingClientRect().top < 120) current = u.id;
+  });
+  navLinks.forEach(l => {
+    l.classList.remove('active');
+    if (l.getAttribute('onclick')?.includes(current)) l.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Learn Space Science — OrbitWatch</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body class="light-page">
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="logo"><span class="logo-dot"></span>Orbit<span class="logo-light">Watch</span></a>
+    <nav class="site-nav">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="tracker.html" class="nav-link">Tracker</a>
+      <a href="database.html" class="nav-link">Database</a>
+      <a href="chat.html" class="nav-link nav-ai">🤖 AI Chat</a>
+      <a href="learn-hub.html" class="nav-link active">📚 Learn</a>
+    </nav>
+    <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="tracker.html" class="nav-link">Tracker</a>
+    <a href="database.html" class="nav-link">Database</a>
+    <a href="chat.html" class="nav-link">🤖 AI Chat</a>
+    <a href="learn-hub.html" class="nav-link active">📚 Learn</a>
+  </div>
+</header>
+
+<div class="learn-page">
+  <div class="learn-hero">
+    <div class="learn-hero-badge">📚 Knowledge Center</div>
+    <h1>Learn <span style="color:var(--accent)">Space Science</span></h1>
+    <p>Explore the universe through structured lessons covering cosmology, astronomy, and the science behind everything OrbitWatch tracks. From the Big Bang to black holes — all explained clearly.</p>
+  </div>
+
+  <div class="learn-hub" style="padding-top:48px">
+    <p class="learn-hub-desc">Choose a subject below to start your journey through space science. Each course is organized into units with detailed lessons, real-world examples, and fascinating facts.</p>
+
+    <div class="learn-cards-grid">
+      <!-- Cosmology -->
+      <a href="learn-cosmology.html" class="learn-card">
+        <span class="learn-card-icon">🌌</span>
+        <span class="learn-card-tag">COURSE 1</span>
+        <div class="learn-card-title">Cosmology</div>
+        <div class="learn-card-desc">Understand the universe at the grandest scale — its origin, structure, evolution, and ultimate fate. From the Big Bang to dark energy, explore the cosmos itself.</div>
+        <div class="learn-card-units">
+          <span class="learn-card-unit-pill">Big Bang Theory</span>
+          <span class="learn-card-unit-pill">Expanding Universe</span>
+          <span class="learn-card-unit-pill">Dark Matter & Energy</span>
+          <span class="learn-card-unit-pill">Cosmic Microwave Background</span>
+          <span class="learn-card-unit-pill">Large-Scale Structure</span>
+          <span class="learn-card-unit-pill">Fate of Universe</span>
+        </div>
+        <span class="learn-card-cta">Start Learning →</span>
+      </a>
+
+      <!-- Astronomy -->
+      <a href="learn-astronomy.html" class="learn-card">
+        <span class="learn-card-icon">🔭</span>
+        <span class="learn-card-tag">COURSE 2</span>
+        <div class="learn-card-title">Astronomy</div>
+        <div class="learn-card-desc">Discover stars, planets, galaxies, and everything in between. Learn how astronomers study the sky, what different objects are made of, and the forces that shape them.</div>
+        <div class="learn-card-units">
+          <span class="learn-card-unit-pill">Stars & Stellar Evolution</span>
+          <span class="learn-card-unit-pill">Solar System</span>
+          <span class="learn-card-unit-pill">Galaxies</span>
+          <span class="learn-card-unit-pill">Black Holes</span>
+          <span class="learn-card-unit-pill">Exoplanets</span>
+          <span class="learn-card-unit-pill">Observational Tools</span>
+        </div>
+        <span class="learn-card-cta">Start Learning →</span>
+      </a>
+    </div>
+
+    <!-- Quick Facts -->
+    <div style="margin-top:60px">
+      <h2 class="learn-hub-title" style="font-size:clamp(18px,3vw,28px);margin-bottom:6px">Did You Know?</h2>
+      <p class="learn-hub-desc" style="margin-bottom:24px">Quick cosmic facts to spark your curiosity</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">
+        <div class="key-point">
+          <span class="key-point-icon">⚡</span>
+          <div class="key-point-text"><strong>Speed of Light</strong>Light travels 299,792 km every second — it takes just 1.3 seconds to reach the Moon from Earth.</div>
+        </div>
+        <div class="key-point">
+          <span class="key-point-icon">🌍</span>
+          <div class="key-point-text"><strong>Age of Earth</strong>Earth is approximately 4.54 billion years old — about one-third the age of the entire universe.</div>
+        </div>
+        <div class="key-point">
+          <span class="key-point-icon">🌟</span>
+          <div class="key-point-text"><strong>Stars in Milky Way</strong>Our galaxy contains an estimated 100–400 billion stars, many with their own planetary systems.</div>
+        </div>
+        <div class="key-point">
+          <span class="key-point-icon">🕳️</span>
+          <div class="key-point-text"><strong>Black Hole Mass</strong>The supermassive black hole at our galaxy's center (Sgr A*) is 4 million times the mass of the Sun.</div>
+        </div>
+        <div class="key-point">
+          <span class="key-point-icon">📡</span>
+          <div class="key-point-text"><strong>Voyager 1</strong>Launched in 1977, Voyager 1 is now over 23 billion km from Earth — the farthest human-made object.</div>
+        </div>
+        <div class="key-point">
+          <span class="key-point-icon">🌌</span>
+          <div class="key-point-text"><strong>Observable Universe</strong>The observable universe is about 93 billion light-years in diameter and contains ~2 trillion galaxies.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-logo">Orbit<span>Watch</span></div>
+    <div class="footer-links">
+      <a href="../index.html">Home</a>
+      <a href="tracker.html">Tracker</a>
+      <a href="database.html">Database</a>
+      <a href="chat.html">AI Chat</a>
+      <a href="learn-hub.html">Learn</a>
+    </div>
+    <div class="footer-copy">© 2025 OrbitWatch · Built for space curiosity</div>
+  </div>
+</footer>
+
+<script>
+document.getElementById('mobileMenuBtn')?.addEventListener('click',()=>document.getElementById('mobileNav')?.classList.toggle('open'));
+</script>
+</body>
+</html>

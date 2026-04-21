@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Learn Cosmology — OrbitWatch</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body class="light-page">
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="logo"><span class="logo-dot"></span>Orbit<span class="logo-light">Watch</span></a>
+    <nav class="site-nav">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="tracker.html" class="nav-link">Tracker</a>
+      <a href="database.html" class="nav-link">Database</a>
+      <a href="chat.html" class="nav-link nav-ai">🤖 AI Chat</a>
+      <a href="learn-hub.html" class="nav-link active">📚 Learn</a>
+    </nav>
+    <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="tracker.html" class="nav-link">Tracker</a>
+    <a href="database.html" class="nav-link">Database</a>
+    <a href="chat.html" class="nav-link">🤖 AI Chat</a>
+    <a href="learn-hub.html" class="nav-link active">📚 Learn</a>
+  </div>
+</header>
+
+<div class="learn-page">
+  <div class="learn-hero">
+    <div class="learn-hero-badge">🌌 Course 1</div>
+    <h1>Cosmology</h1>
+    <p>The science of the universe as a whole — its origin, structure, evolution, and ultimate fate. From the first fraction of a second to the heat death of the cosmos, this course covers it all.</p>
+    <div class="units-toc">
+      <button class="unit-toc-btn" onclick="scrollTo('unit1')"><span class="unit-toc-num">Unit 1</span>Big Bang Theory</button>
+      <button class="unit-toc-btn" onclick="scrollTo('unit2')"><span class="unit-toc-num">Unit 2</span>Expanding Universe</button>
+      <button class="unit-toc-btn" onclick="scrollTo('unit3')"><span class="unit-toc-num">Unit 3</span>Cosmic Microwave Background</button>
+      <button class="unit-toc-btn" onclick="scrollTo('unit4')"><span class="unit-toc-num">Unit 4</span>Dark Matter</button>
+      <button class="unit-toc-btn" onclick="scrollTo('unit5')"><span class="unit-toc-num">Unit 5</span>Dark Energy</button>
+      <button class="unit-toc-btn" onclick="scrollTo('unit6')"><span class="unit-toc-num">Unit 6</span>Large-Scale Structure</button>
+      <button class="unit-toc-btn" onclick="scrollTo('unit7')"><span class="unit-toc-num">Unit 7</span>Fate of the Universe</button>
+    </div>
+  </div>
+
+  <div class="learn-breadcrumb">
+    <a href="learn-hub.html">📚 Learn</a>
+    <span>›</span>
+    <span>Cosmology</span>
+  </div>
+
+  <div class="learn-layout">
+    <!-- Sidebar -->
+    <aside class="learn-sidebar">
+      <div class="learn-sidebar-title">Contents</div>
+
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 1 — Big Bang</div>
+        <span class="learn-nav-link" onclick="openLesson('l1-1')">What is the Big Bang?</span>
+        <span class="learn-nav-link" onclick="openLesson('l1-2')">Timeline of the Early Universe</span>
+        <span class="learn-nav-link" onclick="openLesson('l1-3')">Evidence for the Big Bang</span>
+      </div>
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 2 — Expanding Universe</div>
+        <span class="learn-nav-link" onclick="openLesson('l2-1')">Hubble's Discovery</span>
+        <span class="learn-nav-link" onclick="openLesson('l2-2')">Redshift & Blueshift</span>
+        <span class="learn-nav-link" onclick="openLesson('l2-3')">Hubble's Law</span>
+      </div>
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 3 — CMB</div>
+        <span class="learn-nav-link" onclick="openLesson('l3-1')">What is the CMB?</span>
+        <span class="learn-nav-link" onclick="openLesson('l3-2')">Temperature Fluctuations</span>
+      </div>
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 4 — Dark Matter</div>
+        <span class="learn-nav-link" onclick="openLesson('l4-1')">What is Dark Matter?</span>
+        <span class="learn-nav-link" onclick="openLesson('l4-2')">Evidence & Candidates</span>
+      </div>
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 5 — Dark Energy</div>
+        <span class="learn-nav-link" onclick="openLesson('l5-1')">Accelerating Expansion</span>
+        <span class="learn-nav-link" onclick="openLesson('l5-2')">Cosmological Constant</span>
+      </div>
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 6 — Structure</div>
+        <span class="learn-nav-link" onclick="openLesson('l6-1')">Cosmic Web</span>
+        <span class="learn-nav-link" onclick="openLesson('l6-2')">Galaxy Clusters & Voids</span>
+      </div>
+      <div class="learn-nav-unit">
+        <div class="learn-nav-unit-title">Unit 7 — Fate</div>
+        <span class="learn-nav-link" onclick="openLesson('l7-1')">Possible Fates</span>
+        <span class="learn-nav-link" onclick="openLesson('l7-2')">Heat Death & Big Rip</span>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="learn-main">
+
+      <!-- UNIT 1 -->
+      <div class="learn-unit" id="unit1">
+        <div class="unit-header">
+          <span class="unit-icon">💥</span>
+          <div>
+            <div class="unit-number">Unit 1</div>
+            <div class="unit-title">The Big Bang Theory</div>
+            <div class="unit-desc">How the universe began from an incredibly hot, dense state and expanded into everything we see today.</div>
+          </div>
+        </div>
+
+        <!-- Lesson 1.1 -->
+        <div class="lesson-card open" id="l1-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">What is the Big Bang?</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The Big Bang is the prevailing cosmological model explaining how the universe began approximately 13.8 billion years ago from an extremely hot and dense singular state, and has been expanding ever since.</div>
+            <div class="lesson-section">
+              <h4>The Singular Beginning</h4>
+              <p>Contrary to popular belief, the Big Bang was not an explosion <em>in</em> space — it was an expansion <em>of</em> space itself. All matter, energy, space, and even time originated from this event. There was no "before" the Big Bang because time itself began with it.</p>
+              <p>At the moment of the Big Bang, the entire observable universe was compressed into a region far smaller than an atomic nucleus, at temperatures exceeding <strong>10³² Kelvin (10 trillion trillion trillion degrees)</strong>. Under these extreme conditions, the four fundamental forces — gravity, electromagnetism, the strong nuclear force, and the weak nuclear force — were unified into a single superforce.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">⚡ Key Fact</div>
+              <p>The Big Bang occurred approximately <strong>13.787 ± 0.020 billion years ago</strong>, according to measurements of the cosmic microwave background radiation by the Planck satellite (2018).</p>
+            </div>
+            <div class="lesson-section">
+              <h4>What Caused the Big Bang?</h4>
+              <p>This remains one of science's deepest open questions. Our current physics — including Einstein's General Relativity — breaks down at the singularity. Some theories propose that the Big Bang was a quantum fluctuation in a pre-existing vacuum, others suggest it emerged from a previous contracting universe (the "Big Bounce"), and still others invoke concepts from string theory or loop quantum cosmology. We simply do not yet have the physics tools to describe the very first instant.</p>
+            </div>
+            <div class="key-points">
+              <div class="key-point"><span class="key-point-icon">🕐</span><div class="key-point-text"><strong>Age</strong>13.787 billion years ago</div></div>
+              <div class="key-point"><span class="key-point-icon">🔥</span><div class="key-point-text"><strong>Initial Temperature</strong>~10³² K (Planck temperature)</div></div>
+              <div class="key-point"><span class="key-point-icon">📐</span><div class="key-point-text"><strong>Initial Size</strong>Smaller than a proton</div></div>
+              <div class="key-point"><span class="key-point-icon">🌌</span><div class="key-point-text"><strong>Result</strong>All matter, energy, space, and time</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lesson 1.2 -->
+        <div class="lesson-card" id="l1-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">Timeline of the Early Universe</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The first few minutes after the Big Bang were extraordinarily eventful. In rapid succession, the universe went from an unimaginably hot plasma to a place where atoms could finally form.</div>
+            <div class="lesson-section">
+              <h4>Planck Epoch (0 to 10⁻⁴³ seconds)</h4>
+              <p>The very first instant of the universe, where all four fundamental forces were unified. Our current physics cannot describe this era. The universe had Planck-scale temperature and density.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Inflationary Epoch (10⁻³⁶ to 10⁻³² seconds)</h4>
+              <p><strong>Cosmic inflation</strong> is one of the most important concepts in modern cosmology. The universe expanded exponentially — doubling in size at least 60 times in a tiny fraction of a second. This rapid expansion explains why the universe appears flat and why the cosmic microwave background radiation is so uniform across the sky (the "horizon problem").</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Quark-Gluon Plasma (10⁻³² to 10⁻⁶ seconds)</h4>
+              <p>Quarks and gluons existed freely in an exotic hot plasma. As the universe cooled, quarks combined into protons and neutrons — the building blocks of atomic nuclei. This process is called <strong>hadronization</strong>.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Big Bang Nucleosynthesis (3 minutes to 20 minutes)</h4>
+              <p>In the first three minutes, the universe cooled enough for protons and neutrons to fuse into simple atomic nuclei — primarily hydrogen (75%) and helium-4 (25%), with trace amounts of lithium and deuterium. This process is called <strong>Big Bang Nucleosynthesis (BBN)</strong>, and the predicted abundances precisely match what astronomers observe in the oldest stars today.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Recombination (380,000 years)</h4>
+              <p>For the first 380,000 years, the universe was so hot that electrons couldn't bind to nuclei — photons bounced around in an opaque plasma. When the temperature dropped to about 3,000 K, electrons combined with nuclei to form neutral atoms. The universe became <strong>transparent</strong> for the first time, and the photons that were released at this moment are what we detect today as the Cosmic Microwave Background.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">🔬 Science Detail</div>
+              <p>The universe was fully opaque for its first 380,000 years — we literally cannot see further back than recombination using light. Gravitational waves and neutrinos could theoretically let us peer closer to the Big Bang itself.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lesson 1.3 -->
+        <div class="lesson-card" id="l1-3">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">3</div>
+            <div class="lesson-title">Evidence for the Big Bang</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The Big Bang is not just a hypothesis — it is supported by multiple independent lines of evidence that fit together with remarkable precision.</div>
+            <div class="lesson-section">
+              <h4>1. The Expanding Universe</h4>
+              <p>Edwin Hubble's 1929 discovery that galaxies are moving away from us, with more distant galaxies receding faster, directly implies the universe was once much smaller and denser. Running the expansion backward leads to a single origin point — the Big Bang.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>2. Cosmic Microwave Background (CMB)</h4>
+              <p>In 1965, Arno Penzias and Robert Wilson discovered a faint, uniform glow of microwave radiation coming from all directions in the sky. This is the afterglow of the Big Bang's fireball — photons from recombination stretched to microwave wavelengths by the expansion of space. Its nearly perfect blackbody spectrum and the precise temperature of <strong>2.725 K</strong> match Big Bang predictions exactly.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>3. Primordial Element Abundances</h4>
+              <p>Big Bang Nucleosynthesis predicts that the universe should be roughly 75% hydrogen and 25% helium by mass, with trace amounts of deuterium and lithium. Observations of the oldest, most pristine stars confirm this ratio with stunning accuracy — it cannot be explained by stellar nucleosynthesis alone.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>4. Large-Scale Structure</h4>
+              <p>The tiny quantum fluctuations during inflation left imprints on the CMB that seeded the formation of galaxies and galaxy clusters. Computer simulations starting from these initial conditions produce a universe that looks remarkably like the one we observe.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNIT 2 -->
+      <div class="learn-unit" id="unit2">
+        <div class="unit-header">
+          <span class="unit-icon">🔭</span>
+          <div>
+            <div class="unit-number">Unit 2</div>
+            <div class="unit-title">The Expanding Universe</div>
+            <div class="unit-desc">Discovering that the universe is not static but constantly expanding — and what that tells us about its history and future.</div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l2-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">Hubble's Discovery</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">In 1929, Edwin Hubble made one of the most profound discoveries in scientific history: galaxies are moving away from us, and the farther they are, the faster they recede.</div>
+            <div class="lesson-section">
+              <h4>The Great Debate</h4>
+              <p>Before Hubble, astronomers debated whether the "spiral nebulae" they observed were part of the Milky Way or distant "island universes." Hubble settled this by measuring the distance to the Andromeda nebula using <strong>Cepheid variable stars</strong> as "standard candles" — stars whose intrinsic brightness is known, so their distance can be inferred from how dim they appear.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>The Velocity-Distance Relationship</h4>
+              <p>Hubble found that galaxies' recession velocities were proportional to their distances — a relationship now called <strong>Hubble's Law</strong>. This was shocking: space itself is expanding. Galaxies aren't flying through space; the space between them is stretching. An analogy is raisins in rising bread — each raisin sees all others moving away, and more distant raisins move away faster.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">🏆 Nobel Prize</div>
+              <p>Ironically, Hubble never received a Nobel Prize (the Nobel committee didn't recognize astronomy during his lifetime). Penzias and Wilson won the 1978 Nobel for discovering the CMB. The 2011 Nobel went to Perlmutter, Schmidt, and Riess for discovering the universe's accelerating expansion.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l2-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">Redshift & Blueshift</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The Doppler effect applies to light just as it does to sound — the frequency of light shifts depending on whether the source is moving toward or away from us.</div>
+            <div class="lesson-section">
+              <h4>How Redshift Works</h4>
+              <p>When a light source moves away from an observer, the light waves are stretched — the wavelength increases, shifting toward the red end of the spectrum. This is called <strong>redshift</strong>. Conversely, when a source approaches, light waves are compressed, shifting toward the blue end — <strong>blueshift</strong>.</p>
+              <p>Astronomers measure redshift by looking at <strong>spectral absorption lines</strong> — dark lines in a star's spectrum corresponding to specific elements. When these lines are shifted from their known laboratory positions, it reveals the object's velocity relative to us.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Cosmological Redshift</h4>
+              <p>For very distant galaxies, the redshift is not just a Doppler effect — it's caused by the expansion of space itself stretching the wavelength of light as it travels. The most distant objects we observe have redshifts (denoted <strong>z</strong>) of over 13 — meaning the universe has expanded to more than 14 times its size since that light was emitted.</p>
+            </div>
+            <div class="key-points">
+              <div class="key-point"><span class="key-point-icon">🔴</span><div class="key-point-text"><strong>Redshift (z > 0)</strong>Object moving away or space expanding</div></div>
+              <div class="key-point"><span class="key-point-icon">🔵</span><div class="key-point-text"><strong>Blueshift (z &lt; 0)</strong>Object approaching (e.g., Andromeda galaxy)</div></div>
+              <div class="key-point"><span class="key-point-icon">📏</span><div class="key-point-text"><strong>CMB Redshift</strong>z ≈ 1100 (from recombination era)</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l2-3">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">3</div>
+            <div class="lesson-title">Hubble's Law & the Hubble Constant</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">Hubble's Law states: v = H₀ × d — the recession velocity of a galaxy is proportional to its distance. The proportionality constant H₀ (the Hubble constant) describes the current rate of expansion.</div>
+            <div class="lesson-section">
+              <h4>The Hubble Tension</h4>
+              <p>One of the most pressing problems in modern cosmology is the <strong>"Hubble tension"</strong> — a discrepancy between two different ways of measuring H₀. Measurements from the early universe (CMB) give H₀ ≈ 67.4 km/s/Mpc, while direct measurements of nearby supernovae give H₀ ≈ 73 km/s/Mpc. This 5–sigma tension may point to new physics beyond the standard cosmological model.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Age of the Universe from H₀</h4>
+              <p>The Hubble constant gives us a rough estimate of the universe's age: the "Hubble time" (1/H₀) is about 13.8 billion years — remarkably close to the age derived from other methods, a great consistency check of the Big Bang model.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNIT 3 -->
+      <div class="learn-unit" id="unit3">
+        <div class="unit-header">
+          <span class="unit-icon">📡</span>
+          <div>
+            <div class="unit-number">Unit 3</div>
+            <div class="unit-title">Cosmic Microwave Background</div>
+            <div class="unit-desc">The ancient light from the Big Bang's afterglow — our most powerful window into the early universe.</div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l3-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">What is the CMB?</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The Cosmic Microwave Background (CMB) is the thermal radiation left over from the recombination epoch, 380,000 years after the Big Bang. It is the oldest light we can observe — a snapshot of the universe in its infancy.</div>
+            <div class="lesson-section">
+              <h4>Discovery</h4>
+              <p>In 1965, Arno Penzias and Robert Wilson at Bell Labs were trying to eliminate noise from a microwave antenna when they found a persistent, uniform background signal coming from all directions. This was the CMB — the faint afterglow of the Big Bang, as predicted by George Gamow and colleagues in the 1940s.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Properties</h4>
+              <p>The CMB is extraordinarily uniform — its temperature is <strong>2.72548 ± 0.00057 K</strong> in all directions. It follows a nearly perfect blackbody spectrum, confirming the universe was in thermal equilibrium in its early hot state. The tiny temperature fluctuations (about 1 part in 100,000) encode the seeds of all large-scale structure — galaxies, clusters, and cosmic voids.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">📻 Fun Fact</div>
+              <p>About 1% of the static "snow" you used to see on analog TV screens was actually caused by CMB photons hitting the antenna. You were literally watching the afterglow of the Big Bang.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l3-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">Temperature Fluctuations & What They Tell Us</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The tiny temperature variations in the CMB (just millionths of a degree) are among the most scientifically valuable data in all of cosmology. They encode precise information about the universe's geometry, composition, and history.</div>
+            <div class="lesson-section">
+              <h4>Angular Power Spectrum</h4>
+              <p>Cosmologists analyze the CMB by computing the "power spectrum" — how much variation exists at different angular scales. The peaks in this spectrum correspond to <strong>acoustic oscillations</strong>: pressure waves in the primordial plasma that were frozen in at recombination. The position and height of these peaks precisely constrain the universe's composition (normal matter, dark matter, dark energy), geometry (flat vs. curved), and expansion rate.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>CMB Satellites</h4>
+              <p>Three landmark missions have mapped the CMB with increasing precision: <strong>COBE</strong> (1989) made the first detection of CMB anisotropies, winning the 2006 Nobel Prize. <strong>WMAP</strong> (2001-2010) produced high-resolution maps that established the standard cosmological model (ΛCDM). <strong>Planck</strong> (2009-2013) provided the most precise measurements yet, determining the universe is 13.787 billion years old with less than 0.2% uncertainty.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNIT 4 -->
+      <div class="learn-unit" id="unit4">
+        <div class="unit-header">
+          <span class="unit-icon">🌑</span>
+          <div>
+            <div class="unit-number">Unit 4</div>
+            <div class="unit-title">Dark Matter</div>
+            <div class="unit-desc">The invisible substance that makes up 27% of the universe — detectable only through its gravitational effects.</div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l4-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">What is Dark Matter?</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">Dark matter is a form of matter that does not interact with the electromagnetic force — it does not absorb, emit, or reflect light. Yet it accounts for about 27% of the universe's total energy content and plays a crucial role in the formation of galaxies and large-scale structure.</div>
+            <div class="lesson-section">
+              <h4>The First Clue: Galaxy Rotation Curves</h4>
+              <p>In the 1970s, astronomer Vera Rubin (and Fritz Zwicky before her) found that stars in the outer regions of galaxies orbit much faster than Newton's laws predict based on the visible mass alone. Instead of slowing down at larger radii (as planets do around the Sun), galaxy rotation curves are <strong>flat</strong>. The only explanation: a vast halo of invisible mass surrounding every galaxy.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>What We Know</h4>
+              <p>Dark matter must be: <strong>cold</strong> (moving slowly compared to light), <strong>collisionless</strong> (dark matter particles pass through each other and normal matter without interacting), <strong>non-baryonic</strong> (not made of protons and neutrons), and gravitationally attractive. It clusters in "halos" around galaxies and is essential for the formation of large-scale cosmic structure.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">🌌 Composition of the Universe</div>
+              <p><strong>Normal (baryonic) matter: ~5%</strong> — everything you can see: stars, planets, gas, dust.<br/><strong>Dark matter: ~27%</strong> — invisible but gravitationally active.<br/><strong>Dark energy: ~68%</strong> — driving the accelerating expansion.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l4-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">Evidence & Candidates</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">Multiple independent lines of evidence point to dark matter's existence, and physicists have proposed numerous candidates for what it might be.</div>
+            <div class="lesson-section">
+              <h4>Key Evidence</h4>
+              <p><strong>Gravitational lensing:</strong> Massive objects bend light. The amount of bending from galaxy clusters requires far more mass than visible matter provides. The famous <strong>Bullet Cluster</strong> shows two clusters that collided — the hot gas (visible in X-rays) was slowed by collisions, but the dark matter (mapped by lensing) passed through unaffected, proving dark matter and normal matter can be separated.</p>
+              <p><strong>CMB fluctuations:</strong> The precise pattern of CMB peaks requires non-baryonic dark matter to amplify density fluctuations and form structure at the right rate.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Leading Candidates</h4>
+              <p><strong>WIMPs (Weakly Interacting Massive Particles):</strong> Hypothetical particles predicted by supersymmetry, with masses 10–1000 times that of a proton. They interact via gravity and the weak force only. Experiments like LUX, XENON, and PandaX have searched for WIMPs but found nothing yet — pushing the allowed parameter space to smaller and smaller regions.</p>
+              <p><strong>Axions:</strong> Very light particles originally proposed to solve a problem in particle physics (the strong CP problem). Experiments like ADMX search for axions by looking for their conversion to photons in strong magnetic fields.</p>
+              <p><strong>Primordial Black Holes:</strong> Black holes formed in the early universe before any stars existed. The LIGO gravitational wave detections reignited interest in this idea.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNIT 5 -->
+      <div class="learn-unit" id="unit5">
+        <div class="unit-header">
+          <span class="unit-icon">⚡</span>
+          <div>
+            <div class="unit-number">Unit 5</div>
+            <div class="unit-title">Dark Energy</div>
+            <div class="unit-desc">The mysterious force driving the accelerating expansion of the universe — the biggest unsolved problem in physics.</div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l5-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">The Accelerating Expansion</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">In 1998, two independent teams of astronomers studying Type Ia supernovae made a shocking discovery: the expansion of the universe is not slowing down — it is speeding up. This earned Saul Perlmutter, Brian Schmidt, and Adam Riess the 2011 Nobel Prize in Physics.</div>
+            <div class="lesson-section">
+              <h4>Type Ia Supernovae as Standard Candles</h4>
+              <p>When a white dwarf star accretes enough mass from a companion star to exceed the Chandrasekhar limit (~1.4 solar masses), it explodes in a Type Ia supernova with nearly identical intrinsic brightness. This makes them "standard candles" — by measuring how bright they appear, we can calculate their distance precisely.</p>
+              <p>Both teams found that distant supernovae were <strong>dimmer than expected</strong> — they were farther away than a decelerating universe would predict. The expansion of space is not just continuing, it is <strong>accelerating</strong>.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">🌌 Scale of the Problem</div>
+              <p>Dark energy constitutes ~68% of the total energy content of the universe, yet we have almost no idea what it is. The vacuum energy predicted by quantum field theory is 10¹²⁰ times larger than what we observe — this discrepancy is called the "worst prediction in physics."</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l5-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">The Cosmological Constant & Alternatives</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The simplest description of dark energy is Einstein's cosmological constant (Λ) — a constant energy density filling space uniformly. But alternatives exist, and distinguishing between them is one of the central goals of modern cosmology.</div>
+            <div class="lesson-section">
+              <h4>Einstein's "Greatest Blunder"</h4>
+              <p>In 1917, Einstein introduced the cosmological constant into his equations of General Relativity to allow for a static universe (since Hubble's discovery was still 12 years away). When Hubble showed the universe was expanding, Einstein reportedly called Λ his "greatest blunder." The irony: Λ was later resurrected to explain dark energy, and it perfectly fits the data.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Quintessence & Other Models</h4>
+              <p><strong>Quintessence</strong> proposes dark energy is a dynamic scalar field that changes over time and space (unlike Λ which is constant). If dark energy evolves, the expansion history of the universe would differ from the cosmological constant prediction. The <strong>DESI experiment</strong> (2024) found tantalizing hints that dark energy may not be constant — potentially the first sign of new physics beyond ΛCDM.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNIT 6 -->
+      <div class="learn-unit" id="unit6">
+        <div class="unit-header">
+          <span class="unit-icon">🕸️</span>
+          <div>
+            <div class="unit-number">Unit 6</div>
+            <div class="unit-title">Large-Scale Structure of the Universe</div>
+            <div class="unit-desc">The universe is not uniform — matter is arranged in a vast cosmic web of filaments, clusters, and voids.</div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l6-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">The Cosmic Web</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">When you zoom out to scales of hundreds of millions of light-years, the universe reveals a breathtaking structure: a cosmic web of filaments, sheets, and nodes separated by vast empty voids.</div>
+            <div class="lesson-section">
+              <h4>How the Web Formed</h4>
+              <p>The cosmic web grew from tiny density fluctuations imprinted during inflation. Regions slightly denser than average attracted more matter via gravity, while less-dense regions emptied out. Over billions of years, this runaway process organized matter into the filamentary structures we see today. Dark matter played the crucial role of providing the gravitational scaffold — normal matter fell into the dark matter halos.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Mapping the Web</h4>
+              <p>Galaxy surveys like the <strong>Sloan Digital Sky Survey (SDSS)</strong>, <strong>2dF Galaxy Redshift Survey</strong>, and <strong>DESI</strong> have mapped millions of galaxies in three dimensions, revealing the cosmic web in stunning detail. The patterns match computer simulations (like the Millennium Simulation and IllustrisTNG) with remarkable precision.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l6-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">Galaxy Clusters, Filaments & Voids</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The cosmic web has three main structural components: dense clusters at intersections, filaments connecting them, and vast empty voids in between.</div>
+            <div class="lesson-section">
+              <h4>Galaxy Clusters</h4>
+              <p>The largest gravitationally bound structures in the universe, containing hundreds to thousands of galaxies. The <strong>Virgo Cluster</strong> (the nearest large cluster, ~54 Mly away) contains about 1,300 galaxies and has a total mass of about 10¹⁵ solar masses. Galaxy clusters are surrounded by hot X-ray emitting gas (the intracluster medium) and vast halos of dark matter.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Cosmic Voids</h4>
+              <p>Cosmic voids are enormous underdense regions, typically 100–300 million light-years across, containing very few galaxies. The <strong>Boötes Void</strong> is one of the largest known, spanning ~330 million light-years. Voids are scientifically valuable — they provide clean tests of gravity and dark energy since their growth rate depends on the expansion history of the universe.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">📊 By the Numbers</div>
+              <p>The observable universe contains approximately <strong>2 trillion galaxies</strong>, organized into ~10 million galaxy clusters, connected by filaments spanning hundreds of millions of light-years, surrounding voids that fill most of cosmic volume.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UNIT 7 -->
+      <div class="learn-unit" id="unit7">
+        <div class="unit-header">
+          <span class="unit-icon">♾️</span>
+          <div>
+            <div class="unit-number">Unit 7</div>
+            <div class="unit-title">The Fate of the Universe</div>
+            <div class="unit-desc">What happens at the very end? The ultimate destiny of the cosmos depends on the properties of dark energy.</div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l7-1">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">1</div>
+            <div class="lesson-title">Possible Fates</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">The ultimate fate of the universe depends on the nature and evolution of dark energy, and whether the universe's expansion continues, slows, or reverses.</div>
+            <div class="lesson-section">
+              <h4>Big Freeze (Heat Death)</h4>
+              <p>The most likely scenario given current data. If dark energy remains constant (Λ), the universe will expand forever, with galaxies accelerating away from each other until they disappear beyond the cosmic horizon. Stars will burn out over the next 10¹⁴ years. Black holes will eventually evaporate via Hawking radiation over ~10⁶⁷–10¹⁰⁰ years. The universe approaches maximum entropy — a cold, dark, near-uniform state with no possibility of further energy exchange.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Big Rip</h4>
+              <p>If dark energy increases in strength over time (a "phantom" equation of state), the expansion would accelerate without limit. Eventually, dark energy would overcome even the atomic forces binding matter together. First galaxy clusters would be torn apart, then galaxies, then solar systems, then planets, then atoms themselves — all in the final fraction of a second before the Big Rip. This could occur in ~20 billion years.</p>
+            </div>
+            <div class="lesson-section">
+              <h4>Big Crunch</h4>
+              <p>If dark energy decreases and gravity wins, the expansion could eventually halt and reverse — leading to a collapsing universe that ends in a singularity mirroring the Big Bang. The Big Crunch is currently disfavored by observations.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-card" id="l7-2">
+          <div class="lesson-header" onclick="toggleLesson(this)">
+            <div class="lesson-num">2</div>
+            <div class="lesson-title">Heat Death, Proton Decay & the Far Future</div>
+            <div class="lesson-toggle">+</div>
+          </div>
+          <div class="lesson-body">
+            <div class="lesson-intro">If the universe expands forever toward heat death, the timeline of its future makes the past 13.8 billion years look like a brief prologue.</div>
+            <div class="lesson-section">
+              <h4>The Far Future Timeline</h4>
+              <p><strong>10¹⁴ years:</strong> Last stars burn out. The universe enters the "Degenerate Era," populated only by brown dwarfs, white dwarfs, neutron stars, and black holes.<br/>
+              <strong>10¹⁵ years:</strong> Brown dwarfs fade. Collisions between stellar remnants occasionally reignite fusion briefly.<br/>
+              <strong>10²³ years:</strong> Galaxy clusters dissolve as gravitational interactions eject stars. Even bound structures disintegrate.<br/>
+              <strong>10³⁶–10⁴⁰ years:</strong> If protons decay (predicted by some theories), all remaining matter dissolves into radiation and leptons.<br/>
+              <strong>10⁶⁷–10¹⁰⁰ years:</strong> Black holes evaporate via Hawking radiation, releasing their mass as photons.<br/>
+              <strong>Beyond 10¹⁰⁰ years:</strong> The universe reaches maximum entropy — nothing more can happen. Absolute cold darkness.</p>
+            </div>
+            <div class="fact-box">
+              <div class="fact-box-label">🤯 Perspective</div>
+              <p>The time until the last black hole evaporates (10¹⁰⁰ years) compared to the current age of the universe (10¹⁰ years) is like comparing the entire universe's current age to a single Planck time (10⁻⁴³ seconds). The "stellar era" we live in is an extraordinarily brief spark in cosmic time.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-logo">Orbit<span>Watch</span></div>
+    <div class="footer-links">
+      <a href="../index.html">Home</a>
+      <a href="tracker.html">Tracker</a>
+      <a href="database.html">Database</a>
+      <a href="chat.html">AI Chat</a>
+      <a href="learn-hub.html">Learn</a>
+    </div>
+    <div class="footer-copy">© 2025 OrbitWatch · Built for space curiosity</div>
+  </div>
+</footer>
+
+<script>
+function toggleLesson(header) {
+  const card = header.closest('.lesson-card');
+  card.classList.toggle('open');
+}
+function openLesson(id) {
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('open'); el.scrollIntoView({behavior:'smooth',block:'start'}); }
+}
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.getElementById('mobileMenuBtn')?.addEventListener('click',()=>document.getElementById('mobileNav')?.classList.toggle('open'));
+
+// Sidebar active link on scroll
+const units = document.querySelectorAll('.learn-unit, .lesson-card');
+const navLinks = document.querySelectorAll('.learn-nav-link');
+window.addEventListener('scroll', () => {
+  let current = '';
+  units.forEach(u => {
+    if (u.getBoundingClientRect().top < 120) current = u.id;
+  });
+  navLinks.forEach(l => {
+    l.classList.remove('active');
+    if (l.getAttribute('onclick')?.includes(current)) l.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
