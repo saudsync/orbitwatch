@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Famous Galaxies — OrbitWatch</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ── Galaxies Page Styles ── */
+.galaxies-hero {
+  background: #020610;
+  padding: 120px 24px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(150,100,255,0.15);
+  min-height: 480px;
+  display: flex; align-items: center; justify-content: center;
+}
+.galaxies-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 100% at 50% 50%, rgba(80,40,200,.08) 0%, transparent 60%),
+    radial-gradient(circle 250px at 15% 60%, rgba(200,80,255,.05) 0%, transparent 55%),
+    radial-gradient(circle 200px at 85% 40%, rgba(0,200,255,.04) 0%, transparent 55%);
+  pointer-events: none;
+}
+/* Particle nebula background */
+.nebula-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.nb-particle {
+  position: absolute; border-radius: 50%;
+  animation: nbFloat var(--dur,8s) ease-in-out infinite var(--delay,0s);
+}
+@keyframes nbFloat {
+  0%,100%{transform:translateY(0) scale(1);opacity:var(--opa,.3)}
+  50%{transform:translateY(-20px) scale(1.3);opacity:calc(var(--opa,.3)*1.5)}
+}
+
+.galaxies-hero-inner { position: relative; z-index: 2; }
+.galaxies-hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(150,100,255,.1); border: 1px solid rgba(150,100,255,.25);
+  border-radius: 20px; padding: 6px 18px; font-size: 11px; color: #bb88ff;
+  letter-spacing: 1px; margin-bottom: 24px; font-family: var(--font-mono);
+}
+.galaxies-hero h1 {
+  font-family: var(--font-display); font-size: clamp(36px,7vw,68px);
+  font-weight: 800; color: #e8f4ff; line-height: 1.05;
+  margin-bottom: 18px; letter-spacing: -1px;
+}
+.galaxies-hero h1 span { color: #bb88ff; }
+.galaxies-hero p {
+  color: rgba(200,180,255,.6); font-size: 15px;
+  max-width: 560px; margin: 0 auto 40px; line-height: 1.85;
+}
+
+/* Galaxy type pills */
+.galaxy-types {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 10px;
+}
+.galaxy-type-pill {
+  background: rgba(255,255,255,.03); border: 1px solid rgba(150,100,255,.2);
+  border-radius: 30px; padding: 8px 18px; font-size: 11px;
+  color: rgba(200,180,255,.7); font-family: var(--font-mono); letter-spacing: 1px;
+  transition: all .2s;
+}
+.galaxy-type-pill:hover { background: rgba(150,100,255,.1); border-color: rgba(150,100,255,.4); color: #cc99ff; }
+
+/* Page */
+.page-dark { background: #040c1c; min-height: 100vh; }
+.page-container { max-width: 1200px; margin: 0 auto; padding: 60px 24px 80px; }
+.section-title-light { font-family: var(--font-display); font-size: clamp(22px,4vw,36px); font-weight: 800; color: #e8f4ff; margin-bottom: 8px; }
+.section-sub-light { color: rgba(200,180,255,.5); font-size: 13px; margin-bottom: 40px; line-height: 1.7; }
+
+/* Galaxy Cards */
+.galaxy-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px,1fr)); gap: 24px; margin-bottom: 70px; }
+@media(max-width:780px){.galaxy-cards-grid{grid-template-columns:1fr}}
+
+.galaxy-card {
+  background: linear-gradient(140deg, #060d1c 0%, #090f22 100%);
+  border: 1px solid rgba(100,80,200,.15); border-radius: 18px;
+  overflow: hidden; transition: transform .3s, border-color .3s, box-shadow .3s;
+}
+.galaxy-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--gc-border, rgba(150,100,255,.3));
+  box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 50px var(--gc-glow, rgba(150,100,255,.06));
+}
+
+.galaxy-card-visual {
+  height: 140px; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.galaxy-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.galaxy-type-chip {
+  position: absolute; top: 12px; right: 12px;
+  font-size: 9px; font-family: var(--font-mono); letter-spacing: 1.5px;
+  padding: 4px 10px; border-radius: 6px; text-transform: uppercase; z-index: 3;
+}
+.galaxy-emoji-overlay {
+  font-size: 64px; position: relative; z-index: 2;
+  filter: drop-shadow(0 0 30px var(--gc-color, rgba(150,100,255,.5)));
+  animation: slowPulse 4s ease-in-out infinite;
+}
+@keyframes slowPulse { 0%,100%{filter:drop-shadow(0 0 20px var(--gc-color,rgba(150,100,255,.4)))} 50%{filter:drop-shadow(0 0 40px var(--gc-color,rgba(150,100,255,.7)))} }
+
+.galaxy-card-content { padding: 22px 24px 24px; }
+.galaxy-constellation { font-size: 10px; color: rgba(200,180,255,.35); font-family: var(--font-mono); letter-spacing: 1.5px; margin-bottom: 6px; text-transform: uppercase; }
+.galaxy-name { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: #e8f4ff; line-height: 1.1; margin-bottom: 6px; }
+.galaxy-also-known { font-size: 11px; color: rgba(200,180,255,.4); font-family: var(--font-mono); margin-bottom: 14px; }
+.galaxy-desc { font-size: 12px; color: rgba(180,170,220,.65); line-height: 1.85; margin-bottom: 18px; }
+
+.galaxy-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.g-stat { background: rgba(255,255,255,.025); border: 1px solid rgba(100,80,200,.12); border-radius: 7px; padding: 9px 11px; }
+.g-stat-label { font-size: 9px; color: rgba(180,160,220,.35); font-family: var(--font-mono); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 3px; }
+.g-stat-value { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: #e8f4ff; }
+
+.galaxy-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.galaxy-tag {
+  font-size: 10px; padding: 4px 10px; border-radius: 6px;
+  font-family: var(--font-mono); color: rgba(200,180,255,.6);
+  background: rgba(150,100,255,.08); border: 1px solid rgba(150,100,255,.12);
+}
+
+/* Galaxy Clusters section */
+.clusters-section { margin-bottom: 70px; }
+.clusters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; }
+.cluster-card {
+  background: rgba(255,255,255,.025); border: 1px solid rgba(100,80,200,.12);
+  border-radius: 12px; padding: 20px;
+  transition: border-color .2s, background .2s;
+}
+.cluster-card:hover { border-color: rgba(150,100,255,.3); background: rgba(150,100,255,.04); }
+.cluster-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.cluster-icon { font-size: 28px; }
+.cluster-name { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: #e8f4ff; }
+.cluster-type { font-size: 10px; color: rgba(200,180,255,.4); font-family: var(--font-mono); }
+.cluster-desc { font-size: 12px; color: rgba(180,170,220,.6); line-height: 1.75; }
+.cluster-stat { margin-top: 12px; font-size: 11px; color: rgba(180,160,220,.5); font-family: var(--font-mono); }
+.cluster-stat strong { color: #bb88ff; }
+
+/* Scale timeline */
+.scale-section { margin-bottom: 70px; }
+.scale-steps { display: flex; flex-direction: column; gap: 1px; border-radius: 14px; overflow: hidden; }
+.scale-step {
+  display: flex; align-items: center; gap: 20px; padding: 16px 22px;
+  background: rgba(255,255,255,.02); transition: background .2s;
+}
+.scale-step:hover { background: rgba(150,100,255,.05); }
+.scale-step-icon { font-size: 24px; flex-shrink: 0; width: 36px; text-align: center; }
+.scale-step-range { font-family: var(--font-mono); font-size: 11px; color: #bb88ff; min-width: 160px; flex-shrink: 0; }
+.scale-step-name { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #e8f4ff; margin-bottom: 2px; }
+.scale-step-desc { font-size: 11px; color: rgba(180,170,220,.55); line-height: 1.5; }
+.scale-step-bar {
+  flex: 1; height: 4px; border-radius: 2px; background: rgba(150,100,255,.15);
+  position: relative; overflow: hidden;
+}
+.scale-step-bar-fill {
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: linear-gradient(90deg, #7b61ff, #bb88ff);
+  border-radius: 2px;
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="logo"><span class="logo-dot"></span>Orbit<span class="logo-light">Watch</span></a>
+    <nav class="site-nav">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="tracker.html" class="nav-link">Tracker</a>
+      <a href="database.html" class="nav-link">Database</a>
+      <a href="chat.html" class="nav-link nav-ai">🤖 AI Chat</a>
+      <a href="learn-hub.html" class="nav-link active">📚 Learn</a>
+    </nav>
+    <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="tracker.html" class="nav-link">Tracker</a>
+    <a href="database.html" class="nav-link">Database</a>
+    <a href="chat.html" class="nav-link">🤖 AI Chat</a>
+    <a href="learn-hub.html" class="nav-link active">📚 Learn</a>
+  </div>
+</header>
+
+<section class="galaxies-hero">
+  <div class="nebula-particles" id="nebulaParticles"></div>
+  <div class="galaxies-hero-inner">
+    <div class="galaxies-hero-badge">🌌 EXTRAGALACTIC ASTRONOMY</div>
+    <h1>Famous <span>Galaxies</span><br/>of the Universe</h1>
+    <p>From our own Milky Way to the most distant galaxies ever observed — each one a universe of billions of suns, mysteries, and cosmic history.</p>
+    <div class="galaxy-types">
+      <div class="galaxy-type-pill">🌀 Spiral</div>
+      <div class="galaxy-type-pill">⬭ Elliptical</div>
+      <div class="galaxy-type-pill">🪩 Lenticular</div>
+      <div class="galaxy-type-pill">🪨 Irregular</div>
+      <div class="galaxy-type-pill">🔥 Starburst</div>
+      <div class="galaxy-type-pill">⚫ Active (AGN)</div>
+    </div>
+  </div>
+</section>
+
+<div class="page-dark">
+<div class="page-container">
+
+  <h2 class="section-title-light">The Most Famous Galaxies</h2>
+  <p class="section-sub-light">These iconic galaxies have shaped our understanding of the cosmos — from the structure of the universe to the existence of black holes, dark matter, and the speed of cosmic expansion.</p>
+
+  <div class="galaxy-cards-grid">
+
+    <!-- Milky Way -->
+    <div class="galaxy-card" style="--gc-border:rgba(180,150,255,.35);--gc-glow:rgba(150,100,255,.07)">
+      <div class="galaxy-card-visual" style="background:radial-gradient(ellipse 120% 60% at 50% 50%, rgba(80,50,160,.4) 0%, rgba(20,10,50,.8) 60%, #060d1c 100%)">
+        <div class="galaxy-emoji-overlay" style="--gc-color:rgba(150,100,255,.6)">🌌</div>
+        <div class="galaxy-type-chip" style="background:rgba(150,100,255,.15);color:#bb88ff;border:1px solid rgba(150,100,255,.25)">BARRED SPIRAL</div>
+      </div>
+      <div class="galaxy-card-content">
+        <div class="galaxy-constellation">SAGITTARIUS A* AT CENTER · LOCAL GROUP</div>
+        <div class="galaxy-name">Milky Way</div>
+        <div class="galaxy-also-known">Our home galaxy · NGC 0 (unnamed)</div>
+        <p class="galaxy-desc">The spiral galaxy we call home. A barred spiral containing 100–400 billion stars, including our Sun, located about 26,000 light-years from the galactic center where the supermassive black hole Sagittarius A* resides.</p>
+        <div class="galaxy-stats">
+          <div class="g-stat"><div class="g-stat-label">Diameter</div><div class="g-stat-value">~100,000 ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Stars</div><div class="g-stat-value">100–400 billion</div></div>
+          <div class="g-stat"><div class="g-stat-label">Type</div><div class="g-stat-value">SBbc Spiral</div></div>
+          <div class="g-stat"><div class="g-stat-label">Central BH</div><div class="g-stat-value">4M × Sun</div></div>
+        </div>
+        <div class="galaxy-tags">
+          <span class="galaxy-tag">🔭 Our Galaxy</span>
+          <span class="galaxy-tag">⚫ Sgr A* Black Hole</span>
+          <span class="galaxy-tag">🌀 Barred Spiral</span>
+          <span class="galaxy-tag">👥 Local Group</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Andromeda -->
+    <div class="galaxy-card" style="--gc-border:rgba(100,160,255,.3);--gc-glow:rgba(80,130,255,.06)">
+      <div class="galaxy-card-visual" style="background:radial-gradient(ellipse 140% 80% at 50% 50%, rgba(50,80,200,.3) 0%, rgba(10,20,60,.8) 60%, #060d1c 100%)">
+        <div class="galaxy-emoji-overlay" style="--gc-color:rgba(80,130,255,.6)">🌀</div>
+        <div class="galaxy-type-chip" style="background:rgba(80,130,255,.15);color:#88aaff;border:1px solid rgba(80,130,255,.25)">SPIRAL GALAXY</div>
+      </div>
+      <div class="galaxy-card-content">
+        <div class="galaxy-constellation">ANDROMEDA CONSTELLATION · LOCAL GROUP</div>
+        <div class="galaxy-name">Andromeda</div>
+        <div class="galaxy-also-known">M31 · NGC 224</div>
+        <p class="galaxy-desc">The nearest major galaxy to the Milky Way and the largest in the Local Group. On a collision course with our galaxy — the two will merge in approximately 4.5 billion years to form a new elliptical galaxy.</p>
+        <div class="galaxy-stats">
+          <div class="g-stat"><div class="g-stat-label">Distance</div><div class="g-stat-value">2.537M ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Diameter</div><div class="g-stat-value">220,000 ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Stars</div><div class="g-stat-value">~1 trillion</div></div>
+          <div class="g-stat"><div class="g-stat-label">Approach Speed</div><div class="g-stat-value">110 km/s</div></div>
+        </div>
+        <div class="galaxy-tags">
+          <span class="galaxy-tag">👁️ Naked Eye Visible</span>
+          <span class="galaxy-tag">💥 Future Merger</span>
+          <span class="galaxy-tag">👑 Largest in Local Group</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sombrero Galaxy -->
+    <div class="galaxy-card" style="--gc-border:rgba(200,160,80,.28);--gc-glow:rgba(200,160,80,.05)">
+      <div class="galaxy-card-visual" style="background:radial-gradient(ellipse 130% 50% at 50% 50%, rgba(100,70,30,.4) 0%, rgba(30,15,5,.8) 60%, #060d1c 100%)">
+        <div class="galaxy-emoji-overlay" style="--gc-color:rgba(200,160,80,.6)">🌠</div>
+        <div class="galaxy-type-chip" style="background:rgba(200,160,80,.15);color:#ddbb66;border:1px solid rgba(200,160,80,.25)">SA0/Sa SPIRAL</div>
+      </div>
+      <div class="galaxy-card-content">
+        <div class="galaxy-constellation">VIRGO CONSTELLATION · VIRGO CLUSTER</div>
+        <div class="galaxy-name">Sombrero Galaxy</div>
+        <div class="galaxy-also-known">M104 · NGC 4594</div>
+        <p class="galaxy-desc">Named for its striking resemblance to a wide-brimmed Mexican hat. Features a bright white bulge, a dark prominent dust lane, and an unusually massive central black hole — about a billion solar masses.</p>
+        <div class="galaxy-stats">
+          <div class="g-stat"><div class="g-stat-label">Distance</div><div class="g-stat-value">31.1M ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Diameter</div><div class="g-stat-value">50,000 ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Central BH</div><div class="g-stat-value">~1B × Sun</div></div>
+          <div class="g-stat"><div class="g-stat-label">Globular Clusters</div><div class="g-stat-value">~2,000</div></div>
+        </div>
+        <div class="galaxy-tags">
+          <span class="galaxy-tag">🎩 Hat-shaped Dust Lane</span>
+          <span class="galaxy-tag">⚫ Massive Black Hole</span>
+          <span class="galaxy-tag">📷 Hubble Favorite</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Whirlpool Galaxy -->
+    <div class="galaxy-card" style="--gc-border:rgba(100,200,150,.28);--gc-glow:rgba(80,200,130,.05)">
+      <div class="galaxy-card-visual" style="background:radial-gradient(ellipse 120% 80% at 50% 50%, rgba(30,100,60,.35) 0%, rgba(5,30,15,.8) 60%, #060d1c 100%)">
+        <div class="galaxy-emoji-overlay" style="--gc-color:rgba(80,200,130,.6)">🌀</div>
+        <div class="galaxy-type-chip" style="background:rgba(80,200,130,.12);color:#66cc99;border:1px solid rgba(80,200,130,.22)">GRAND DESIGN SPIRAL</div>
+      </div>
+      <div class="galaxy-card-content">
+        <div class="galaxy-constellation">CANES VENATICI · M51 GROUP</div>
+        <div class="galaxy-name">Whirlpool Galaxy</div>
+        <div class="galaxy-also-known">M51 · NGC 5194</div>
+        <p class="galaxy-desc">A textbook example of a grand design spiral galaxy, interacting gravitationally with its companion NGC 5195. This interaction triggers intense star formation. The first galaxy in which spiral structure was identified.</p>
+        <div class="galaxy-stats">
+          <div class="g-stat"><div class="g-stat-label">Distance</div><div class="g-stat-value">23.16M ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Diameter</div><div class="g-stat-value">76,000 ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Stars</div><div class="g-stat-value">~160 billion</div></div>
+          <div class="g-stat"><div class="g-stat-label">Companion</div><div class="g-stat-value">NGC 5195</div></div>
+        </div>
+        <div class="galaxy-tags">
+          <span class="galaxy-tag">🌀 Perfect Spiral Arms</span>
+          <span class="galaxy-tag">🤝 Interacting Pair</span>
+          <span class="galaxy-tag">⭐ High Star Formation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Triangulum Galaxy -->
+    <div class="galaxy-card" style="--gc-border:rgba(255,130,80,.28);--gc-glow:rgba(255,130,80,.04)">
+      <div class="galaxy-card-visual" style="background:radial-gradient(ellipse 120% 80% at 50% 50%, rgba(100,40,10,.35) 0%, rgba(30,10,5,.8) 60%, #060d1c 100%)">
+        <div class="galaxy-emoji-overlay" style="--gc-color:rgba(255,130,80,.5)">🔺</div>
+        <div class="galaxy-type-chip" style="background:rgba(255,130,80,.12);color:#ff9966;border:1px solid rgba(255,130,80,.22)">SPIRAL GALAXY</div>
+      </div>
+      <div class="galaxy-card-content">
+        <div class="galaxy-constellation">TRIANGULUM CONSTELLATION · LOCAL GROUP</div>
+        <div class="galaxy-name">Triangulum Galaxy</div>
+        <div class="galaxy-also-known">M33 · NGC 598</div>
+        <p class="galaxy-desc">The third-largest member of the Local Group. One of the most distant objects visible to the naked eye under perfect conditions. Contains NGC 604, one of the largest known star-forming nebulae — 1,500 light-years across.</p>
+        <div class="galaxy-stats">
+          <div class="g-stat"><div class="g-stat-label">Distance</div><div class="g-stat-value">2.73M ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Diameter</div><div class="g-stat-value">60,000 ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Stars</div><div class="g-stat-value">40 billion</div></div>
+          <div class="g-stat"><div class="g-stat-label">NGC 604</div><div class="g-stat-value">1,500 ly wide</div></div>
+        </div>
+        <div class="galaxy-tags">
+          <span class="galaxy-tag">👁️ Naked Eye (Barely)</span>
+          <span class="galaxy-tag">🌟 Giant H II Region</span>
+          <span class="galaxy-tag">👥 Local Group</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Centaurus A -->
+    <div class="galaxy-card" style="--gc-border:rgba(255,80,80,.28);--gc-glow:rgba(255,80,80,.04)">
+      <div class="galaxy-card-visual" style="background:radial-gradient(ellipse 120% 70% at 50% 50%, rgba(100,20,20,.4) 0%, rgba(30,5,5,.8) 60%, #060d1c 100%)">
+        <div class="galaxy-emoji-overlay" style="--gc-color:rgba(255,80,80,.6)">⚫</div>
+        <div class="galaxy-type-chip" style="background:rgba(255,80,80,.12);color:#ff6666;border:1px solid rgba(255,80,80,.22)">RADIO GALAXY</div>
+      </div>
+      <div class="galaxy-card-content">
+        <div class="galaxy-constellation">CENTAURUS CONSTELLATION · CENTAURUS GROUP</div>
+        <div class="galaxy-name">Centaurus A</div>
+        <div class="galaxy-also-known">NGC 5128 · Caldwell 77</div>
+        <p class="galaxy-desc">The closest radio galaxy and active galactic nucleus to Earth. Its supermassive black hole (55 million solar masses) launches powerful jets of plasma extending over a million light-years, making it one of the brightest radio sources in the sky.</p>
+        <div class="galaxy-stats">
+          <div class="g-stat"><div class="g-stat-label">Distance</div><div class="g-stat-value">13.7M ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Central BH</div><div class="g-stat-value">55M × Sun</div></div>
+          <div class="g-stat"><div class="g-stat-label">Jet Length</div><div class="g-stat-value">1M+ ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Type</div><div class="g-stat-value">E0 Elliptical</div></div>
+        </div>
+        <div class="galaxy-tags">
+          <span class="galaxy-tag">📡 Brightest Radio Source</span>
+          <span class="galaxy-tag">⚫ Active AGN</span>
+          <span class="galaxy-tag">🔥 Relativistic Jets</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Large Magellanic Cloud -->
+    <div class="galaxy-card" style="--gc-border:rgba(100,200,255,.28);--gc-glow:rgba(100,200,255,.04)">
+      <div class="galaxy-card-visual" style="background:radial-gradient(ellipse 140% 90% at 50% 50%, rgba(30,80,120,.35) 0%, rgba(5,20,40,.8) 60%, #060d1c 100%)">
+        <div class="galaxy-emoji-overlay" style="--gc-color:rgba(100,200,255,.5)">☁️</div>
+        <div class="galaxy-type-chip" style="background:rgba(100,200,255,.12);color:#77ccff;border:1px solid rgba(100,200,255,.22)">IRREGULAR GALAXY</div>
+      </div>
+      <div class="galaxy-card-content">
+        <div class="galaxy-constellation">DORADO / MENSA · MILKY WAY SATELLITE</div>
+        <div class="galaxy-name">Large Magellanic Cloud</div>
+        <div class="galaxy-also-known">LMC · PGC 17223</div>
+        <p class="galaxy-desc">One of the Milky Way's satellite galaxies, visible as a cloud-like patch in the southern sky. Home to the Tarantula Nebula, the most energetic star-forming region in the Local Group, which could produce a supernova visible in daylight.</p>
+        <div class="galaxy-stats">
+          <div class="g-stat"><div class="g-stat-label">Distance</div><div class="g-stat-value">158,000 ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Diameter</div><div class="g-stat-value">14,000 ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Stars</div><div class="g-stat-value">~30 billion</div></div>
+          <div class="g-stat"><div class="g-stat-label">Notable</div><div class="g-stat-value">Tarantula Nebula</div></div>
+        </div>
+        <div class="galaxy-tags">
+          <span class="galaxy-tag">🌌 MW Satellite</span>
+          <span class="galaxy-tag">🕷️ Tarantula Nebula</span>
+          <span class="galaxy-tag">👁️ Naked Eye (Southern)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NGC 1300 - Barred Spiral -->
+    <div class="galaxy-card" style="--gc-border:rgba(180,120,255,.28);--gc-glow:rgba(180,120,255,.05)">
+      <div class="galaxy-card-visual" style="background:radial-gradient(ellipse 120% 80% at 50% 50%, rgba(70,30,120,.4) 0%, rgba(20,5,40,.8) 60%, #060d1c 100%)">
+        <div class="galaxy-emoji-overlay" style="--gc-color:rgba(180,120,255,.6)">🎆</div>
+        <div class="galaxy-type-chip" style="background:rgba(180,120,255,.12);color:#cc99ff;border:1px solid rgba(180,120,255,.22)">BARRED SPIRAL</div>
+      </div>
+      <div class="galaxy-card-content">
+        <div class="galaxy-constellation">ERIDANUS CONSTELLATION · ERIDANUS GROUP</div>
+        <div class="galaxy-name">NGC 1300</div>
+        <div class="galaxy-also-known">NGC 1300 · Caldwell — Barred Spiral Archetype</div>
+        <p class="galaxy-desc">One of the most photographed barred spiral galaxies in the sky. Its elegant bar structure and sweeping spiral arms make it the textbook example of a barred spiral galaxy — the same type as our own Milky Way.</p>
+        <div class="galaxy-stats">
+          <div class="g-stat"><div class="g-stat-label">Distance</div><div class="g-stat-value">61.3M ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Diameter</div><div class="g-stat-value">~110,000 ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Bar Length</div><div class="g-stat-value">~60,000 ly</div></div>
+          <div class="g-stat"><div class="g-stat-label">Type</div><div class="g-stat-value">SBbc</div></div>
+        </div>
+        <div class="galaxy-tags">
+          <span class="galaxy-tag">🌀 Textbook Barred Spiral</span>
+          <span class="galaxy-tag">🔭 Hubble Classic</span>
+          <span class="galaxy-tag">🌌 Same Type as MW</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- GALAXY CLUSTERS -->
+  <div class="clusters-section">
+    <h2 class="section-title-light">Galaxy Groups & Clusters</h2>
+    <p class="section-sub-light">Galaxies rarely travel alone — they group together under gravity into structures of increasing scale.</p>
+    <div class="clusters-grid">
+      <div class="cluster-card">
+        <div class="cluster-card-header">
+          <div class="cluster-icon">🏘️</div>
+          <div><div class="cluster-name">Local Group</div><div class="cluster-type">Galaxy Group</div></div>
+        </div>
+        <p class="cluster-desc">Our home galaxy group containing ~80 galaxies including the Milky Way, Andromeda, and Triangulum, spanning about 10 million light-years.</p>
+        <div class="cluster-stat">Members: <strong>~80 galaxies</strong> · Span: <strong>10M ly</strong></div>
+      </div>
+      <div class="cluster-card">
+        <div class="cluster-card-header">
+          <div class="cluster-icon">🏙️</div>
+          <div><div class="cluster-name">Virgo Cluster</div><div class="cluster-type">Galaxy Cluster</div></div>
+        </div>
+        <p class="cluster-desc">The nearest large galaxy cluster to Earth, containing over 1,300 galaxies including the giant elliptical M87 with its famous black hole image.</p>
+        <div class="cluster-stat">Members: <strong>1,300+</strong> · Distance: <strong>53.8M ly</strong></div>
+      </div>
+      <div class="cluster-card">
+        <div class="cluster-card-header">
+          <div class="cluster-icon">🌆</div>
+          <div><div class="cluster-name">Coma Cluster</div><div class="cluster-type">Galaxy Cluster</div></div>
+        </div>
+        <p class="cluster-desc">One of the densest known galaxy clusters, famous for being one of the first places where dark matter was inferred from the unexpectedly fast motion of galaxies.</p>
+        <div class="cluster-stat">Members: <strong>~1,000</strong> · Distance: <strong>321M ly</strong></div>
+      </div>
+      <div class="cluster-card">
+        <div class="cluster-card-header">
+          <div class="cluster-icon">🌇</div>
+          <div><div class="cluster-name">Perseus Cluster</div><div class="cluster-type">Galaxy Cluster</div></div>
+        </div>
+        <p class="cluster-desc">One of the most massive objects in the known universe and the brightest X-ray cluster in the sky. Contains thousands of galaxies embedded in a vast cloud of hot plasma.</p>
+        <div class="cluster-stat">Members: <strong>~190 bright</strong> · Distance: <strong>240M ly</strong></div>
+      </div>
+      <div class="cluster-card">
+        <div class="cluster-card-header">
+          <div class="cluster-icon">🌃</div>
+          <div><div class="cluster-name">Laniakea Supercluster</div><div class="cluster-type">Supercluster</div></div>
+        </div>
+        <p class="cluster-desc">Our home supercluster — identified in 2014. Contains the Milky Way along with ~100,000 other galaxies spread across 520 million light-years.</p>
+        <div class="cluster-stat">Galaxies: <strong>~100,000</strong> · Span: <strong>520M ly</strong></div>
+      </div>
+      <div class="cluster-card">
+        <div class="cluster-card-header">
+          <div class="cluster-icon">🌌</div>
+          <div><div class="cluster-name">Bullet Cluster</div><div class="cluster-type">Merging Cluster Pair</div></div>
+        </div>
+        <p class="cluster-desc">Two colliding galaxy clusters that provided the strongest direct evidence for the existence of dark matter — hot gas slows down but dark matter passes straight through.</p>
+        <div class="cluster-stat">Distance: <strong>3.8B ly</strong> · Evidence: <strong>Dark Matter</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COSMIC SCALE -->
+  <div class="scale-section">
+    <h2 class="section-title-light">The Cosmic Scale</h2>
+    <p class="section-sub-light">From our solar system to the observable universe — an enormous hierarchy of structures.</p>
+    <div class="scale-steps">
+      <div class="scale-step">
+        <div class="scale-step-icon">☀️</div>
+        <div class="scale-step-range">~40 AU</div>
+        <div>
+          <div class="scale-step-name">Solar System</div>
+          <div class="scale-step-desc">Sun to the edge of the Oort Cloud</div>
+        </div>
+        <div class="scale-step-bar"><div class="scale-step-bar-fill" style="width:2%"></div></div>
+      </div>
+      <div class="scale-step">
+        <div class="scale-step-icon">⭐</div>
+        <div class="scale-step-range">~4 light-years</div>
+        <div>
+          <div class="scale-step-name">To Nearest Star</div>
+          <div class="scale-step-desc">Proxima Centauri — our cosmic neighbor</div>
+        </div>
+        <div class="scale-step-bar"><div class="scale-step-bar-fill" style="width:5%"></div></div>
+      </div>
+      <div class="scale-step">
+        <div class="scale-step-icon">🌌</div>
+        <div class="scale-step-range">~100,000 light-years</div>
+        <div>
+          <div class="scale-step-name">Milky Way Galaxy</div>
+          <div class="scale-step-desc">Diameter of our home galaxy</div>
+        </div>
+        <div class="scale-step-bar"><div class="scale-step-bar-fill" style="width:20%"></div></div>
+      </div>
+      <div class="scale-step">
+        <div class="scale-step-icon">🌀</div>
+        <div class="scale-step-range">~2.5M light-years</div>
+        <div>
+          <div class="scale-step-name">To Andromeda</div>
+          <div class="scale-step-desc">Our nearest spiral galaxy neighbor</div>
+        </div>
+        <div class="scale-step-bar"><div class="scale-step-bar-fill" style="width:35%"></div></div>
+      </div>
+      <div class="scale-step">
+        <div class="scale-step-icon">🏘️</div>
+        <div class="scale-step-range">~10M light-years</div>
+        <div>
+          <div class="scale-step-name">Local Group</div>
+          <div class="scale-step-desc">Our collection of ~80 galaxies</div>
+        </div>
+        <div class="scale-step-bar"><div class="scale-step-bar-fill" style="width:50%"></div></div>
+      </div>
+      <div class="scale-step">
+        <div class="scale-step-icon">🏙️</div>
+        <div class="scale-step-range">~520M light-years</div>
+        <div>
+          <div class="scale-step-name">Laniakea Supercluster</div>
+          <div class="scale-step-desc">Our home supercluster of 100,000 galaxies</div>
+        </div>
+        <div class="scale-step-bar"><div class="scale-step-bar-fill" style="width:72%"></div></div>
+      </div>
+      <div class="scale-step">
+        <div class="scale-step-icon">🔭</div>
+        <div class="scale-step-range">~93B light-years</div>
+        <div>
+          <div class="scale-step-name">Observable Universe</div>
+          <div class="scale-step-desc">Everything we can observe — ~2 trillion galaxies</div>
+        </div>
+        <div class="scale-step-bar"><div class="scale-step-bar-fill" style="width:100%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV LINKS -->
+  <div style="text-align:center;padding:20px 0 40px">
+    <a href="planets.html" style="color:#00d4ff;font-family:var(--font-mono);font-size:12px">← Explore Planets</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="learn-hub.html" style="color:rgba(180,210,255,.5);font-family:var(--font-mono);font-size:12px" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='rgba(180,210,255,.5)'">Back to Learn Hub</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="stars.html" style="color:#00d4ff;font-family:var(--font-mono);font-size:12px">Explore Stars →</a>
+  </div>
+
+</div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-logo">Orbit<span>Watch</span></div>
+    <div class="footer-links">
+      <a href="../index.html">Home</a>
+      <a href="tracker.html">Tracker</a>
+      <a href="database.html">Database</a>
+      <a href="chat.html">AI Chat</a>
+      <a href="learn-hub.html">Learn</a>
+    </div>
+    <div class="footer-copy">© 2025 OrbitWatch · Built for space curiosity</div>
+  </div>
+</footer>
+
+<script>
+// Nebula particles
+const nb = document.getElementById('nebulaParticles');
+const colors = ['rgba(150,100,255,.3)','rgba(80,130,255,.25)','rgba(200,80,255,.2)','rgba(255,255,255,.15)'];
+for(let i=0;i<80;i++){
+  const p = document.createElement('div');
+  p.className = 'nb-particle';
+  const size = Math.random()*3+1;
+  const color = colors[Math.floor(Math.random()*colors.length)];
+  p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${color};--dur:${Math.random()*8+5}s;--delay:${Math.random()*8}s;--opa:${Math.random()*0.4+0.1}`;
+  nb.appendChild(p);
+}
+document.getElementById('mobileMenuBtn')?.addEventListener('click',()=>document.getElementById('mobileNav')?.classList.toggle('open'));
+</script>
+</body>
+</html>

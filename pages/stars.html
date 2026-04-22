@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Stars — OrbitWatch</title>
+<link rel="stylesheet" href="../css/style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ── Stars Page Extra Styles ── */
+.stars-hero {
+  background: linear-gradient(160deg, #030a18 0%, #050d20 40%, #090518 100%);
+  padding: 120px 24px 70px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(0,212,255,0.15);
+}
+.stars-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 30%, rgba(0,212,255,.06) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 50% at 80% 60%, rgba(255,180,50,.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.twinkling-stars { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.tw-star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle var(--dur, 3s) ease-in-out infinite var(--delay, 0s);
+}
+@keyframes twinkle { 0%,100%{opacity:.15} 50%{opacity:1} }
+@keyframes shootingStar {
+  0%   { transform: translateX(0) translateY(0) rotate(-30deg); opacity: 1; }
+  100% { transform: translateX(300px) translateY(150px) rotate(-30deg); opacity: 0; }
+}
+.shooting-star {
+  position: absolute;
+  width: 120px; height: 1px;
+  background: linear-gradient(90deg, white, transparent);
+  animation: shootingStar 3s ease-in infinite;
+  opacity: 0;
+}
+
+.stars-hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,200,50,.08); border: 1px solid rgba(255,200,50,.25);
+  border-radius: 20px; padding: 6px 18px; font-size: 11px; color: #ffcc44;
+  letter-spacing: 1px; margin-bottom: 24px; font-family: var(--font-mono);
+}
+.stars-hero h1 {
+  font-family: var(--font-display); font-size: clamp(36px,7vw,68px);
+  font-weight: 800; color: #e8f4ff; line-height: 1.05;
+  margin-bottom: 18px; letter-spacing: -1px;
+}
+.stars-hero h1 span { color: #ffcc44; }
+.stars-hero p {
+  color: rgba(200,220,255,0.65); font-size: 15px;
+  max-width: 580px; margin: 0 auto 40px; line-height: 1.85;
+}
+
+/* Spectral Classification Strip */
+.spectral-strip {
+  display: flex; justify-content: center; gap: 0; flex-wrap: wrap;
+  margin: 0 auto; max-width: 700px;
+}
+.spectral-class {
+  flex: 1; min-width: 60px;
+  padding: 12px 8px; text-align: center;
+  border-radius: 0; transition: transform .2s;
+}
+.spectral-class:first-child { border-radius: 10px 0 0 10px; }
+.spectral-class:last-child { border-radius: 0 10px 10px 0; }
+.spectral-class:hover { transform: translateY(-3px); z-index: 2; }
+.sc-letter { font-family: var(--font-display); font-size: 20px; font-weight: 800; }
+.sc-temp { font-size: 9px; opacity: .7; margin-top: 4px; font-family: var(--font-mono); }
+
+/* Main content */
+.page-container { max-width: 1200px; margin: 0 auto; padding: 60px 24px 80px; }
+
+/* Star Cards Grid */
+.stars-section-title {
+  font-family: var(--font-display); font-size: clamp(22px,4vw,36px); font-weight: 800;
+  color: #e8f4ff; margin-bottom: 8px;
+}
+.stars-section-sub { color: rgba(200,220,255,.55); font-size: 13px; margin-bottom: 40px; line-height: 1.7; }
+
+.star-cards-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 22px;
+  margin-bottom: 70px;
+}
+
+.star-card {
+  background: linear-gradient(140deg, #070f1f 0%, #0a1428 100%);
+  border: 1px solid rgba(100,150,255,0.13);
+  border-radius: 16px; overflow: hidden;
+  transition: transform .3s, border-color .3s, box-shadow .3s;
+  cursor: default;
+}
+.star-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255,200,50,.35);
+  box-shadow: 0 16px 50px rgba(0,0,0,.4), 0 0 30px rgba(255,200,50,.06);
+}
+
+.star-card-header {
+  padding: 24px 24px 18px;
+  position: relative; overflow: hidden;
+}
+.star-card-header::before {
+  content: '';
+  position: absolute; inset: 0;
+  opacity: .25;
+}
+.star-glow {
+  width: 60px; height: 60px; border-radius: 50%;
+  flex-shrink: 0; display: flex; align-items: center;
+  justify-content: center; font-size: 26px; margin-bottom: 14px;
+  box-shadow: 0 0 30px var(--star-color, #ffcc44), 0 0 60px var(--star-color-dim, rgba(255,200,50,.3));
+  position: relative; z-index: 1;
+}
+.star-type-badge {
+  display: inline-flex; font-size: 10px; font-family: var(--font-mono);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 6px; margin-bottom: 10px;
+  position: relative; z-index: 1;
+}
+.star-name {
+  font-family: var(--font-display); font-size: 24px; font-weight: 800;
+  color: #e8f4ff; line-height: 1.1; position: relative; z-index: 1;
+}
+.star-constellation {
+  font-size: 11px; color: rgba(200,220,255,.45);
+  margin-top: 3px; font-family: var(--font-mono); position: relative; z-index: 1;
+}
+
+.star-card-body { padding: 0 24px 24px; }
+.star-desc { font-size: 12px; color: rgba(180,210,255,.65); line-height: 1.8; margin-bottom: 18px; }
+
+.star-stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 16px;
+}
+.star-stat {
+  background: rgba(255,255,255,.03); border: 1px solid rgba(100,150,255,.1);
+  border-radius: 8px; padding: 10px 12px;
+}
+.star-stat-label { font-size: 9px; color: rgba(180,210,255,.4); font-family: var(--font-mono); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+.star-stat-value { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #e8f4ff; }
+
+.star-fun-fact {
+  background: rgba(255,200,50,.05); border: 1px solid rgba(255,200,50,.15);
+  border-radius: 8px; padding: 11px 14px;
+}
+.star-fun-fact-label { font-size: 9px; font-family: var(--font-mono); color: #ffcc44; letter-spacing: 1.5px; margin-bottom: 5px; }
+.star-fun-fact p { font-size: 11px; color: rgba(200,220,255,.65); line-height: 1.6; margin: 0; }
+
+/* Life Cycle Section */
+.lifecycle-section { margin-bottom: 70px; }
+.lifecycle-track {
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto; padding-bottom: 12px;
+  scrollbar-width: thin;
+}
+.lifecycle-step {
+  flex-shrink: 0; text-align: center; padding: 24px 20px;
+  background: rgba(255,255,255,.02); border: 1px solid rgba(100,150,255,.1);
+  border-radius: 12px; min-width: 140px;
+  transition: transform .2s, border-color .2s;
+}
+.lifecycle-step:hover { transform: translateY(-4px); border-color: rgba(0,212,255,.3); }
+.lifecycle-icon { font-size: 32px; margin-bottom: 10px; display: block; }
+.lifecycle-step-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: #e8f4ff; margin-bottom: 4px; }
+.lifecycle-step-desc { font-size: 10px; color: rgba(180,210,255,.5); line-height: 1.5; }
+.lifecycle-arrow { font-size: 22px; color: rgba(0,212,255,.35); padding: 0 8px; flex-shrink: 0; }
+
+/* HR Diagram */
+.hr-diagram-section { margin-bottom: 70px; }
+.hr-box {
+  background: linear-gradient(140deg, #060d1c, #09132a);
+  border: 1px solid rgba(100,150,255,.12); border-radius: 16px; padding: 32px;
+}
+.hr-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 14px;
+  margin-top: 24px;
+}
+.hr-cell {
+  border-radius: 10px; padding: 16px; text-align: center;
+  transition: transform .2s;
+}
+.hr-cell:hover { transform: scale(1.04); }
+.hr-cell-emoji { font-size: 28px; margin-bottom: 8px; display: block; }
+.hr-cell-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: #e8f4ff; margin-bottom: 3px; }
+.hr-cell-desc { font-size: 10px; color: rgba(180,210,255,.5); line-height: 1.5; }
+
+/* Comparison Table */
+.compare-section { margin-bottom: 70px; }
+.compare-table {
+  width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 14px;
+  overflow: hidden;
+}
+.compare-table th {
+  background: rgba(0,212,255,.08); padding: 14px 16px;
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  color: #00d4ff; text-align: left; letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(100,150,255,.15);
+}
+.compare-table td {
+  padding: 12px 16px; font-size: 12px; color: rgba(180,210,255,.75);
+  border-bottom: 1px solid rgba(100,150,255,.07);
+  font-family: var(--font-mono);
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(255,255,255,.02); }
+.compare-table tbody tr:nth-child(odd) td { background: rgba(255,255,255,.01); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="../index.html" class="logo"><span class="logo-dot"></span>Orbit<span class="logo-light">Watch</span></a>
+    <nav class="site-nav">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="tracker.html" class="nav-link">Tracker</a>
+      <a href="database.html" class="nav-link">Database</a>
+      <a href="chat.html" class="nav-link nav-ai">🤖 AI Chat</a>
+      <a href="learn-hub.html" class="nav-link active">📚 Learn</a>
+    </nav>
+    <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html" class="nav-link">Home</a>
+    <a href="tracker.html" class="nav-link">Tracker</a>
+    <a href="database.html" class="nav-link">Database</a>
+    <a href="chat.html" class="nav-link">🤖 AI Chat</a>
+    <a href="learn-hub.html" class="nav-link active">📚 Learn</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="stars-hero">
+  <div class="twinkling-stars" id="twinklingStars"></div>
+  <div style="position:relative;z-index:2">
+    <div class="stars-hero-badge">⭐ STELLAR SCIENCE</div>
+    <h1>The Universe's<br/><span>Brightest Stars</span></h1>
+    <p>From the blazing blue giants to the cool red dwarfs — explore the most famous and fascinating stars in our galaxy and beyond.</p>
+
+    <!-- Spectral Classes -->
+    <div class="spectral-strip">
+      <div class="spectral-class" style="background:rgba(80,100,255,.2);color:#8899ff">
+        <div class="sc-letter">O</div><div class="sc-temp">&gt;30,000 K</div>
+      </div>
+      <div class="spectral-class" style="background:rgba(100,140,255,.18);color:#99bbff">
+        <div class="sc-letter">B</div><div class="sc-temp">10–30K K</div>
+      </div>
+      <div class="spectral-class" style="background:rgba(180,200,255,.15);color:#c8d8ff">
+        <div class="sc-letter">A</div><div class="sc-temp">7.5–10K K</div>
+      </div>
+      <div class="spectral-class" style="background:rgba(255,240,180,.12);color:#ffe89a">
+        <div class="sc-letter">F</div><div class="sc-temp">6–7.5K K</div>
+      </div>
+      <div class="spectral-class" style="background:rgba(255,220,100,.15);color:#ffdd66">
+        <div class="sc-letter">G</div><div class="sc-temp">5–6K K</div>
+      </div>
+      <div class="spectral-class" style="background:rgba(255,160,60,.15);color:#ffaa44">
+        <div class="sc-letter">K</div><div class="sc-temp">3.5–5K K</div>
+      </div>
+      <div class="spectral-class" style="background:rgba(255,80,40,.18);color:#ff7755">
+        <div class="sc-letter">M</div><div class="sc-temp">&lt;3,500 K</div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:rgba(200,220,255,.35);margin-top:10px;font-family:var(--font-mono)">SPECTRAL CLASSIFICATION — HOT TO COOL</p>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<div style="background:#040c1c; min-height:100vh">
+<div class="page-container">
+
+  <!-- FAMOUS STARS GRID -->
+  <div style="margin-bottom:16px">
+    <h2 class="stars-section-title">Famous Stars of Our Galaxy</h2>
+    <p class="stars-section-sub">Iconic stars studied for centuries — each one a unique window into stellar physics and the life cycle of suns.</p>
+  </div>
+
+  <div class="star-cards-grid">
+
+    <!-- Sun -->
+    <div class="star-card">
+      <div class="star-card-header">
+        <div class="star-glow" style="--star-color:#ffdd44;--star-color-dim:rgba(255,220,50,.25);background:radial-gradient(circle,#ffe066,#ff9900)">☀️</div>
+        <div class="star-type-badge" style="background:rgba(255,200,50,.1);color:#ffcc44;border:1px solid rgba(255,200,50,.2)">G-TYPE MAIN SEQUENCE</div>
+        <div class="star-name">The Sun</div>
+        <div class="star-constellation">Sol — Our Home Star</div>
+      </div>
+      <div class="star-card-body">
+        <p class="star-desc">The nearest star to Earth and the center of our solar system. A perfectly average yellow dwarf that has burned for 4.6 billion years and will continue for another 5 billion.</p>
+        <div class="star-stats">
+          <div class="star-stat"><div class="star-stat-label">Distance</div><div class="star-stat-value">8.3 light-min</div></div>
+          <div class="star-stat"><div class="star-stat-label">Diameter</div><div class="star-stat-value">1.39M km</div></div>
+          <div class="star-stat"><div class="star-stat-label">Temperature</div><div class="star-stat-value">5,778 K</div></div>
+          <div class="star-stat"><div class="star-stat-label">Age</div><div class="star-stat-value">4.6 Gyr</div></div>
+        </div>
+        <div class="star-fun-fact">
+          <div class="star-fun-fact-label">⚡ FUN FACT</div>
+          <p>The Sun converts 600 million tonnes of hydrogen into helium every single second via nuclear fusion.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sirius -->
+    <div class="star-card">
+      <div class="star-card-header">
+        <div class="star-glow" style="--star-color:#aaccff;--star-color-dim:rgba(170,200,255,.25);background:radial-gradient(circle,#cce0ff,#7799ff)">💫</div>
+        <div class="star-type-badge" style="background:rgba(120,170,255,.1);color:#99ccff;border:1px solid rgba(120,170,255,.2)">A-TYPE MAIN SEQUENCE</div>
+        <div class="star-name">Sirius</div>
+        <div class="star-constellation">Canis Major — The Dog Star</div>
+      </div>
+      <div class="star-card-body">
+        <p class="star-desc">The brightest star in the night sky (magnitude −1.46). A binary system — Sirius A orbited by the white dwarf Sirius B. Ancient Egyptians used it to predict the Nile flood.</p>
+        <div class="star-stats">
+          <div class="star-stat"><div class="star-stat-label">Distance</div><div class="star-stat-value">8.6 ly</div></div>
+          <div class="star-stat"><div class="star-stat-label">Luminosity</div><div class="star-stat-value">25× Sun</div></div>
+          <div class="star-stat"><div class="star-stat-label">Temperature</div><div class="star-stat-value">9,940 K</div></div>
+          <div class="star-stat"><div class="star-stat-label">Mass</div><div class="star-stat-value">2.1× Sun</div></div>
+        </div>
+        <div class="star-fun-fact">
+          <div class="star-fun-fact-label">⚡ FUN FACT</div>
+          <p>Sirius B, its companion white dwarf, has a mass roughly equal to the Sun packed into a volume the size of Earth.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Betelgeuse -->
+    <div class="star-card">
+      <div class="star-card-header">
+        <div class="star-glow" style="--star-color:#ff6633;--star-color-dim:rgba(255,100,50,.3);background:radial-gradient(circle,#ff8855,#cc3300)">🔴</div>
+        <div class="star-type-badge" style="background:rgba(255,100,50,.1);color:#ff8855;border:1px solid rgba(255,100,50,.2)">RED SUPERGIANT</div>
+        <div class="star-name">Betelgeuse</div>
+        <div class="star-constellation">Orion — The Hunter's Shoulder</div>
+      </div>
+      <div class="star-card-body">
+        <p class="star-desc">One of the largest stars visible to the naked eye. A red supergiant nearing the end of its life — it will eventually explode as a spectacular supernova visible in daylight.</p>
+        <div class="star-stats">
+          <div class="star-stat"><div class="star-stat-label">Distance</div><div class="star-stat-value">700 ly</div></div>
+          <div class="star-stat"><div class="star-stat-label">Radius</div><div class="star-stat-value">764× Sun</div></div>
+          <div class="star-stat"><div class="star-stat-label">Temperature</div><div class="star-stat-value">3,500 K</div></div>
+          <div class="star-stat"><div class="star-stat-label">Luminosity</div><div class="star-stat-value">126,000× Sun</div></div>
+        </div>
+        <div class="star-fun-fact">
+          <div class="star-fun-fact-label">⚡ FUN FACT</div>
+          <p>If placed at the center of our solar system, Betelgeuse would engulf Mercury, Venus, Earth, Mars, and even Jupiter.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Proxima Centauri -->
+    <div class="star-card">
+      <div class="star-card-header">
+        <div class="star-glow" style="--star-color:#ff4444;--star-color-dim:rgba(255,60,60,.25);background:radial-gradient(circle,#ff6655,#aa1100)">🔴</div>
+        <div class="star-type-badge" style="background:rgba(255,80,60,.1);color:#ff7766;border:1px solid rgba(255,80,60,.2)">RED DWARF (M-TYPE)</div>
+        <div class="star-name">Proxima Centauri</div>
+        <div class="star-constellation">Centaurus — Our Closest Neighbor</div>
+      </div>
+      <div class="star-card-body">
+        <p class="star-desc">The closest known star to the Sun at just 4.24 light-years. A small, faint red dwarf with a potentially habitable exoplanet — Proxima b — in its orbit.</p>
+        <div class="star-stats">
+          <div class="star-stat"><div class="star-stat-label">Distance</div><div class="star-stat-value">4.24 ly</div></div>
+          <div class="star-stat"><div class="star-stat-label">Mass</div><div class="star-stat-value">0.12× Sun</div></div>
+          <div class="star-stat"><div class="star-stat-label">Temperature</div><div class="star-stat-value">3,042 K</div></div>
+          <div class="star-stat"><div class="star-stat-label">Luminosity</div><div class="star-stat-value">0.0015× Sun</div></div>
+        </div>
+        <div class="star-fun-fact">
+          <div class="star-fun-fact-label">⚡ FUN FACT</div>
+          <p>Red dwarfs like Proxima can live for trillions of years — far longer than the current age of the universe (~13.8 Gyr).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rigel -->
+    <div class="star-card">
+      <div class="star-card-header">
+        <div class="star-glow" style="--star-color:#aaccff;--star-color-dim:rgba(150,190,255,.25);background:radial-gradient(circle,#ddeeff,#5588ff)">🔵</div>
+        <div class="star-type-badge" style="background:rgba(80,130,255,.1);color:#88aaff;border:1px solid rgba(80,130,255,.2)">BLUE SUPERGIANT</div>
+        <div class="star-name">Rigel</div>
+        <div class="star-constellation">Orion — The Hunter's Foot</div>
+      </div>
+      <div class="star-card-body">
+        <p class="star-desc">One of the most luminous stars in the Milky Way. This blue supergiant burns ferociously hot and will likely end its life as a supernova within the next million years.</p>
+        <div class="star-stats">
+          <div class="star-stat"><div class="star-stat-label">Distance</div><div class="star-stat-value">860 ly</div></div>
+          <div class="star-stat"><div class="star-stat-label">Luminosity</div><div class="star-stat-value">120,000× Sun</div></div>
+          <div class="star-stat"><div class="star-stat-label">Temperature</div><div class="star-stat-value">12,100 K</div></div>
+          <div class="star-stat"><div class="star-stat-label">Mass</div><div class="star-stat-value">21× Sun</div></div>
+        </div>
+        <div class="star-fun-fact">
+          <div class="star-fun-fact-label">⚡ FUN FACT</div>
+          <p>Despite being 860 light-years away, Rigel appears nearly as bright as Betelgeuse because it is intrinsically 120,000 times more luminous than our Sun.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Polaris -->
+    <div class="star-card">
+      <div class="star-card-header">
+        <div class="star-glow" style="--star-color:#eeddaa;--star-color-dim:rgba(240,220,150,.25);background:radial-gradient(circle,#ffeebb,#ddaa44)">⭐</div>
+        <div class="star-type-badge" style="background:rgba(240,200,100,.1);color:#eecc66;border:1px solid rgba(240,200,100,.2)">YELLOW SUPERGIANT</div>
+        <div class="star-name">Polaris</div>
+        <div class="star-constellation">Ursa Minor — The North Star</div>
+      </div>
+      <div class="star-card-body">
+        <p class="star-desc">The North Star — famous for sitting almost directly above Earth's North Pole, making it the crucial navigational star for centuries of human exploration.</p>
+        <div class="star-stats">
+          <div class="star-stat"><div class="star-stat-label">Distance</div><div class="star-stat-value">433 ly</div></div>
+          <div class="star-stat"><div class="star-stat-label">Luminosity</div><div class="star-stat-value">2,500× Sun</div></div>
+          <div class="star-stat"><div class="star-stat-label">Temperature</div><div class="star-stat-value">6,015 K</div></div>
+          <div class="star-stat"><div class="star-stat-label">Mass</div><div class="star-stat-value">5.4× Sun</div></div>
+        </div>
+        <div class="star-fun-fact">
+          <div class="star-fun-fact-label">⚡ FUN FACT</div>
+          <p>Polaris is a Cepheid variable star that pulses in brightness every 3.97 days — it is also a triple star system.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STELLAR LIFE CYCLE -->
+  <div class="lifecycle-section">
+    <h2 class="stars-section-title">Stellar Life Cycle</h2>
+    <p class="stars-section-sub">Every star is born, lives, and dies — the path it takes depends almost entirely on its initial mass.</p>
+
+    <div style="margin-bottom:20px">
+      <div style="font-family:var(--font-mono);font-size:11px;color:rgba(180,210,255,.4);margin-bottom:12px;letter-spacing:1px">◎ LOW-MASS STARS (like our Sun)</div>
+      <div class="lifecycle-track">
+        <div class="lifecycle-step"><span class="lifecycle-icon">☁️</span><div class="lifecycle-step-name">Nebula</div><div class="lifecycle-step-desc">Gas & dust cloud collapses under gravity</div></div>
+        <div class="lifecycle-arrow">→</div>
+        <div class="lifecycle-step"><span class="lifecycle-icon">🌡️</span><div class="lifecycle-step-name">Protostar</div><div class="lifecycle-step-desc">Core heats up, fusion begins</div></div>
+        <div class="lifecycle-arrow">→</div>
+        <div class="lifecycle-step"><span class="lifecycle-icon">⭐</span><div class="lifecycle-step-name">Main Sequence</div><div class="lifecycle-step-desc">Stable H→He fusion (billions of years)</div></div>
+        <div class="lifecycle-arrow">→</div>
+        <div class="lifecycle-step"><span class="lifecycle-icon">🟠</span><div class="lifecycle-step-name">Red Giant</div><div class="lifecycle-step-desc">Hydrogen depleted, star expands</div></div>
+        <div class="lifecycle-arrow">→</div>
+        <div class="lifecycle-step"><span class="lifecycle-icon">💨</span><div class="lifecycle-step-name">Planetary Nebula</div><div class="lifecycle-step-desc">Outer layers expelled into space</div></div>
+        <div class="lifecycle-arrow">→</div>
+        <div class="lifecycle-step"><span class="lifecycle-icon">🤍</span><div class="lifecycle-step-name">White Dwarf</div><div class="lifecycle-step-desc">Dense cooling core remains</div></div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:rgba(255,100,80,.5);margin-bottom:12px;letter-spacing:1px">◎ HIGH-MASS STARS (like Betelgeuse)</div>
+      <div class="lifecycle-track">
+        <div class="lifecycle-step"><span class="lifecycle-icon">☁️</span><div class="lifecycle-step-name">Nebula</div><div class="lifecycle-step-desc">Massive collapse, faster formation</div></div>
+        <div class="lifecycle-arrow">→</div>
+        <div class="lifecycle-step"><span class="lifecycle-icon">🔵</span><div class="lifecycle-step-name">Blue Giant</div><div class="lifecycle-step-desc">Extremely hot & luminous</div></div>
+        <div class="lifecycle-arrow">→</div>
+        <div class="lifecycle-step"><span class="lifecycle-icon">🔴</span><div class="lifecycle-step-name">Red Supergiant</div><div class="lifecycle-step-desc">Massive expansion, fuses heavy elements</div></div>
+        <div class="lifecycle-arrow">→</div>
+        <div class="lifecycle-step"><span class="lifecycle-icon">💥</span><div class="lifecycle-step-name">Supernova</div><div class="lifecycle-step-desc">Catastrophic explosion</div></div>
+        <div class="lifecycle-arrow">→</div>
+        <div class="lifecycle-step"><span class="lifecycle-icon">🌀</span><div class="lifecycle-step-name">Neutron Star</div><div class="lifecycle-step-desc">Or Black Hole if very massive</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HR DIAGRAM -->
+  <div class="hr-diagram-section">
+    <h2 class="stars-section-title">Star Classification</h2>
+    <p class="stars-section-sub">The Hertzsprung–Russell diagram organizes stars by luminosity and temperature, revealing distinct populations.</p>
+    <div class="hr-box">
+      <div class="hr-grid">
+        <div class="hr-cell" style="background:rgba(80,100,255,.12);border:1px solid rgba(80,100,255,.2)">
+          <span class="hr-cell-emoji">🔵</span>
+          <div class="hr-cell-name">Blue Giants</div>
+          <div class="hr-cell-desc">O & B type. Hottest, most massive, shortest lived.</div>
+        </div>
+        <div class="hr-cell" style="background:rgba(200,220,255,.06);border:1px solid rgba(200,220,255,.12)">
+          <span class="hr-cell-emoji">⬜</span>
+          <div class="hr-cell-name">White Stars</div>
+          <div class="hr-cell-desc">A type. Sirius-like. Hot and bright.</div>
+        </div>
+        <div class="hr-cell" style="background:rgba(255,240,180,.06);border:1px solid rgba(255,240,180,.12)">
+          <span class="hr-cell-emoji">🌟</span>
+          <div class="hr-cell-name">Yellow Dwarfs</div>
+          <div class="hr-cell-desc">G type. The Sun. Stable middle-age stars.</div>
+        </div>
+        <div class="hr-cell" style="background:rgba(255,160,60,.08);border:1px solid rgba(255,160,60,.15)">
+          <span class="hr-cell-emoji">🟠</span>
+          <div class="hr-cell-name">Orange Dwarfs</div>
+          <div class="hr-cell-desc">K type. Cooler than Sun. Long-lived candidates for life.</div>
+        </div>
+        <div class="hr-cell" style="background:rgba(255,70,40,.08);border:1px solid rgba(255,70,40,.15)">
+          <span class="hr-cell-emoji">🔴</span>
+          <div class="hr-cell-name">Red Dwarfs</div>
+          <div class="hr-cell-desc">M type. Most common. Faint, cool, trillion-year lifespans.</div>
+        </div>
+        <div class="hr-cell" style="background:rgba(255,100,50,.1);border:1px solid rgba(255,100,50,.2)">
+          <span class="hr-cell-emoji">🌋</span>
+          <div class="hr-cell-name">Red Supergiants</div>
+          <div class="hr-cell-desc">Massive, bloated. Pre-supernova. Betelgeuse, Antares.</div>
+        </div>
+        <div class="hr-cell" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)">
+          <span class="hr-cell-emoji">🤍</span>
+          <div class="hr-cell-name">White Dwarfs</div>
+          <div class="hr-cell-desc">Stellar remnants. Earth-sized, no fusion. Slowly fading.</div>
+        </div>
+        <div class="hr-cell" style="background:rgba(100,200,100,.06);border:1px solid rgba(100,200,100,.15)">
+          <span class="hr-cell-emoji">💚</span>
+          <div class="hr-cell-name">Neutron Stars</div>
+          <div class="hr-cell-desc">Ultra-dense remnants. Some spin as pulsars.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARISON TABLE -->
+  <div class="compare-section">
+    <h2 class="stars-section-title">Stellar Comparison</h2>
+    <p class="stars-section-sub">How famous stars measure up against each other and our Sun.</p>
+    <div style="overflow-x:auto;border-radius:14px;border:1px solid rgba(100,150,255,.12)">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Star</th>
+            <th>Type</th>
+            <th>Distance (ly)</th>
+            <th>Temperature (K)</th>
+            <th>Luminosity (× Sun)</th>
+            <th>Mass (× Sun)</th>
+            <th>Apparent Magnitude</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Sun</td><td>G2V</td><td>—</td><td>5,778</td><td>1.00</td><td>1.00</td><td>−26.74</td></tr>
+          <tr><td>Sirius</td><td>A1V</td><td>8.6</td><td>9,940</td><td>25.4</td><td>2.06</td><td>−1.46</td></tr>
+          <tr><td>Canopus</td><td>A9/F0</td><td>310</td><td>7,400</td><td>10,700</td><td>8.0</td><td>−0.74</td></tr>
+          <tr><td>Arcturus</td><td>K1.5 III</td><td>37</td><td>4,286</td><td>170</td><td>1.08</td><td>−0.05</td></tr>
+          <tr><td>Vega</td><td>A0V</td><td>25</td><td>9,602</td><td>40.1</td><td>2.14</td><td>0.03</td></tr>
+          <tr><td>Rigel</td><td>B8Ia</td><td>860</td><td>12,100</td><td>120,000</td><td>21</td><td>0.13</td></tr>
+          <tr><td>Betelgeuse</td><td>M1-M2 Ia</td><td>700</td><td>3,500</td><td>126,000</td><td>11.6</td><td>0.42</td></tr>
+          <tr><td>Polaris</td><td>F7Ib</td><td>433</td><td>6,015</td><td>2,500</td><td>5.4</td><td>1.98</td></tr>
+          <tr><td>Proxima Cen.</td><td>M5.5Ve</td><td>4.24</td><td>3,042</td><td>0.0015</td><td>0.12</td><td>11.13</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BACK LINK -->
+  <div style="text-align:center;padding:20px 0 40px">
+    <a href="learn-hub.html" style="display:inline-flex;align-items:center;gap:8px;color:rgba(180,210,255,.5);font-family:var(--font-mono);font-size:12px;transition:color .2s" onmouseover="this.style.color='#00d4ff'" onmouseout="this.style.color='rgba(180,210,255,.5)'">← Back to Learn Hub</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="planets.html" style="display:inline-flex;align-items:center;gap:8px;color:#00d4ff;font-family:var(--font-mono);font-size:12px;transition:color .2s">Explore Planets →</a>
+  </div>
+
+</div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-logo">Orbit<span>Watch</span></div>
+    <div class="footer-links">
+      <a href="../index.html">Home</a>
+      <a href="tracker.html">Tracker</a>
+      <a href="database.html">Database</a>
+      <a href="chat.html">AI Chat</a>
+      <a href="learn-hub.html">Learn</a>
+    </div>
+    <div class="footer-copy">© 2025 OrbitWatch · Built for space curiosity</div>
+  </div>
+</footer>
+
+<script>
+// Twinkling stars
+const container = document.getElementById('twinklingStars');
+for(let i=0;i<120;i++){
+  const s = document.createElement('div');
+  s.className = 'tw-star';
+  const size = Math.random()*2.5+0.5;
+  s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${Math.random()*4+2}s;--delay:${Math.random()*5}s`;
+  container.appendChild(s);
+}
+// Shooting stars
+for(let i=0;i<5;i++){
+  const ss = document.createElement('div');
+  ss.className = 'shooting-star';
+  ss.style.cssText = `top:${Math.random()*60+5}%;left:${Math.random()*40}%;animation-delay:${Math.random()*10+i*4}s;animation-duration:${Math.random()*2+2}s;opacity:0`;
+  container.appendChild(ss);
+}
+document.getElementById('mobileMenuBtn')?.addEventListener('click',()=>document.getElementById('mobileNav')?.classList.toggle('open'));
+</script>
+</body>
+</html>
